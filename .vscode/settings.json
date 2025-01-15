@@ -1,10 +1,5 @@
 {
-  "[typescript]": {
-    "editor.defaultFormatter": "denoland.vscode-deno"
-  },
-  "deno.enablePaths": [
-    "supabase/functions"
-  ],
+  "deno.enablePaths": ["supabase/functions"],
   "deno.lint": true,
   "deno.unstable": [
     "bare-node-builtins",
@@ -20,5 +15,12 @@
     "fs",
     "http",
     "net"
-  ]
+  ],
+  "editor.defaultFormatter": "biomejs.biome",
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.organizeImports.biome": true,
+    "quickfix.biome": true,
+    "source.formatDocument.biome": true
+  }
 }
