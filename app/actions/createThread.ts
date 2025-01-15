@@ -12,60 +12,22 @@ export async function createThread(formData: {
   const supabase = createServerComponentClient<Database>({ cookies });
 
   // NOTE: スレッドを作成
-  //   const { data: thread, error: threadError } = await supabase
-  //     .from("threads")
-  //     .insert({
-  //       title: formData.title,
-  //       user_id: user.id,
-  //     })
-  //     .select()
-  //       .single()
-
-  //   if (threadError) {
-  //     return {
-  //       error: "スレッドの作成に失敗しました"
-  //     }
-  //   }
-
-  // ユーザーを作成
-  const { data: user, error } = await supabase
-    .from('app_users') // テーブル名がapp_usersに変更
+  const { error: threadError } = await supabase
+    .from('articles')
     .insert({
-      name: 'テスト',
-      email: 'テストemail',
-      auth_provider: 'EMAIL',
-      last_login_date: new Date().toISOString(),
-      // created_atとupdated_atはデフォルト値で自動設定
+      title: formData.title,
+      content: formData.content,
     })
     .select()
     .single();
-  console.log(user);
-  if (error) {
-    console.error('Error details:', error); // デバッグ用
 
+  if (threadError) {
     return {
-      error: 'ユーザーの作成に失敗しました',
-      details: error.message,
+      error: 'スレッドの作成に失敗しました',
     };
   }
 
-  // 最初の投稿を作成
-  //   const { error: postError } = await supabase
-  //     .from("posts")
-  //     .insert({
-  //       content: formData.content,
-  //       thread_id: thread.id,
-  //       user_id: user.id,
-  //     })
-
-  //   if (postError) {
-  //     return {
-  //       error: "投稿の作成に失敗しました"
-  //     }
-  //   }
-
-  // 以下に記事テーブル作成のコードを実装
-
+  // NOTE: キャッシュを更新してトップページの記事情報を更新
   revalidatePath('/');
   return { success: true };
 }
