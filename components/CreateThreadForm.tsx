@@ -1,4 +1,3 @@
-// components/CreateThreadForm.tsx
 'use client';
 
 import { createThread } from '@/app/actions/createThread';
@@ -26,7 +25,9 @@ const formSchema = z.object({
   content: z.string().min(10).max(1000),
 });
 
-export function CreateThreadForm() {
+export function CreateThreadForm({
+  setIsDialogOpen,
+}: { setIsDialogOpen: (open: boolean) => void }) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
@@ -63,6 +64,7 @@ export function CreateThreadForm() {
       });
     } finally {
       setIsLoading(false);
+      setIsDialogOpen(false);
     }
   }
 
