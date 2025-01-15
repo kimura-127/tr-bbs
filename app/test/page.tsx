@@ -1,29 +1,29 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { createClient } from '@/utils/supabase/client'
+import { createClient } from '@/utils/supabase/client';
+import { useState } from 'react';
 
 export default function TestPage() {
-  const [inputValue, setInputValue] = useState('')
-  const supabase = createClient()
+  const [inputValue, setInputValue] = useState('');
+  const supabase = createClient();
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    
+    e.preventDefault();
+
     try {
       const { data, error } = await supabase
         .from('test_items')
         .insert([{ content: inputValue }])
-        .select()
+        .select();
 
-      if (error) throw error
-      
-      console.log('保存成功:', data)
-      setInputValue('')
+      if (error) throw error;
+
+      console.log('保存成功:', data);
+      setInputValue('');
     } catch (error) {
-      console.error('エラー:', error)
+      console.error('エラー:', error);
     }
-  }
+  };
 
   return (
     <div className="max-w-4xl mx-auto p-4">
@@ -44,5 +44,5 @@ export default function TestPage() {
         </button>
       </form>
     </div>
-  )
-} 
+  );
+}
