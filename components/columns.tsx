@@ -1,4 +1,5 @@
 'use client';
+import { useReadThreads } from '@/hooks/useReadThreads';
 import type { ColumnDef } from '@tanstack/react-table';
 import Link from 'next/link';
 import { Button } from './ui/button';
@@ -16,9 +17,16 @@ export const columns: ColumnDef<Payment>[] = [
     accessorKey: 'title',
     header: 'トピックス',
     cell: ({ row }) => {
+      const ReadThreads = useReadThreads();
+      const isRead = ReadThreads.isRead(row.original.id);
+
       return (
         <Link href={`/thread/${row.original.id}`}>
-          <Button variant="link" className="text-green-700">
+          <Button
+            onClick={() => ReadThreads.markAsRead(row.original.id)}
+            variant="link"
+            className={`text-green-700 ${isRead && 'text-red-500'}`}
+          >
             {row.original.title}
           </Button>
         </Link>
