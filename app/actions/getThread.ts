@@ -1,3 +1,5 @@
+'use server';
+
 import type { Payment } from '@/components/columns';
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
@@ -24,10 +26,13 @@ export async function getThreads(): Promise<Payment[]> {
         .eq('article_id', article.id);
 
       return {
+        id: article.id,
         title: article.title,
         name: '名無し',
         replyCount: count ?? 0,
-        createdAt: new Date(article.created_at),
+        createdAt: new Date(article.created_at).toLocaleString('ja-JP', {
+          timeZone: 'Asia/Tokyo',
+        }),
       };
     })
   );
