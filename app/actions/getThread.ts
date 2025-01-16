@@ -14,8 +14,7 @@ export async function getThreads(): Promise<Payment[]> {
       id,
       title,
       user_id,
-      created_at,
-      replies:replies(count)
+      created_at
     `)
     .order('created_at', { ascending: false });
 
@@ -28,7 +27,7 @@ export async function getThreads(): Promise<Payment[]> {
     id: article.id,
     title: article.title,
     name: '名無し',
-    replyCount: article.replies?.[0]?.count ?? 0,
+    replyCount: 0,
     createdAt: new Date(article.created_at).toLocaleString('ja-JP', {
       timeZone: 'Asia/Tokyo',
     }),
