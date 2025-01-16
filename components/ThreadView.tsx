@@ -78,6 +78,7 @@ export function ThreadView({ thread }: ThreadViewProps) {
   }
 
   return (
+    // NOTE: スレッドビュー
     <div className="container mx-auto py-1.5">
       <Breadcrumb className="mb-2">
         <BreadcrumbList>
@@ -106,7 +107,26 @@ export function ThreadView({ thread }: ThreadViewProps) {
           </div>
         </div>
       </div>
-      <div className="border rounded-lg p-4 shadow tracking-wide leading-7">
+
+      {/* NOTE: コメント一覧 */}
+      {thread.replies.length > 0 && (
+        <div className="mb-10">
+          <div className="space-y-4">
+            {thread.replies.map((reply) => (
+              <div key={reply.id} className="rounded-lg border p-4 shadow">
+                <p className="text-gray-500">日時: {reply.createdAt}</p>
+                <p className="text-gray-500 mb-2">投稿者: 名無し</p>
+                <div className="whitespace-pre-wrap leading-6 tracking-wide">
+                  {reply.content}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* NOTE: コメント投稿フォーム */}
+      <div className="border rounded-lg p-4 shadow tracking-wide leading-7 mb-40">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField

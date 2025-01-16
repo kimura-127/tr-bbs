@@ -5,21 +5,37 @@ import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
 
+export type Reply = {
+  id: string;
+  content: string;
+  createdAt: string;
+};
+
 export type Thread = {
   id: string;
   title: string;
   content: string;
   createdAt: string;
   name: string;
+  replies: Reply[];
 };
 
 export async function getThread(threadId: string): Promise<Thread | null> {
   const cookieStore = cookies();
-  const supabase = createServerComponentClient({ cookies: () => cookieStore });
+  const supabase = createServerComponentClient<Database>({
+    cookies: () => cookieStore,
+  });
 
   const { data: article, error } = await supabase
     .from('articles')
-    .select('*')
+    .select(`
+      *,
+      replies (
+        id,
+        content,
+        created_at
+      )
+    `)
     .eq('id', threadId)
     .single();
 
@@ -36,6 +52,13 @@ export async function getThread(threadId: string): Promise<Thread | null> {
     createdAt: new Date(article.created_at).toLocaleString('ja-JP', {
       timeZone: 'Asia/Tokyo',
     }),
+    replies: article.replies.map((reply) => ({
+      id: reply.id,
+      content: reply.content,
+      createdAt: new Date(reply.created_at).toLocaleString('ja-JP', {
+        timeZone: 'Asia/Tokyo',
+      }),
+    })),
   };
 }
 
