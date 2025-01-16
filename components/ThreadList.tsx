@@ -21,10 +21,11 @@ type Props = {
 
 export function ThreadList({ initialData }: Props) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isVisibleSearch, setIsVisibleSearch] = useState(false);
 
   return (
     <div className="container mx-auto py-1.5">
-      <div className="flex gap-1 bg-gray-700 rounded-lg px-2 py-1.5 mb-6">
+      <div className="flex gap-1 bg-gray-700 rounded-lg px-2 py-1.5">
         <div>
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
@@ -45,13 +46,20 @@ export function ThreadList({ initialData }: Props) {
           </Dialog>
         </div>
         <div>
-          <Button className="h-8 bg-gray-700 hover:bg-gray-700 hover:text-gray-300 font-semibold gap-2 text-base tracking-wide">
+          <Button
+            onClick={() => setIsVisibleSearch(!isVisibleSearch)}
+            className="h-8 bg-gray-700 hover:bg-gray-700 hover:text-gray-300 font-semibold gap-2 text-base tracking-wide"
+          >
             <Search />
             検索
           </Button>
         </div>
       </div>
-      <DataTable columns={columns} data={initialData} />
+      <DataTable
+        columns={columns}
+        data={initialData}
+        isVisibleSearch={isVisibleSearch}
+      />
     </div>
   );
 }
