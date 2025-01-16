@@ -10,7 +10,13 @@ export async function getThreads(): Promise<Payment[]> {
 
   const { data: articles, error } = await supabase
     .from('articles')
-    .select('id, title, user_id, created_at')
+    .select(`
+      id,
+      title,
+      user_id,
+      created_at,
+      replies:replies(count)
+    `)
     .order('created_at', { ascending: false });
 
   if (error) {
@@ -18,24 +24,13 @@ export async function getThreads(): Promise<Payment[]> {
     return [];
   }
 
-  const articlesWithComments = await Promise.all(
-    articles.map(async (article) => {
-      const { count } = await supabase
-        .from('comments')
-        .select('*', { count: 'exact', head: true })
-        .eq('article_id', article.id);
-
-      return {
-        id: article.id,
-        title: article.title,
-        name: '名無し',
-        replyCount: count ?? 0,
-        createdAt: new Date(article.created_at).toLocaleString('ja-JP', {
-          timeZone: 'Asia/Tokyo',
-        }),
-      };
-    })
-  );
-
-  return articlesWithComments;
+  return articles.map((article) => ({
+    id: article.id,
+    title: article.title,
+    name: '名無し',
+    replyCount: article.replies?.[0]?.count ?? 0,
+    createdAt: new Date(article.created_at).toLocaleString('ja-JP', {
+      timeZone: 'Asia/Tokyo',
+    }),
+  }));
 }
