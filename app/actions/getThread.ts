@@ -1,12 +1,10 @@
 'use server';
 
 import type { Payment } from '@/components/columns';
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
+import { createClient } from '@/utils/supabase/server';
 
 export async function getThreads(): Promise<Payment[]> {
-  const cookieStore = cookies();
-  const supabase = createServerComponentClient({ cookies: () => cookieStore });
+  const supabase = await createClient();
 
   const { data: articles, error } = await supabase
     .from('articles')
@@ -14,7 +12,8 @@ export async function getThreads(): Promise<Payment[]> {
       id,
       title,
       user_id,
-      created_at
+      created_at,
+      replies_count
     `)
     .order('created_at', { ascending: false });
 
@@ -27,7 +26,7 @@ export async function getThreads(): Promise<Payment[]> {
     id: article.id,
     title: article.title,
     name: '名無し',
-    replyCount: 0,
+    replyCount: article.replies_count,
     createdAt: new Date(article.created_at).toLocaleString('ja-JP', {
       timeZone: 'Asia/Tokyo',
     }),

@@ -47,6 +47,7 @@ export type Database = {
           content: string
           created_at: string
           id: string
+          replies_count: number
           title: string
           user_id: string | null
         }
@@ -54,6 +55,7 @@ export type Database = {
           content: string
           created_at?: string
           id?: string
+          replies_count?: number
           title: string
           user_id?: string | null
         }
@@ -61,6 +63,7 @@ export type Database = {
           content?: string
           created_at?: string
           id?: string
+          replies_count?: number
           title?: string
           user_id?: string | null
         }

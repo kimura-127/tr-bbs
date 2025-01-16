@@ -1,15 +1,13 @@
 'use server';
 
-import type { Database } from '@/types/supabase';
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/utils/supabase/server';
 import { revalidatePath } from 'next/cache';
-import { cookies } from 'next/headers';
 
 export async function createThread(formData: {
   title: string;
   content: string;
 }) {
-  const supabase = createServerComponentClient<Database>({ cookies });
+  const supabase = await createClient();
 
   // NOTE: スレッドを作成
   const { error: threadError } = await supabase

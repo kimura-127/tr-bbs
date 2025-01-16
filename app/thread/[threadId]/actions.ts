@@ -1,9 +1,7 @@
 'use server';
 
-import type { Database } from '@/types/supabase';
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/utils/supabase/server';
 import { revalidatePath } from 'next/cache';
-import { cookies } from 'next/headers';
 
 export type Reply = {
   id: string;
@@ -21,10 +19,7 @@ export type Thread = {
 };
 
 export async function getThread(threadId: string): Promise<Thread | null> {
-  const cookieStore = cookies();
-  const supabase = createServerComponentClient<Database>({
-    cookies: () => cookieStore,
-  });
+  const supabase = await createClient();
 
   const { data: article, error } = await supabase
     .from('articles')
@@ -66,7 +61,7 @@ export async function createComment(
   threadId: string,
   formData: { content: string }
 ) {
-  const supabase = createServerComponentClient<Database>({ cookies });
+  const supabase = await createClient();
 
   const { error: commentError } = await supabase
     .from('replies')
@@ -77,7 +72,14 @@ export async function createComment(
     .select()
     .single();
 
-  if (commentError) {
+  const { data: updateData, error: updateError } = await supabase
+    .from('articles')
+    .update({
+      replies_count: 1,
+    })
+    .eq('id', threadId);
+  console.log(updateData, updateError);
+  if (commentError || updateError) {
     return {
       error: 'コメントの投稿に失敗しました',
     };
