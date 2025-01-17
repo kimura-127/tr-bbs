@@ -18,7 +18,7 @@ import {
 } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Bell, RotateCw } from 'lucide-react';
+import { Bell, Divide, FileCheck2, RotateCw } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -43,6 +43,8 @@ interface ThreadViewProps {
 
 export function ThreadView({ thread }: ThreadViewProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const [isBumping, setIsBumping] = useState(false);
+  const [bumpSuccess, setBumpSuccess] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
@@ -119,9 +121,11 @@ export function ThreadView({ thread }: ThreadViewProps) {
         </div>
       </div>
 
-      <div className="flex justify-end gap-2">
+      <div className="flex justify-end gap-2 max-md:flex-col max-md:items-end">
         <Button
           onClick={async () => {
+            setIsBumping(true);
+            setBumpSuccess(false);
             try {
               const result = await bumpThread(thread.id);
               if (result.error) {
@@ -131,6 +135,10 @@ export function ThreadView({ thread }: ThreadViewProps) {
                   description: result.error,
                 });
               } else {
+                setBumpSuccess(true);
+                setTimeout(() => {
+                  setBumpSuccess(false);
+                }, 1000);
                 toast({
                   description: 'スレッドを上位に表示しました',
                 });
@@ -141,15 +149,27 @@ export function ThreadView({ thread }: ThreadViewProps) {
                 title: 'エラー',
                 description: 'エラーが発生しました',
               });
+            } finally {
+              setIsBumping(false);
             }
           }}
-          className="bg-gray-700 hover:bg-gray-800 font-semibold gap-2 text-xs tracking-wide"
+          disabled={isBumping}
+          className="w-52 max-md:text-xs max-md:tracking-normal bg-gray-700 hover:bg-gray-800 font-semibold gap-2 text-xs tracking-wide"
         >
-          <RotateCw />
-          スレッドを上位に表示させる
+          {bumpSuccess ? (
+            <div className="flex items-center gap-2">
+              <FileCheck2 />
+              <p>上位に表示されました！</p>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2">
+              <RotateCw className={isBumping ? 'animate-spin' : ''} />
+              <p>スレッドを上位に表示させる</p>
+            </div>
+          )}
         </Button>
         <div className="flex flex-col items-center">
-          <Button className="bg-gray-700 hover:bg-gray-800 font-semibold gap-2 text-xs tracking-wide">
+          <Button className="w-52 bg-gray-700 hover:bg-gray-800 font-semibold gap-2 text-xs tracking-wide">
             <Bell /> コメント通知をオンにする
           </Button>
           <p className="text-sm mt-2">コメント通知は近日実装予定</p>
