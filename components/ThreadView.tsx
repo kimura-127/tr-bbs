@@ -54,7 +54,7 @@ export function ThreadView({ thread }: ThreadViewProps) {
 
   useEffect(() => {
     router.prefetch('/');
-  }, [router]);
+  });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
