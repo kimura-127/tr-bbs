@@ -1,9 +1,15 @@
+import { getThreads } from '@/app/actions/getThread';
 import { ThreadList } from '@/components/ThreadList';
-import { getThreads } from './actions/getThread';
+import { Suspense } from 'react';
 
-// パフォーマンス計測用
+export const revalidate = 0; // キャッシュを無効化
+
 export default async function Home() {
-  const data = await getThreads();
+  const threads = await getThreads();
 
-  return <ThreadList initialData={data} />;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ThreadList initialData={threads} />
+    </Suspense>
+  );
 }
