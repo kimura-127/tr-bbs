@@ -8,9 +8,10 @@ export const revalidate = 0; // キャッシュを無効化
 export default async function ThreadPage({
   params,
 }: {
-  params: { threadId: string };
+  params: Promise<{ threadId: string }>;
 }) {
-  const thread = await getThread(params.threadId);
+  const { threadId } = await params;
+  const thread = await getThread(threadId);
 
   if (!thread) {
     notFound();
