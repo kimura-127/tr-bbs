@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
+import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -54,7 +55,7 @@ export function ThreadView({ thread }: ThreadViewProps) {
 
   useEffect(() => {
     router.prefetch('/');
-  }, [router]);
+  });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
@@ -87,6 +88,9 @@ export function ThreadView({ thread }: ThreadViewProps) {
     // NOTE: スレッドビュー
     <div className="container mx-auto py-1.5">
       <div>
+        <Head>
+          <Link href="/" prefetch={true} />
+        </Head>
         <div className="bg-gray-700 text-base px-4 h-12 flex items-center rounded-lg mb-2">
           <h1 className="text-xl font-semibold text-white tracking-wider leading-7">
             {thread.title}
