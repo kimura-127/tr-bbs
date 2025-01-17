@@ -81,7 +81,7 @@ export function ThreadView({ thread }: ThreadViewProps) {
   return (
     // NOTE: スレッドビュー
     <div className="container mx-auto py-1.5">
-      <div className="mb-10">
+      <div>
         <div className="bg-gray-700 text-base px-4 h-12 flex items-center rounded-lg mb-2">
           <h1 className="text-xl font-semibold text-white tracking-wider leading-7">
             {thread.title}
@@ -98,10 +98,8 @@ export function ThreadView({ thread }: ThreadViewProps) {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link href={`/thread/${thread.id}`} prefetch={true}>
-                  {thread.title}
-                </Link>
+              <BreadcrumbLink className="cursor-pointer">
+                {thread.title}
               </BreadcrumbLink>
             </BreadcrumbItem>
           </BreadcrumbList>
@@ -113,6 +111,14 @@ export function ThreadView({ thread }: ThreadViewProps) {
             {thread.content}
           </div>
         </div>
+      </div>
+
+      <div className="flex items-center">
+        <div className="border-t w-full my-14" />
+        <div className="flex-1">
+          <p className="whitespace-nowrap px-4">コメント</p>
+        </div>
+        <div className="border-t w-full my-14" />
       </div>
 
       {/* NOTE: コメント一覧 */}
