@@ -1,7 +1,7 @@
 'use client';
 
 import type { Thread } from '@/app/thread/[threadId]/actions';
-import { createComment } from '@/app/thread/[threadId]/actions';
+import { bumpThread, createComment } from '@/app/thread/[threadId]/actions';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Bell, RotateCw } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -81,7 +82,7 @@ export function ThreadView({ thread }: ThreadViewProps) {
   return (
     // NOTE: スレッドビュー
     <div className="container mx-auto py-1.5">
-      <div>
+      <div className="mb-4">
         <div className="bg-gray-700 text-base px-4 h-12 flex items-center rounded-lg mb-2">
           <h1
             className={`max-md:text-sm ${
@@ -115,6 +116,43 @@ export function ThreadView({ thread }: ThreadViewProps) {
           <div className="whitespace-pre-wrap leading-6 tracing-wide">
             {thread.content}
           </div>
+        </div>
+      </div>
+
+      <div className="flex justify-end gap-2">
+        <Button
+          onClick={async () => {
+            try {
+              const result = await bumpThread(thread.id);
+              if (result.error) {
+                toast({
+                  variant: 'destructive',
+                  title: 'エラー',
+                  description: result.error,
+                });
+              } else {
+                toast({
+                  description: 'スレッドを上位に表示しました',
+                });
+              }
+            } catch (error) {
+              toast({
+                variant: 'destructive',
+                title: 'エラー',
+                description: 'エラーが発生しました',
+              });
+            }
+          }}
+          className="bg-gray-700 hover:bg-gray-800 font-semibold gap-2 text-xs tracking-wide"
+        >
+          <RotateCw />
+          スレッドを上位に表示させる
+        </Button>
+        <div className="flex flex-col items-center">
+          <Button className="bg-gray-700 hover:bg-gray-800 font-semibold gap-2 text-xs tracking-wide">
+            <Bell /> コメント通知をオンにする
+          </Button>
+          <p className="text-sm mt-2">コメント通知は近日実装予定</p>
         </div>
       </div>
 

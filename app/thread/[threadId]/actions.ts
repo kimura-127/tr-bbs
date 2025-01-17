@@ -124,3 +124,23 @@ export async function createComment(
   revalidatePath(`/thread/${threadId}`);
   return { success: true };
 }
+
+export async function bumpThread(threadId: string) {
+  const supabase = await createClient();
+
+  const { error } = await supabase
+    .from('articles')
+    .update({ updated_at: new Date().toISOString() })
+    .eq('id', threadId);
+
+  if (error) {
+    console.error('Error bumping thread:', error);
+    return { error: 'スレッドの更新に失敗しました' };
+  }
+
+  // キャッシュを更新
+  revalidatePath('/');
+  revalidatePath(`/thread/${threadId}`);
+
+  return { success: true };
+}
