@@ -1,10 +1,5 @@
-import DeployButton from '@/components/deploy-button';
-import { EnvVarWarning } from '@/components/env-var-warning';
-import HeaderAuth from '@/components/header-auth';
-import { ThemeSwitcher } from '@/components/theme-switcher';
 import { ThemeProvider } from 'next-themes';
 import { Geist } from 'next/font/google';
-import Link from 'next/link';
 import './globals.css';
 import { SiteLogo } from '@/components/SiteLogo';
 
