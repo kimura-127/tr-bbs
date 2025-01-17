@@ -22,7 +22,6 @@ type Props = {
 export function ThreadList({ initialData }: Props) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isVisibleSearch, setIsVisibleSearch] = useState(false);
-  const [data, setData] = useState<Payment[]>(initialData);
 
   return (
     <div className="container mx-auto py-1.5">
@@ -58,7 +57,7 @@ export function ThreadList({ initialData }: Props) {
       </div>
       <DataTable
         columns={columns}
-        data={data}
+        data={initialData}
         isVisibleSearch={isVisibleSearch}
       />
     </div>
