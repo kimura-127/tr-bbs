@@ -52,12 +52,24 @@ export async function getThread(threadId: string): Promise<Thread | null> {
     name: '名無し',
     createdAt: new Date(article.created_at).toLocaleString('ja-JP', {
       timeZone: 'Asia/Tokyo',
+      hour12: false,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
     }),
     replies: replies.map((reply) => ({
       id: reply.id,
       content: reply.content,
       createdAt: new Date(reply.created_at).toLocaleString('ja-JP', {
         timeZone: 'Asia/Tokyo',
+        hour12: false,
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
       }),
     })),
   };
@@ -69,18 +81,43 @@ export async function createComment(
 ) {
   const supabase = await createClient();
 
-  const { error: commentError } = await supabase
-    .from('replies')
-    .insert({
-      article_id: threadId,
-      content: formData.content,
-    })
-    .select()
+  // トランザクションのような処理を実装
+  // 1. まず現在の記事データを取得
+  const { data: currentArticle, error: fetchError } = await supabase
+    .from('articles')
+    .select('replies_count')
+    .eq('id', threadId)
     .single();
+
+  if (fetchError) {
+    return {
+      error: '記事の取得に失敗しました',
+    };
+  }
+
+  // 2. コメントを追加
+  const { error: commentError } = await supabase.from('replies').insert({
+    article_id: threadId,
+    content: formData.content,
+  });
 
   if (commentError) {
     return {
       error: 'コメントの投稿に失敗しました',
+    };
+  }
+
+  // 3. replies_countを1増やす
+  const { data: articleData, error: articleError } = await supabase
+    .from('articles')
+    .update({
+      replies_count: (currentArticle?.replies_count ?? 0) + 1,
+    })
+    .eq('id', threadId);
+
+  if (articleError) {
+    return {
+      error: '記事の更新に失敗しました',
     };
   }
 

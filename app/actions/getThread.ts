@@ -23,6 +23,12 @@ export async function getThreads(): Promise<Payment[]> {
     replyCount: article.replies_count,
     createdAt: new Date(article.created_at).toLocaleString('ja-JP', {
       timeZone: 'Asia/Tokyo',
+      hour12: false,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
     }),
   }));
 }
