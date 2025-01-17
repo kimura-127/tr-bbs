@@ -21,14 +21,13 @@ export const columns: ColumnDef<Payment>[] = [
       const isRead = ReadThreads.isRead(row.original.id);
 
       return (
-        <Link href={`/thread/${row.original.id}`}>
-          <Button
-            onClick={() => ReadThreads.markAsRead(row.original.id)}
-            variant="link"
-            className={`text-green-700 ${isRead && 'text-red-500'}`}
-          >
-            {row.original.title}
-          </Button>
+        <Link
+          onClick={() => ReadThreads.markAsRead(row.original.id)}
+          href={`/thread/${row.original.id}`}
+          prefetch={true}
+          className={`text-green-700 hover:underline ${isRead && 'text-red-500'}`}
+        >
+          {row.original.title}
         </Link>
       );
     },
