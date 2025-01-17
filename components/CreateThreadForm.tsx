@@ -21,7 +21,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 const formSchema = z.object({
-  title: z.string().min(2).max(100),
+  title: z.string().min(2).max(50),
   content: z.string().min(10).max(1000),
 });
 
