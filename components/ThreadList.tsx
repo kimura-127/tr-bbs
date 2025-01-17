@@ -13,7 +13,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Search, SquarePen } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 type Props = {
   initialData: Payment[];
