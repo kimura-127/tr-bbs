@@ -54,18 +54,18 @@ export function ThreadView({ thread }: ThreadViewProps) {
     setIsLoading(true);
     try {
       const result = await createComment(thread.id, values);
-      if (result.error) {
-        toast({
-          variant: 'destructive',
-          title: 'エラー',
-          description: result.error,
-        });
-      } else {
-        toast({
-          description: 'コメントを投稿しました',
-        });
-        form.reset();
-      }
+      //   if (result.error) {
+      //     toast({
+      //       variant: 'destructive',
+      //       title: 'エラー',
+      //       description: result.error,
+      //     });
+      //   } else {
+      //     toast({
+      //       description: 'コメントを投稿しました',
+      //     });
+      //     form.reset();
+      //   }
     } catch (error) {
       toast({
         variant: 'destructive',
