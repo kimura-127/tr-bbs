@@ -8,8 +8,8 @@ export async function getThreads(): Promise<Payment[]> {
 
   const { data: articles, error } = await supabase
     .from('articles')
-    .select('id, title, user_id, created_at, replies_count')
-    .order('created_at', { ascending: false });
+    .select('id, title, user_id, updated_at, replies_count')
+    .order('updated_at', { ascending: false });
 
   if (error) {
     console.error('Error fetching articles:', error);
@@ -21,7 +21,7 @@ export async function getThreads(): Promise<Payment[]> {
     title: article.title,
     name: '名無し',
     replyCount: article.replies_count,
-    createdAt: new Date(article.created_at).toLocaleString('ja-JP', {
+    createdAt: new Date(article.updated_at).toLocaleString('ja-JP', {
       timeZone: 'Asia/Tokyo',
       hour12: false,
       year: 'numeric',
