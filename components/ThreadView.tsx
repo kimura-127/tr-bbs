@@ -7,7 +7,6 @@ import {
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
-  BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
 import {
@@ -20,7 +19,8 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Button } from './ui/button';
@@ -44,12 +44,17 @@ interface ThreadViewProps {
 export function ThreadView({ thread }: ThreadViewProps) {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       content: '',
     },
   });
+
+  useEffect(() => {
+    router.prefetch('/');
+  }, [router]);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
@@ -90,10 +95,8 @@ export function ThreadView({ thread }: ThreadViewProps) {
         <Breadcrumb className="mb-4 ml-2">
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link href="/" prefetch={true}>
-                  トップページ
-                </Link>
+              <BreadcrumbLink onClick={() => router.push('/')}>
+                トップページ
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
