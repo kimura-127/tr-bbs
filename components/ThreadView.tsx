@@ -80,25 +80,25 @@ export function ThreadView({ thread }: ThreadViewProps) {
   return (
     // NOTE: スレッドビュー
     <div className="container mx-auto py-1.5">
-      <Breadcrumb className="mb-2">
-        <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbLink href="/">トップページ</BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbLink href={`/thread/${thread.id}`}>
-              {thread.title}
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-        </BreadcrumbList>
-      </Breadcrumb>
       <div className="mb-10">
-        <div className="bg-gray-700 text-base px-8 py-1.5 rounded-lg mb-6">
-          <h1 className="text-2xl font-semibold text-white tracking-wide leading-7">
+        <div className="bg-gray-700 text-base px-4 h-12 flex items-center rounded-lg mb-2">
+          <h1 className="text-xl font-semibold text-white tracking-wider leading-7">
             {thread.title}
           </h1>
         </div>
+        <Breadcrumb className="mb-4 ml-2">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/">トップページ</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbLink href={`/thread/${thread.id}`}>
+                {thread.title}
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
         <div className="rounded-lg border p-4 shadow">
           <p className="text-gray-500">日時: {thread.createdAt}</p>
           <p className="text-gray-500 mb-4">投稿者: 名無し</p>

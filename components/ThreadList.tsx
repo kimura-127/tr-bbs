@@ -13,7 +13,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Search, SquarePen } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 type Props = {
   initialData: Payment[];
@@ -22,14 +22,15 @@ type Props = {
 export function ThreadList({ initialData }: Props) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isVisibleSearch, setIsVisibleSearch] = useState(false);
+  const [data, setData] = useState<Payment[]>(initialData);
 
   return (
     <div className="container mx-auto py-1.5">
-      <div className="flex gap-1 bg-gray-700 rounded-lg px-2 py-1.5">
+      <div className="flex gap-1 bg-gray-700 rounded-lg px-2 h-12 items-center">
         <div>
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
-              <Button className="h-8 bg-gray-700 hover:bg-gray-700 hover:text-gray-300 font-semibold gap-2 text-base tracking-wide">
+              <Button className="h-12 bg-gray-700 hover:bg-gray-700 hover:text-gray-300 font-semibold gap-2 text-base tracking-wide">
                 <SquarePen />
                 新規作成
               </Button>
@@ -48,7 +49,7 @@ export function ThreadList({ initialData }: Props) {
         <div>
           <Button
             onClick={() => setIsVisibleSearch(!isVisibleSearch)}
-            className="h-8 bg-gray-700 hover:bg-gray-700 hover:text-gray-300 font-semibold gap-2 text-base tracking-wide"
+            className="h-12 bg-gray-700 hover:bg-gray-700 hover:text-gray-300 font-semibold gap-2 text-base tracking-wide"
           >
             <Search />
             検索
@@ -57,7 +58,7 @@ export function ThreadList({ initialData }: Props) {
       </div>
       <DataTable
         columns={columns}
-        data={initialData}
+        data={data}
         isVisibleSearch={isVisibleSearch}
       />
     </div>
