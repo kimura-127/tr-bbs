@@ -19,45 +19,47 @@ export type Thread = {
 };
 
 export async function getThread(threadId: string): Promise<Thread | null> {
-  // NOTE: 一時的にSupabaseアクセスをコメントアウト
-  // const supabase = await createClient();
+  const supabase = await createClient();
 
-  // const { data: article, error } = await supabase
-  //   .from('articles')
-  //   .select(`
-  //     *,
-  //     replies (
-  //       id,
-  //       content,
-  //       created_at
-  //     )
-  //   `)
-  //   .eq('id', threadId)
-  //   .single();
+  // 記事の取得
+  const { data: article, error: articleError } = await supabase
+    .from('articles')
+    .select('id, title, content, created_at')
+    .eq('id', threadId)
+    .single();
 
-  // if (error) {
-  //   console.error('Error fetching thread:', error);
-  //   return null;
-  // }
+  if (articleError) {
+    console.error('Error fetching article:', articleError);
+    return null;
+  }
 
-  // ダミーデータを返す
-  const dummyReplies = Array.from({ length: 20 }, (_, i) => ({
-    id: `reply-${i + 1}`,
-    content: `これはテスト返信 ${i + 1} です。`,
-    createdAt: new Date(Date.now() - i * 3600000).toLocaleString('ja-JP', {
-      timeZone: 'Asia/Tokyo',
-    }),
-  }));
+  // 返信の取得
+  const { data: replies, error: repliesError } = await supabase
+    .from('replies')
+    .select('id, content, created_at')
+    .eq('article_id', threadId)
+    .order('created_at', { ascending: true });
+
+  if (repliesError) {
+    console.error('Error fetching replies:', repliesError);
+    return null;
+  }
 
   return {
-    id: threadId,
-    title: 'テストスレッド',
-    content: 'これはテストスレッドの本文です。',
+    id: article.id,
+    title: article.title,
+    content: article.content,
     name: '名無し',
-    createdAt: new Date().toLocaleString('ja-JP', {
+    createdAt: new Date(article.created_at).toLocaleString('ja-JP', {
       timeZone: 'Asia/Tokyo',
     }),
-    replies: dummyReplies,
+    replies: replies.map((reply) => ({
+      id: reply.id,
+      content: reply.content,
+      createdAt: new Date(reply.created_at).toLocaleString('ja-JP', {
+        timeZone: 'Asia/Tokyo',
+      }),
+    })),
   };
 }
 
@@ -65,32 +67,23 @@ export async function createComment(
   threadId: string,
   formData: { content: string }
 ) {
-  // NOTE: 一時的にSupabaseアクセスをコメントアウト
-  // const supabase = await createClient();
+  const supabase = await createClient();
 
-  // const { error: commentError } = await supabase
-  //   .from('replies')
-  //   .insert({
-  //     article_id: threadId,
-  //     content: formData.content,
-  //   })
-  //   .select()
-  //   .single();
+  const { error: commentError } = await supabase
+    .from('replies')
+    .insert({
+      article_id: threadId,
+      content: formData.content,
+    })
+    .select()
+    .single();
 
-  // const { data: updateData, error: updateError } = await supabase
-  //   .from('articles')
-  //   .update({
-  //     replies_count: 1,
-  //   })
-  //   .eq('id', threadId);
-  // console.log(updateData, updateError);
-  // if (commentError || updateError) {
-  //   return {
-  //     error: 'コメントの投稿に失敗しました',
-  //   };
-  // }
+  if (commentError) {
+    return {
+      error: 'コメントの投稿に失敗しました',
+    };
+  }
 
-  // ダミーの成功レスポンスを返す
   revalidatePath(`/thread/${threadId}`);
   return { success: true };
 }
