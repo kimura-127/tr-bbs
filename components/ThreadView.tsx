@@ -18,10 +18,8 @@ import {
 } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
-import Head from 'next/head';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Button } from './ui/button';
@@ -51,10 +49,6 @@ export function ThreadView({ thread }: ThreadViewProps) {
     defaultValues: {
       content: '',
     },
-  });
-
-  useEffect(() => {
-    router.prefetch('/');
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -88,18 +82,22 @@ export function ThreadView({ thread }: ThreadViewProps) {
     // NOTE: スレッドビュー
     <div className="container mx-auto py-1.5">
       <div>
-        <Head>
-          <Link href="/" prefetch={true} />
-        </Head>
         <div className="bg-gray-700 text-base px-4 h-12 flex items-center rounded-lg mb-2">
-          <h1 className="text-xl font-semibold text-white tracking-wider leading-7">
+          <h1
+            className={`max-md:text-sm ${
+              thread.title.length > 30 ? 'text-sm' : 'text-xl'
+            } font-semibold text-white tracking-wider leading-7`}
+          >
             {thread.title}
           </h1>
         </div>
         <Breadcrumb className="mb-4 ml-2">
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink onClick={() => router.push('/')}>
+              <BreadcrumbLink
+                className="cursor-pointer"
+                onClick={() => router.back()}
+              >
                 トップページ
               </BreadcrumbLink>
             </BreadcrumbItem>

@@ -22,6 +22,8 @@ import { useState } from 'react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 
+const TABLE_RESPONSIVE_INDEX = 0;
+
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
@@ -66,9 +68,14 @@ export function DataTable<TData, TValue>({
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
+                {headerGroup.headers.map((header, index) => {
                   return (
-                    <TableHead key={header.id}>
+                    <TableHead
+                      key={header.id}
+                      className={
+                        index === TABLE_RESPONSIVE_INDEX ? '' : 'max-md:hidden'
+                      }
+                    >
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -83,24 +90,40 @@ export function DataTable<TData, TValue>({
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && 'selected'}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell
-                      className={`${cell.column.id === 'title' ? 'w-2/3' : ''}`}
-                      key={cell.id}
-                    >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
+              table.getRowModel().rows.map((row) => {
+                const tableCells = row.getVisibleCells();
+
+                return (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && 'selected'}
+                  >
+                    {tableCells.map((cell, index) => (
+                      <TableCell
+                        className={`${cell.column.id === 'title' ? 'w-2/3' : ''} ${index === TABLE_RESPONSIVE_INDEX ? '' : 'max-md:hidden'}`}
+                        key={cell.id}
+                        onClick={() => {
+                          console.log(tableCells[2].getValue());
+                        }}
+                      >
+                        <div className="flex flex-col">
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                          <div className="md:hidden">
+                            （{String(tableCells[2].getValue())}）
+                          </div>
+                        </div>
+                        <div className="md:hidden flex gap-2">
+                          <p>{String(tableCells[3].getValue())}</p>:
+                          <p>{String(tableCells[1].getValue())}</p>
+                        </div>
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                );
+              })
             ) : (
               <TableRow>
                 <TableCell
