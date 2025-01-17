@@ -2,7 +2,6 @@
 import { useReadThreads } from '@/hooks/useReadThreads';
 import type { ColumnDef } from '@tanstack/react-table';
 import Link from 'next/link';
-import { Button } from './ui/button';
 
 export type Payment = {
   id: string;

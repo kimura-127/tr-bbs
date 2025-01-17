@@ -19,6 +19,7 @@ import {
 } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
+import Link from 'next/link';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -89,12 +90,18 @@ export function ThreadView({ thread }: ThreadViewProps) {
         <Breadcrumb className="mb-4 ml-2">
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink href="/">トップページ</BreadcrumbLink>
+              <BreadcrumbLink asChild>
+                <Link href="/" prefetch={true}>
+                  トップページ
+                </Link>
+              </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink href={`/thread/${thread.id}`}>
-                {thread.title}
+              <BreadcrumbLink asChild>
+                <Link href={`/thread/${thread.id}`} prefetch={true}>
+                  {thread.title}
+                </Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
           </BreadcrumbList>
