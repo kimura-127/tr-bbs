@@ -19,16 +19,10 @@ export async function GET() {
       priority: '1.0',
     },
     {
-      loc: 'https://www.cl-bbs.com/thread/new',
+      loc: 'https://www.cl-bbs.com/notificationSetting',
       lastmod: new Date().toISOString().split('T')[0],
       changefreq: 'weekly',
       priority: '0.8',
-    },
-    {
-      loc: 'https://www.cl-bbs.com/notificationSetting',
-      lastmod: new Date().toISOString().split('T')[0],
-      changefreq: 'monthly',
-      priority: '0.5',
     },
   ];
 
