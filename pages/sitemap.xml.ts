@@ -1,11 +1,15 @@
-import { createClient } from '@/utils/supabase/server';
+import { createClient as createServerClient } from '@supabase/supabase-js';
 import type { GetServerSideProps } from 'next';
 
 const domain = 'https://tr-bbs.vercel.app';
 
-export const getServerSideProps: GetServerSideProps = async ({ res }) => {
-  const supabase = await createClient();
+// Supabaseクライアントの作成（Pages Router用）
+const supabase = createServerClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
+);
 
+export const getServerSideProps: GetServerSideProps = async ({ res }) => {
   // スレッドの一覧を取得
   const { data: threads } = await supabase
     .from('articles')
