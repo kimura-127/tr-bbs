@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import { NotificationSettingComponent } from './notificationSettingcomponent';
+import { NotificationSettingComponent } from './NotificationSettingComponent';
 
 export default async function NotificationSettingPage() {
   return (
