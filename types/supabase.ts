@@ -80,6 +80,111 @@ export type Database = {
           },
         ]
       }
+      email_logs: {
+        Row: {
+          body: string
+          created_at: string
+          email: string
+          error_message: string | null
+          id: string
+          notification_setting_id: string
+          reply_id: string
+          retry_count: number
+          sent_at: string | null
+          status: string
+          subject: string
+          thread_id: string
+          updated_at: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          email: string
+          error_message?: string | null
+          id?: string
+          notification_setting_id: string
+          reply_id: string
+          retry_count?: number
+          sent_at?: string | null
+          status?: string
+          subject: string
+          thread_id: string
+          updated_at?: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          email?: string
+          error_message?: string | null
+          id?: string
+          notification_setting_id?: string
+          reply_id?: string
+          retry_count?: number
+          sent_at?: string | null
+          status?: string
+          subject?: string
+          thread_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_logs_notification_setting_id_fkey"
+            columns: ["notification_setting_id"]
+            isOneToOne: false
+            referencedRelation: "notification_settings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "email_logs_reply_id_fkey"
+            columns: ["reply_id"]
+            isOneToOne: false
+            referencedRelation: "replies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "email_logs_thread_id_fkey"
+            columns: ["thread_id"]
+            isOneToOne: false
+            referencedRelation: "articles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notification_settings: {
+        Row: {
+          created_at: string
+          email: string | null
+          id: string
+          thread_id: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          thread_id: string
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          thread_id?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notification_settings_thread_id_fkey"
+            columns: ["thread_id"]
+            isOneToOne: false
+            referencedRelation: "articles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       replies: {
         Row: {
           article_id: string

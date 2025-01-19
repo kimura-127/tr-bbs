@@ -12,7 +12,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { Search, SquarePen } from 'lucide-react';
+import { Bell, Search, SquarePen } from 'lucide-react';
 import { useState } from 'react';
 
 type Props = {
@@ -52,6 +52,12 @@ export function ThreadList({ initialData }: Props) {
           >
             <Search />
             検索
+          </Button>
+        </div>
+        <div>
+          <Button className="h-12 bg-gray-700 hover:bg-gray-700 hover:text-gray-300 font-semibold gap-2 text-base tracking-wide">
+            <Bell />
+            通知設定
           </Button>
         </div>
       </div>

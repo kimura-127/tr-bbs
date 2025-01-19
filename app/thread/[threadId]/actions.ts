@@ -1,5 +1,6 @@
 'use server';
 
+import { sendCommentNotification } from '@/app/actions/sendCommentNotification';
 import { createClient } from '@/utils/supabase/server';
 import { revalidatePath } from 'next/cache';
 
@@ -80,49 +81,66 @@ export async function createComment(
   formData: { content: string }
 ) {
   const supabase = await createClient();
+  console.log('メール通知を送信');
 
-  // トランザクションのような処理を実装
-  // 1. まず現在の記事データを取得
-  const { data: currentArticle, error: fetchError } = await supabase
-    .from('articles')
-    .select('replies_count')
-    .eq('id', threadId)
-    .single();
+  try {
+    // 1. 現在の記事データを取得
+    const { data: currentArticle, error: fetchError } = await supabase
+      .from('articles')
+      .select('title, replies_count')
+      .eq('id', threadId)
+      .single();
 
-  if (fetchError) {
-    return {
-      error: '記事の取得に失敗しました',
-    };
+    if (fetchError) {
+      return {
+        error: '記事の取得に失敗しました',
+      };
+    }
+
+    // 2. コメントを追加
+    const { data: newReply, error: commentError } = await supabase
+      .from('replies')
+      .insert({
+        article_id: threadId,
+        content: formData.content,
+      })
+      .select()
+      .single();
+
+    if (commentError) {
+      return {
+        error: 'コメントの投稿に失敗しました',
+      };
+    }
+
+    // 3. replies_countを1増やす
+    const { error: articleError } = await supabase
+      .from('articles')
+      .update({
+        replies_count: (currentArticle?.replies_count ?? 0) + 1,
+      })
+      .eq('id', threadId);
+
+    if (articleError) {
+      return {
+        error: '記事の更新に失敗しました',
+      };
+    }
+
+    // 4. メール通知を送信
+    await sendCommentNotification({
+      threadId,
+      replyId: newReply.id,
+      threadTitle: currentArticle.title,
+      commentContent: formData.content,
+    });
+
+    revalidatePath(`/thread/${threadId}`);
+    return { success: true };
+  } catch (error) {
+    console.error('Error in createComment:', error);
+    return { error: 'エラーが発生しました' };
   }
-
-  // 2. コメントを追加
-  const { error: commentError } = await supabase.from('replies').insert({
-    article_id: threadId,
-    content: formData.content,
-  });
-
-  if (commentError) {
-    return {
-      error: 'コメントの投稿に失敗しました',
-    };
-  }
-
-  // 3. replies_countを1増やす
-  const { data: articleData, error: articleError } = await supabase
-    .from('articles')
-    .update({
-      replies_count: (currentArticle?.replies_count ?? 0) + 1,
-    })
-    .eq('id', threadId);
-
-  if (articleError) {
-    return {
-      error: '記事の更新に失敗しました',
-    };
-  }
-
-  revalidatePath(`/thread/${threadId}`);
-  return { success: true };
 }
 
 export async function bumpThread(threadId: string) {
