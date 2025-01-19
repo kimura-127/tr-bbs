@@ -3,4 +3,4 @@ Allow: /
 Disallow: /api/
 Disallow: /auth/
 
-Sitemap: https://tr-bbs.vercel.app/sitemap.xml 
+Sitemap: https://www.cl-bbs.com/sitemap.xml 
