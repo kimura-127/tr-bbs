@@ -30,7 +30,7 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
       changefreq: 'daily',
       priority: '1.0',
     },
-    // TODO: 未実装のためコメントアウト
+    // TODO: 未実装のためコメントアウトとする
     // {
     //   loc: `${domain}/notificationSetting`,
     //   lastmod: new Date().toISOString().split('T')[0],
