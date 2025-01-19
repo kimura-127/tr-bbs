@@ -19,6 +19,7 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Bell, Divide, FileCheck2, RotateCw } from 'lucide-react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -97,11 +98,14 @@ export function ThreadView({ thread }: ThreadViewProps) {
         <Breadcrumb className="mb-4 ml-2">
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink
-                className="cursor-pointer"
-                onClick={() => router.back()}
-              >
-                トップページ
+              <BreadcrumbLink asChild>
+                <Link
+                  href={'/'}
+                  prefetch={false}
+                  onMouseEnter={() => router.prefetch('/')}
+                >
+                  トップページ
+                </Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
