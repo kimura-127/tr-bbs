@@ -43,7 +43,7 @@ export const metadata: Metadata = {
     maximumScale: 1,
   },
   verification: {
-    google: 'google-site-verification-code', // Google Search Consoleで取得したコード
+    google: 'IbtO0bo_HX6HlYbCYsZLSvrCouw09paR-la4e910bJk"',
   },
 };
 
