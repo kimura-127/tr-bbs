@@ -25,8 +25,7 @@ export const columns: ColumnDef<Payment>[] = [
         <Link
           onClick={() => ReadThreads.markAsRead(row.original.id)}
           href={`/thread/${row.original.id}`}
-          prefetch={false}
-          onMouseEnter={() => router.prefetch(`/thread/${row.original.id}`)}
+          prefetch={true}
           className={`text-green-700 hover:underline ${isRead && 'text-red-500'}`}
         >
           {row.original.title}
