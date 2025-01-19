@@ -1,9 +1,15 @@
-import { createClient } from '@/utils/supabase/server';
-import { NextResponse } from 'next/server';
+import { createClient as createServerClient } from '@supabase/supabase-js';
+import type { GetServerSideProps } from 'next';
 
-export async function GET() {
-  const supabase = await createClient();
+const domain = 'https://tr-bbs.vercel.app';
 
+// Supabaseクライアントの作成（Pages Router用）
+const supabase = createServerClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
+);
+
+export const getServerSideProps: GetServerSideProps = async ({ res }) => {
   // スレッドの一覧を取得
   const { data: threads } = await supabase
     .from('articles')
@@ -13,23 +19,24 @@ export async function GET() {
   // 基本的なURLエントリー
   const staticUrls = [
     {
-      loc: 'https://www.cl-bbs.com/',
+      loc: `${domain}/`,
       lastmod: new Date().toISOString().split('T')[0],
       changefreq: 'daily',
       priority: '1.0',
     },
-    {
-      loc: 'https://www.cl-bbs.com/notificationSetting',
-      lastmod: new Date().toISOString().split('T')[0],
-      changefreq: 'weekly',
-      priority: '0.8',
-    },
+    // TODO: 未実装のためコメントアウト
+    // {
+    //   loc: `${domain}/notificationSetting`,
+    //   lastmod: new Date().toISOString().split('T')[0],
+    //   changefreq: 'weekly',
+    //   priority: '0.8',
+    // },
   ];
 
   // スレッド詳細ページのURLエントリーを生成
   const threadUrls =
     threads?.map((thread) => ({
-      loc: `https://www.cl-bbs.com/thread/${thread.id}`,
+      loc: `${domain}/thread/${thread.id}`,
       lastmod: thread.updated_at.split('T')[0],
       changefreq: 'daily',
       priority: '0.7',
@@ -52,10 +59,12 @@ export async function GET() {
         .join('')}
     </urlset>`;
 
-  return new NextResponse(sitemap, {
-    headers: {
-      'Content-Type': 'application/xml',
-      'Cache-Control': 'public, max-age=3600',
-    },
-  });
-}
+  res.setHeader('Content-Type', 'text/xml');
+  res.setHeader('Cache-Control', 'public, max-age=3600');
+  res.write(sitemap);
+  res.end();
+
+  return {
+    props: {},
+  };
+};
