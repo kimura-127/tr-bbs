@@ -1,5 +1,6 @@
 import { createClient as createServerClient } from '@supabase/supabase-js';
 import type { GetServerSideProps } from 'next';
+import type { FC } from 'react';
 
 const domain = 'https://tr-bbs.vercel.app';
 
@@ -8,6 +9,11 @@ const supabase = createServerClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || '',
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
 );
+
+// 空のコンポーネント（サイトマップはgetServerSidePropsで生成するため）
+const Sitemap: FC = () => null;
+
+export default Sitemap;
 
 export const getServerSideProps: GetServerSideProps = async ({ res }) => {
   // スレッドの一覧を取得
