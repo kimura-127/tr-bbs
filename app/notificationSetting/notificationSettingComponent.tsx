@@ -1,8 +1,6 @@
 'use client';
 
 import { CreateThreadForm } from '@/components/CreateThreadForm';
-import { type Payment, columns } from '@/components/columns';
-import { DataTable } from '@/components/data-table';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -12,15 +10,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Bell, Search, SquarePen } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 
-type Props = {
-  initialData: Payment[];
-};
-
-export function ThreadList({ initialData }: Props) {
+export const NotificationSettingComponent = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isVisibleSearch, setIsVisibleSearch] = useState(false);
 
@@ -67,11 +63,16 @@ export function ThreadList({ initialData }: Props) {
           </Button>
         </div>
       </div>
-      <DataTable
-        columns={columns}
-        data={initialData}
-        isVisibleSearch={isVisibleSearch}
-      />
+      <RadioGroup defaultValue="option-one">
+        <div className="flex items-center space-x-2">
+          <RadioGroupItem value="option-one" id="option-one" />
+          <Label htmlFor="option-one">Option One</Label>
+        </div>
+        <div className="flex items-center space-x-2">
+          <RadioGroupItem value="option-two" id="option-two" />
+          <Label htmlFor="option-two">Option Two</Label>
+        </div>
+      </RadioGroup>
     </div>
   );
-}
+};
