@@ -2,6 +2,7 @@
 
 import type { Thread } from '@/app/thread/[threadId]/actions';
 import { bumpThread, createComment } from '@/app/thread/[threadId]/actions';
+import { NotificationSettingsDialog } from '@/components/NotificationSettingsDialog';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -18,9 +19,8 @@ import {
 } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Bell, Divide, FileCheck2, RotateCw } from 'lucide-react';
+import { Bell, FileCheck2, RotateCw } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -47,7 +47,6 @@ export function ThreadView({ thread }: ThreadViewProps) {
   const [isBumping, setIsBumping] = useState(false);
   const [bumpSuccess, setBumpSuccess] = useState(false);
   const { toast } = useToast();
-  const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -99,11 +98,7 @@ export function ThreadView({ thread }: ThreadViewProps) {
           <BreadcrumbList>
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
-                <Link
-                  href={'/'}
-                  prefetch={false}
-                  onMouseEnter={() => router.prefetch('/')}
-                >
+                <Link href={'/'} prefetch={true}>
                   トップページ
                 </Link>
               </BreadcrumbLink>
@@ -172,12 +167,7 @@ export function ThreadView({ thread }: ThreadViewProps) {
             </div>
           )}
         </Button>
-        <div className="flex flex-col items-center">
-          <Button className="w-52 bg-gray-700 hover:bg-gray-800 font-semibold gap-2 text-xs tracking-wide">
-            <Bell /> コメント通知をオンにする
-          </Button>
-          <p className="text-sm mt-2">コメント通知は近日実装予定</p>
-        </div>
+        <NotificationSettingsDialog threadId={thread.id} />
       </div>
 
       <div className="flex items-center">

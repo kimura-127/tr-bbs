@@ -2,15 +2,49 @@ import { ThemeProvider } from 'next-themes';
 import { Geist } from 'next/font/google';
 import './globals.css';
 import { SiteLogo } from '@/components/SiteLogo';
+import type { Metadata } from 'next';
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
   : 'http://localhost:3000';
 
-export const metadata = {
+export const metadata: Metadata = {
   metadataBase: new URL(defaultUrl),
-  title: 'Next.js and Supabase Starter Kit',
-  description: 'The fastest way to build apps with Next.js and Supabase',
+  title: {
+    default: '掲示板アプリ',
+    template: '%s | 掲示板アプリ',
+  },
+  description:
+    '掲示板アプリです。スレッドの作成、コメントの投稿、通知機能などが利用できます。',
+  keywords: ['掲示板', 'コミュニティ', 'スレッド', 'コメント', '通知'],
+  authors: [{ name: 'Your Name' }],
+  openGraph: {
+    title: '掲示板アプリ',
+    description:
+      '掲示板アプリです。スレッドの作成、コメントの投稿、通知機能などが利用できます。',
+    url: defaultUrl,
+    siteName: '掲示板アプリ',
+    locale: 'ja_JP',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: '掲示板アプリ',
+    description:
+      '掲示板アプリです。スレッドの作成、コメントの投稿、通知機能などが利用できます。',
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 1,
+  },
+  verification: {
+    google: 'google-site-verification-code', // Google Search Consoleで取得したコード
+  },
 };
 
 const geistSans = Geist({
@@ -24,7 +58,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={geistSans.className} suppressHydrationWarning>
+    <html lang="ja" className={geistSans.className} suppressHydrationWarning>
+      <head>
+        <meta charSet="utf-8" />
+        <meta name="format-detection" content="telephone=no" />
+        <link rel="icon" href="/favicon.ico" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <link rel="manifest" href="/manifest.json" />
+      </head>
       <body className="bg-background text-foreground">
         <ThemeProvider
           attribute="class"
