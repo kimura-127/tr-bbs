@@ -2,6 +2,7 @@
 import { useReadThreads } from '@/hooks/useReadThreads';
 import type { ColumnDef } from '@tanstack/react-table';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 export type Payment = {
   id: string;
@@ -18,12 +19,14 @@ export const columns: ColumnDef<Payment>[] = [
     cell: ({ row }) => {
       const ReadThreads = useReadThreads();
       const isRead = ReadThreads.isRead(row.original.id);
+      const router = useRouter();
 
       return (
         <Link
           onClick={() => ReadThreads.markAsRead(row.original.id)}
           href={`/thread/${row.original.id}`}
-          prefetch={true}
+          prefetch={false}
+          onMouseEnter={() => router.prefetch(`/thread/${row.original.id}`)}
           className={`text-green-700 hover:underline ${isRead && 'text-red-500'}`}
         >
           {row.original.title}
