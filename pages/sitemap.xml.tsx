@@ -2,8 +2,6 @@ import { createClient as createServerClient } from '@supabase/supabase-js';
 import type { GetServerSideProps } from 'next';
 import type { FC } from 'react';
 
-const domain = 'https://tr-bbs.vercel.app';
-
 // Supabaseクライアントの作成（Pages Router用）
 const supabase = createServerClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || '',
@@ -25,7 +23,7 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
   // 基本的なURLエントリー
   const staticUrls = [
     {
-      loc: `${domain}/`,
+      loc: `${process.env.VERCEL_URL}/`,
       lastmod: new Date().toISOString().split('T')[0],
       changefreq: 'daily',
       priority: '1.0',
@@ -42,7 +40,7 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
   // スレッド詳細ページのURLエントリーを生成
   const threadUrls =
     threads?.map((thread) => ({
-      loc: `${domain}/thread/${thread.id}`,
+      loc: `${process.env.VERCEL_URL}/thread/${thread.id}`,
       lastmod: thread.updated_at.split('T')[0],
       changefreq: 'daily',
       priority: '0.7',
