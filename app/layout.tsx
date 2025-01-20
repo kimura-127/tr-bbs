@@ -3,45 +3,55 @@ import { Geist } from 'next/font/google';
 import './globals.css';
 import { SiteLogo } from '@/components/SiteLogo';
 import { Toaster } from '@/components/ui/sonner';
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 
-const defaultUrl = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}`
-  : 'http://localhost:3000';
+const defaultUrl = 'https://www.cl-bbs.com';
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(defaultUrl),
   title: {
-    default: '掲示板アプリ',
-    template: '%s | 掲示板アプリ',
+    default: 'チョコットランド 取引掲示板 | 装備売り買い・交換BBS',
+    template: '%s | チョコットランド取引掲示板',
   },
   description:
-    '掲示板アプリです。スレッドの作成、コメントの投稿、通知機能などが利用できます。',
-  keywords: ['掲示板', 'コミュニティ', 'スレッド', 'コメント', '通知'],
-  authors: [{ name: 'Your Name' }],
+    'チョコットランドの取引掲示板（BBS）です。アイテムの売買や交換の取引ができます。スレッドの作成、コメントの投稿、通知機能で快適な取引環境を提供します。チョコラン公認の避難所として、安全な取引の場を提供しています。',
+  keywords: [
+    'チョコットランド',
+    '掲示板',
+    'BBS',
+    '取引',
+    '避難所',
+    '装備売買',
+    'ボート',
+    'チョコラン',
+    'ゲーム取引',
+    'アイテムトレード',
+  ],
+  authors: [{ name: 'チョコットランド取引掲示板' }],
   openGraph: {
-    title: '掲示板アプリ',
+    title: 'チョコットランド 取引掲示板 | アイテム売買・交換BBS',
     description:
-      '掲示板アプリです。スレッドの作成、コメントの投稿、通知機能などが利用できます。',
+      'チョコットランドの取引掲示板（BBS）です。アイテムの売買や交換の取引ができます。スレッドの作成、コメントの投稿、通知機能で快適な取引環境を提供します。チョコラン公認の避難所として、安全な取引の場を提供しています。',
     url: defaultUrl,
-    siteName: '掲示板アプリ',
+    siteName: 'チョコットランド取引掲示板',
     locale: 'ja_JP',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: '掲示板アプリ',
+    title: 'チョコットランド 取引掲示板 | 装備売り買い・交換BBS',
     description:
-      '掲示板アプリです。スレッドの作成、コメントの投稿、通知機能などが利用できます。',
+      'チョコットランドの取引掲示板（BBS）です。アイテムの売買や交換の取引ができます。スレッドの作成、コメントの投稿、通知機能で快適な取引環境を提供します。',
   },
   robots: {
     index: true,
     follow: true,
-  },
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-    maximumScale: 1,
   },
   verification: {
     google: 'IbtO0bo_HX6HlYbCYsZLSvrCouw09paR-la4e910bJk',
@@ -78,6 +88,33 @@ export default function RootLayout({
           <main className="min-h-screen flex flex-col items-center">
             {children}
           </main>
+          <footer className="w-full bg-gray-800 text-gray-300 py-8 mt-8">
+            <div className="container mx-auto px-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-40">
+                <div>
+                  <h2 className="text-lg font-semibold mb-4">
+                    チョコットランド取引掲示板（チョコランBBS）について
+                  </h2>
+                  <p className="text-sm">
+                    当サイトはチョコットランド（チョコラン）のアイテム取引をサポートする掲示板（BBS）です。
+                    装備やアイテムの売買・交換を安全に行える環境を提供しています。
+                  </p>
+                </div>
+                <div>
+                  <h2 className="text-lg font-semibold mb-4">主な機能</h2>
+                  <ul className="text-sm space-y-2">
+                    <li>・スレッド作成機能</li>
+                    <li>・メール通知機能</li>
+                    <li>・LINE通知機能（開発中）</li>
+                    <li>・AIによる相場検索（開発中）</li>
+                  </ul>
+                </div>
+              </div>
+              <div className="mt-8 pt-4 border-t border-gray-700 text-center text-sm">
+                <p>© 2025 チョコットランド取引掲示板 - 装備売り買い・交換BBS</p>
+              </div>
+            </div>
+          </footer>
           <Toaster />
         </ThemeProvider>
       </body>

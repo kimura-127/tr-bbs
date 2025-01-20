@@ -1,11 +1,11 @@
 'use client';
 
 import { DataTable } from '@/components/data-table';
+
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { notificationColumns } from '@/components/ui/notification-setting/columns';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import type { Article, NotificationSettingWithArticle } from '@/types';
 import type { ColumnDef } from '@tanstack/react-table';
@@ -17,7 +17,8 @@ import {
   BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbSeparator,
-} from '../ui/breadcrumb';
+} from '../breadcrumb';
+import { notificationColumns } from './columns';
 
 interface NotificationSettingFormProps {
   getNotificationSettings: (
