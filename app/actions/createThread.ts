@@ -3,10 +3,13 @@
 import { createClient } from '@/utils/supabase/server';
 import { revalidatePath } from 'next/cache';
 
-export async function createThread(formData: {
+interface CreateThreadInput {
   title: string;
   content: string;
-}) {
+  imageUrls?: string[];
+}
+
+export async function createThread(formData: CreateThreadInput) {
   const supabase = await createClient();
 
   // NOTE: スレッドを作成
@@ -15,6 +18,7 @@ export async function createThread(formData: {
     .insert({
       title: formData.title,
       content: formData.content,
+      image_urls: formData.imageUrls || [],
     })
     .select()
     .single();
