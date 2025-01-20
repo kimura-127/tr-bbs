@@ -47,6 +47,7 @@ export type Database = {
           content: string
           created_at: string
           id: string
+          image_urls: string[] | null
           replies_count: number
           title: string
           updated_at: string
@@ -56,6 +57,7 @@ export type Database = {
           content: string
           created_at?: string
           id?: string
+          image_urls?: string[] | null
           replies_count?: number
           title: string
           updated_at?: string
@@ -65,6 +67,7 @@ export type Database = {
           content?: string
           created_at?: string
           id?: string
+          image_urls?: string[] | null
           replies_count?: number
           title?: string
           updated_at?: string
@@ -191,18 +194,21 @@ export type Database = {
           content: string
           created_at: string
           id: string
+          image_urls: string[] | null
         }
         Insert: {
           article_id: string
           content: string
           created_at?: string
           id?: string
+          image_urls?: string[] | null
         }
         Update: {
           article_id?: string
           content?: string
           created_at?: string
           id?: string
+          image_urls?: string[] | null
         }
         Relationships: [
           {

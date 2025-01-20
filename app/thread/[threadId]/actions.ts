@@ -1,48 +1,46 @@
 'use server';
 
 import { sendCommentNotification } from '@/app/actions/sendCommentNotification';
+import type { Database } from '@/types/supabase';
 import { createClient } from '@/utils/supabase/server';
 import { revalidatePath } from 'next/cache';
 
-export type Reply = {
-  id: string;
-  content: string;
-  createdAt: string;
-};
-
-export type Thread = {
+export interface Thread {
   id: string;
   title: string;
   content: string;
   createdAt: string;
-  name: string;
-  replies: Reply[];
-};
+  image_urls: string[] | null;
+  replies: {
+    id: string;
+    content: string;
+    createdAt: string;
+    image_urls: string[] | null;
+  }[];
+}
 
 export async function getThread(threadId: string): Promise<Thread | null> {
   const supabase = await createClient();
 
-  // 記事の取得
   const { data: article, error: articleError } = await supabase
     .from('articles')
-    .select('id, title, content, created_at')
+    .select('*')
     .eq('id', threadId)
     .single();
 
   if (articleError) {
-    console.error('Error fetching article:', articleError);
+    console.error(articleError);
     return null;
   }
 
-  // 返信の取得
   const { data: replies, error: repliesError } = await supabase
     .from('replies')
-    .select('id, content, created_at')
+    .select('*')
     .eq('article_id', threadId)
     .order('created_at', { ascending: true });
 
   if (repliesError) {
-    console.error('Error fetching replies:', repliesError);
+    console.error(repliesError);
     return null;
   }
 
@@ -50,19 +48,11 @@ export async function getThread(threadId: string): Promise<Thread | null> {
     id: article.id,
     title: article.title,
     content: article.content,
-    name: '名無し',
-    createdAt: new Date(article.created_at).toLocaleString('ja-JP', {
-      timeZone: 'Asia/Tokyo',
-      hour12: false,
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-    }),
+    image_urls: article.image_urls,
     replies: replies.map((reply) => ({
       id: reply.id,
       content: reply.content,
+      image_urls: reply.image_urls,
       createdAt: new Date(reply.created_at).toLocaleString('ja-JP', {
         timeZone: 'Asia/Tokyo',
         hour12: false,
@@ -73,12 +63,21 @@ export async function getThread(threadId: string): Promise<Thread | null> {
         minute: '2-digit',
       }),
     })),
+    createdAt: new Date(article.created_at).toLocaleString('ja-JP', {
+      timeZone: 'Asia/Tokyo',
+      hour12: false,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+    }),
   };
 }
 
 export async function createComment(
   threadId: string,
-  formData: { content: string }
+  formData: { content: string; imageUrls: string[] }
 ) {
   const supabase = await createClient();
   console.log('メール通知を送信');
@@ -103,6 +102,7 @@ export async function createComment(
       .insert({
         article_id: threadId,
         content: formData.content,
+        image_urls: formData.imageUrls,
       })
       .select()
       .single();
@@ -146,17 +146,17 @@ export async function createComment(
 export async function bumpThread(threadId: string) {
   const supabase = await createClient();
 
-  const { error } = await supabase
+  const { error: updateError } = await supabase
     .from('articles')
     .update({ updated_at: new Date().toISOString() })
     .eq('id', threadId);
 
-  if (error) {
-    console.error('Error bumping thread:', error);
-    return { error: 'スレッドの更新に失敗しました' };
+  if (updateError) {
+    return {
+      error: 'スレッドの更新に失敗しました',
+    };
   }
 
-  // キャッシュを更新
   revalidatePath('/');
   revalidatePath(`/thread/${threadId}`);
 

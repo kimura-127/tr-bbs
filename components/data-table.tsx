@@ -102,9 +102,6 @@ export function DataTable<TData, TValue>({
                       <TableCell
                         className={`${cell.column.id === 'title' ? 'w-2/3' : ''} ${index === TABLE_RESPONSIVE_INDEX ? '' : 'max-md:hidden'}`}
                         key={cell.id}
-                        onClick={() => {
-                          console.log(tableCells[2].getValue());
-                        }}
                       >
                         <div className="flex flex-col">
                           {flexRender(

@@ -1,11 +1,11 @@
 'use client';
 
 import { createThread } from '@/app/actions/createThread';
+import { ImageUpload } from '@/components/image-upload';
 import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -14,20 +14,51 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
+import { createClient } from '@/utils/supabase/client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
 
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png'];
+
 const formSchema = z.object({
-  title: z.string().min(2).max(50),
-  content: z.string().min(10).max(1000),
+  title: z
+    .string()
+    .min(2, { message: 'タイトルは2文字以上で入力してください' })
+    .max(50, { message: 'タイトルは50文字以内で入力してください' }),
+  content: z
+    .string()
+    .min(10, { message: 'コメントは10文字以上で入力してください' })
+    .max(1000, { message: 'コメントは1000文字以内で入力してください' }),
+  images: z
+    .array(
+      z
+        .any()
+        .refine((file) => file instanceof File, 'ファイル形式が不正です')
+        .refine(
+          (file) => file instanceof File && file.size <= MAX_FILE_SIZE,
+          '画像サイズは5MB以内にしてください'
+        )
+        .refine(
+          (file) =>
+            file instanceof File && ACCEPTED_IMAGE_TYPES.includes(file.type),
+          'JPGまたはPNG形式の画像のみアップロード可能です'
+        )
+    )
+    .max(4, { message: '画像は最大4枚までアップロードできます' })
+    .optional()
+    .default([]),
 });
 
 export function CreateThreadForm({
   setIsDialogOpen,
-}: { setIsDialogOpen: (open: boolean) => void }) {
+}: {
+  setIsDialogOpen: (open: boolean) => void;
+}) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
@@ -35,14 +66,67 @@ export function CreateThreadForm({
     defaultValues: {
       title: '',
       content: '',
+      images: [],
     },
   });
   const { toast } = useToast();
 
+  async function uploadImages(files: File[]) {
+    const supabase = createClient();
+    try {
+      const imageUrls = await Promise.all(
+        files.map(async (file) => {
+          const fileExt = file.name.split('.').pop();
+          const fileName = `${uuidv4()}.${fileExt}`;
+          const { error: uploadError } = await supabase.storage
+            .from('thread_images')
+            .upload(fileName, file);
+
+          if (uploadError) {
+            throw uploadError;
+          }
+
+          // 公開URLを取得
+          const {
+            data: { publicUrl },
+          } = supabase.storage.from('thread_images').getPublicUrl(fileName);
+
+          return publicUrl;
+        })
+      );
+
+      return { imageUrls };
+    } catch (error) {
+      console.error('画像アップロードエラー:', error);
+      return { error: '画像のアップロードに失敗しました' };
+    }
+  }
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     try {
-      const result = await createThread(values);
+      // 画像がある場合はアップロード
+      let imageUrls: string[] = [];
+      if (values.images && values.images.length > 0) {
+        const uploadResult = await uploadImages(values.images);
+        if (uploadResult.error) {
+          toast({
+            variant: 'destructive',
+            title: 'エラー',
+            description: uploadResult.error,
+          });
+          return;
+        }
+        imageUrls = uploadResult.imageUrls || [];
+      }
+
+      // スレッドを作成
+      const result = await createThread({
+        title: values.title,
+        content: values.content,
+        imageUrls,
+      });
+
       if (result.error) {
         toast({
           variant: 'destructive',
@@ -96,6 +180,25 @@ export function CreateThreadForm({
               </FormLabel>
               <FormControl>
                 <Textarea className="h-80 2xl:h-96" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="images"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="font-semibold tracking-wider">
+                画像
+              </FormLabel>
+              <FormControl>
+                <ImageUpload
+                  disabled={isLoading}
+                  onChange={field.onChange}
+                  value={[]}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
