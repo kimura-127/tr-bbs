@@ -12,9 +12,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { Bell, Search, SquarePen } from 'lucide-react';
+import { Bell, Brain, Search, SquarePen } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 type Props = {
   initialData: Payment[];
@@ -64,6 +65,23 @@ export function ThreadList({ initialData }: Props) {
               <Bell />
               通知設定
             </Link>
+          </Button>
+        </div>
+        <div>
+          <Button
+            onClick={() =>
+              toast.info('AIによる相場検索機能', {
+                description: '近日実装予定です。今しばらくお待ちください。',
+                action: {
+                  label: '閉じる',
+                  onClick: () => {},
+                },
+              })
+            }
+            className="h-12 bg-gray-700 hover:bg-gray-700 hover:text-gray-300 font-semibold gap-2 text-base tracking-wide"
+          >
+            <Brain />
+            AIによる相場検索
           </Button>
         </div>
       </div>

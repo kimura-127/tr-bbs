@@ -2,6 +2,7 @@ import { ThemeProvider } from 'next-themes';
 import { Geist } from 'next/font/google';
 import './globals.css';
 import { SiteLogo } from '@/components/SiteLogo';
+import { Toaster } from '@/components/ui/sonner';
 import type { Metadata } from 'next';
 
 const defaultUrl = process.env.VERCEL_URL
@@ -77,6 +78,7 @@ export default function RootLayout({
           <main className="min-h-screen flex flex-col items-center">
             {children}
           </main>
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>

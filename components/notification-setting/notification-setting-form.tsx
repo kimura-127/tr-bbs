@@ -1,14 +1,23 @@
 'use client';
 
-import { columns } from '@/components/columns';
 import { DataTable } from '@/components/data-table';
+import { notificationColumns } from '@/components/notification-setting/columns';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import type { Article, NotificationSettingWithArticle } from '@/types';
+import type { ColumnDef } from '@tanstack/react-table';
+import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbSeparator,
+} from '../ui/breadcrumb';
 
 interface NotificationSettingFormProps {
   getNotificationSettings: (
@@ -59,12 +68,12 @@ export function NotificationSettingForm({
   }, [notificationValue, notificationType, fetchNotificationSettings]);
 
   // カラムに削除ボタンを追加
-  const columnsWithDelete = [
-    ...columns,
+  const columnsWithDelete: ColumnDef<Article>[] = [
+    ...notificationColumns,
     {
       id: 'actions',
       header: '操作',
-      cell: ({ row }: { row: { original: Article } }) => (
+      cell: ({ row }) => (
         <Button
           variant="destructive"
           size="sm"
@@ -77,49 +86,83 @@ export function NotificationSettingForm({
   ];
 
   return (
-    <Card className="p-6">
-      <h2 className="text-2xl font-bold mb-6">通知設定</h2>
-
-      <div className="space-y-6">
-        <div>
-          <h3 className="text-lg font-semibold mb-4">通知方法の選択</h3>
-          <RadioGroup
-            defaultValue="email"
-            onValueChange={setNotificationType}
-            className="space-y-2"
+    <div>
+      <div className="mb-4">
+        <div className="bg-gray-700 text-base pl-8 h-12 flex items-center rounded-lg mb-2">
+          <h1
+            className="max-md:text-sm text-base
+             font-semibold text-white tracking-wider leading-7"
           >
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="email" id="email" />
-              <Label htmlFor="email">メール通知</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="line" id="line" disabled />
-              <Label htmlFor="line">LINE通知（準備中）</Label>
-            </div>
-          </RadioGroup>
+            通知設定
+          </h1>
         </div>
-
-        <div>
-          <Label htmlFor="notification-value">
-            {notificationType === 'email' ? 'メールアドレス' : 'LINE ID'}
-          </Label>
-          <Input
-            id="notification-value"
-            type={notificationType === 'email' ? 'email' : 'text'}
-            placeholder={
-              notificationType === 'email' ? 'example@example.com' : 'LINE ID'
-            }
-            value={notificationValue}
-            onChange={(e) => setNotificationValue(e.target.value)}
-            className="mt-1"
-          />
-        </div>
-
-        <div>
-          <h3 className="text-lg font-semibold mb-4">通知設定一覧</h3>
-          <DataTable columns={columnsWithDelete} data={notificationData} />
-        </div>
+        <Breadcrumb className="mb-4 ml-2">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink asChild>
+                <Link href={'/'} prefetch={true}>
+                  トップページ
+                </Link>
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbLink className="cursor-pointer">
+                通知設定
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
       </div>
-    </Card>
+
+      <Card className="p-6">
+        <h2 className="text-2xl font-bold mb-6">通知設定</h2>
+
+        <div className="space-y-6">
+          <div>
+            <h3 className="text-lg font-semibold mb-4">通知方法の選択</h3>
+            <RadioGroup
+              defaultValue="email"
+              onValueChange={setNotificationType}
+              className="space-y-2"
+            >
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="email" id="email" />
+                <Label htmlFor="email">メール通知</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="line" id="line" disabled />
+                <Label htmlFor="line">LINE通知（準備中）</Label>
+              </div>
+            </RadioGroup>
+          </div>
+
+          <div>
+            <Label htmlFor="notification-value">
+              {notificationType === 'email' ? 'メールアドレス' : 'LINE ID'}
+            </Label>
+            <Input
+              id="notification-value"
+              type={notificationType === 'email' ? 'email' : 'text'}
+              placeholder={
+                notificationType === 'email' ? 'example@example.com' : 'LINE ID'
+              }
+              value={notificationValue}
+              onChange={(e) => setNotificationValue(e.target.value)}
+              className="mt-1"
+            />
+          </div>
+
+          <div>
+            <h3 className="text-lg font-semibold mb-4">通知スレッド一覧</h3>
+            <DataTable
+              columns={columnsWithDelete}
+              data={notificationData}
+              isVisibleSearch={false}
+            />
+          </div>
+        </div>
+      </Card>
+    </div>
   );
 }
