@@ -3,4 +3,14 @@ Allow: /
 Disallow: /api/
 Disallow: /auth/
 
-Sitemap: https://www.cl-bbs.com/sitemap.xml 
+Sitemap: https://www.cl-bbs.com/sitemap.xml
+
+# チョコットランド取引掲示板BBS
+# 装備売り買い・交換BBS 
+
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /auth/
+
+Sitemap: https://www.cl-bbs.com/sitemap.xml
