@@ -81,7 +81,7 @@ export function ImageUpload({
       </div>
 
       {preview.length > 0 && (
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {preview.map((url, index) => (
             <div key={url} className="relative group">
               <div className="aspect-square relative">
