@@ -39,7 +39,7 @@ export async function getNotificationSettings(
 
 // サーバーアクション: 通知設定の削除
 export async function deleteNotificationSetting(
-  threadId: string,
+  articleId: string,
   email: string
 ): Promise<void> {
   const supabase = await createClient();
@@ -48,7 +48,7 @@ export async function deleteNotificationSetting(
     .from('notification_settings')
     .delete()
     .match({
-      thread_id: threadId,
+      thread_id: articleId,
       email: email,
       type: 'email',
     });

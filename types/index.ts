@@ -1,7 +1,7 @@
 export interface Article {
   id: string;
   title: string;
-  user_id: string;
+  user_id: string | null;
   created_at: string;
   updated_at: string;
   replies_count: number;
@@ -17,6 +17,6 @@ export interface NotificationSetting {
 }
 
 export type NotificationSettingWithArticle = {
-  article_id: string;
+  thread_id: string;
   articles: Article;
 };

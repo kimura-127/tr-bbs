@@ -23,7 +23,7 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
   // 基本的なURLエントリー
   const staticUrls = [
     {
-      loc: `${process.env.VERCEL_URL}/`,
+      loc: `https://${process.env.VERCEL_URL}/`,
       lastmod: new Date().toISOString().split('T')[0],
       changefreq: 'daily',
       priority: '1.0',
@@ -40,7 +40,7 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
   // スレッド詳細ページのURLエントリーを生成
   const threadUrls =
     threads?.map((thread) => ({
-      loc: `${process.env.VERCEL_URL}/thread/${thread.id}`,
+      loc: `https://${process.env.VERCEL_URL}/thread/${thread.id}`,
       lastmod: thread.updated_at.split('T')[0],
       changefreq: 'daily',
       priority: '0.7',
