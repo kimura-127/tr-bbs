@@ -1,13 +1,22 @@
-import { getThreads } from '@/app/actions/getThread';
-import { columns } from '@/components/columns';
+import type { Payment } from '@/components/columns';
 import { DataTable } from '@/components/data-table';
+import type { ColumnDef } from '@tanstack/react-table';
 
-export async function ThreadList() {
+interface ThreadListProps {
+  columns: ColumnDef<Payment, string | number>[];
+  getThreads: () => Promise<Payment[]>;
+}
+
+export async function ThreadList({ columns, getThreads }: ThreadListProps) {
   const threads = await getThreads();
 
   return (
     <div className="space-y-4">
-      <DataTable columns={columns} data={threads} isVisibleSearch={false} />
+      <DataTable
+        columns={columns}
+        data={threads}
+        isVisibleCreateWithSearch={true}
+      />
     </div>
   );
 }
