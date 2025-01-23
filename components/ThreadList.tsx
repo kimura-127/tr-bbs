@@ -17,7 +17,9 @@ import {
   Bell,
   Brain,
   Menu,
+  PlusIcon,
   Search,
+  SearchIcon,
   ShoppingBasket,
   SquarePen,
 } from 'lucide-react';
@@ -60,7 +62,7 @@ export function ThreadList({ initialData }: Props) {
             onClick={() => setIsVisibleSearch(!isVisibleSearch)}
             className="h-12 bg-gray-700 hover:bg-gray-700 hover:text-gray-300 font-semibold gap-2 text-base tracking-wide"
           >
-            <Search />
+            <SearchIcon className="mr-2 h-4 w-4" />
             検索
           </Button>
         </div>

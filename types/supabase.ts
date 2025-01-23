@@ -83,6 +83,82 @@ export type Database = {
           },
         ]
       }
+      avatar_articles: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          image_urls: string[] | null
+          replies_count: number
+          title: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          image_urls?: string[] | null
+          replies_count?: number
+          title: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          image_urls?: string[] | null
+          replies_count?: number
+          title?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "avatar_articles_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "app_users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      avatar_replies: {
+        Row: {
+          article_id: string
+          content: string
+          created_at: string
+          id: string
+          image_urls: string[] | null
+          updated_at: string
+        }
+        Insert: {
+          article_id: string
+          content: string
+          created_at?: string
+          id?: string
+          image_urls?: string[] | null
+          updated_at?: string
+        }
+        Update: {
+          article_id?: string
+          content?: string
+          created_at?: string
+          id?: string
+          image_urls?: string[] | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "avatar_replies_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "avatar_articles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       email_logs: {
         Row: {
           body: string
@@ -149,6 +225,82 @@ export type Database = {
             columns: ["thread_id"]
             isOneToOne: false
             referencedRelation: "articles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      free_talk_articles: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          image_urls: string[] | null
+          replies_count: number
+          title: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          image_urls?: string[] | null
+          replies_count?: number
+          title: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          image_urls?: string[] | null
+          replies_count?: number
+          title?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "free_talk_articles_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "app_users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      free_talk_replies: {
+        Row: {
+          article_id: string
+          content: string
+          created_at: string
+          id: string
+          image_urls: string[] | null
+          updated_at: string
+        }
+        Insert: {
+          article_id: string
+          content: string
+          created_at?: string
+          id?: string
+          image_urls?: string[] | null
+          updated_at?: string
+        }
+        Update: {
+          article_id?: string
+          content?: string
+          created_at?: string
+          id?: string
+          image_urls?: string[] | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "free_talk_replies_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "free_talk_articles"
             referencedColumns: ["id"]
           },
         ]
