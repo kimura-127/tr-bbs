@@ -3,33 +3,65 @@
 import { createClient } from '@/utils/supabase/server';
 import { revalidatePath } from 'next/cache';
 
-interface CreateThreadInput {
+interface CreateThreadData {
   title: string;
   content: string;
-  imageUrls?: string[];
+  image_urls?: string[];
 }
 
-export async function createThread(formData: CreateThreadInput) {
+// 取引スレッド作成
+export async function createTradingThread(data: CreateThreadData) {
   const supabase = await createClient();
 
-  // NOTE: スレッドを作成
-  const { error: threadError } = await supabase
-    .from('articles')
-    .insert({
-      title: formData.title,
-      content: formData.content,
-      image_urls: formData.imageUrls || [],
-    })
-    .select()
-    .single();
+  const { error } = await supabase.from('articles').insert({
+    title: data.title,
+    content: data.content,
+    image_urls: data.image_urls,
+  });
 
-  if (threadError) {
-    return {
-      error: 'スレッドの作成に失敗しました',
-    };
+  if (error) {
+    console.error('Error creating trading thread:', error);
+    return { error: error.message };
   }
 
-  // NOTE: キャッシュを更新してトップページの記事情報を更新
   revalidatePath('/');
+  return { success: true };
+}
+
+// 雑談スレッド作成
+export async function createFreeTalkThread(data: CreateThreadData) {
+  const supabase = await createClient();
+
+  const { error } = await supabase.from('free_talk_articles').insert({
+    title: data.title,
+    content: data.content,
+    image_urls: data.image_urls,
+  });
+
+  if (error) {
+    console.error('Error creating free talk thread:', error);
+    return { error: error.message };
+  }
+
+  revalidatePath('/free-talk');
+  return { success: true };
+}
+
+// アバタースレッド作成
+export async function createAvatarThread(data: CreateThreadData) {
+  const supabase = await createClient();
+
+  const { error } = await supabase.from('avatar_articles').insert({
+    title: data.title,
+    content: data.content,
+    image_urls: data.image_urls,
+  });
+
+  if (error) {
+    console.error('Error creating avatar thread:', error);
+    return { error: error.message };
+  }
+
+  revalidatePath('/avatar');
   return { success: true };
 }

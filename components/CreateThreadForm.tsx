@@ -1,6 +1,10 @@
 'use client';
 
-import { createThread } from '@/app/actions/createThread';
+import {
+  createAvatarThread,
+  createFreeTalkThread,
+  createTradingThread,
+} from '@/app/actions/createThread';
 import { ImageUpload } from '@/components/image-upload';
 import { Button } from '@/components/ui/button';
 import {
@@ -12,6 +16,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { createClient } from '@/utils/supabase/client';
@@ -34,6 +39,9 @@ const formSchema = z.object({
     .string()
     .min(10, { message: 'コメントは10文字以上で入力してください' })
     .max(1000, { message: 'コメントは1000文字以内で入力してください' }),
+  boardType: z.enum(['trading', 'freeTalk', 'avatar'], {
+    required_error: '掲示板を選択してください',
+  }),
   images: z
     .array(
       z
@@ -54,6 +62,12 @@ const formSchema = z.object({
     .default([]),
 });
 
+// 戻り値の型を定義
+interface ThreadResult {
+  error?: string;
+  success?: boolean;
+}
+
 export function CreateThreadForm({
   setIsDialogOpen,
 }: {
@@ -66,6 +80,7 @@ export function CreateThreadForm({
     defaultValues: {
       title: '',
       content: '',
+      boardType: 'trading',
       images: [],
     },
   });
@@ -106,7 +121,7 @@ export function CreateThreadForm({
     setIsLoading(true);
     try {
       // 画像がある場合はアップロード
-      let imageUrls: string[] = [];
+      let image_urls: string[] = [];
       if (values.images && values.images.length > 0) {
         const uploadResult = await uploadImages(values.images);
         if (uploadResult.error) {
@@ -117,17 +132,34 @@ export function CreateThreadForm({
           });
           return;
         }
-        imageUrls = uploadResult.imageUrls || [];
+        image_urls = uploadResult.imageUrls || [];
       }
 
-      // スレッドを作成
-      const result = await createThread({
+      // スレッドデータを準備
+      const threadData = {
         title: values.title,
         content: values.content,
-        imageUrls,
-      });
+        image_urls: image_urls,
+      };
 
-      if (result.error) {
+      // 選択された掲示板の種類に応じてスレッドを作成
+      let result: ThreadResult;
+      switch (values.boardType) {
+        case 'trading':
+          router.prefetch('/');
+          result = await createTradingThread(threadData);
+          break;
+        case 'freeTalk':
+          router.prefetch('/free-talk');
+          result = await createFreeTalkThread(threadData);
+          break;
+        case 'avatar':
+          router.prefetch('/avatar');
+          result = await createAvatarThread(threadData);
+          break;
+      }
+
+      if (result?.error) {
         toast({
           variant: 'destructive',
           title: 'エラー',
@@ -138,7 +170,18 @@ export function CreateThreadForm({
           description: 'スレッドを作成しました',
         });
         form.reset();
-        router.refresh();
+        // 掲示板の種類に応じてリダイレクト先を変更
+        switch (values.boardType) {
+          case 'trading':
+            router.push('/');
+            break;
+          case 'freeTalk':
+            router.push('/free-talk');
+            break;
+          case 'avatar':
+            router.push('/avatar');
+            break;
+        }
       }
     } catch (error) {
       toast({
@@ -180,6 +223,59 @@ export function CreateThreadForm({
               </FormLabel>
               <FormControl>
                 <Textarea className="h-40 2xl:h-96" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="boardType"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="font-semibold tracking-wider">
+                掲示板の種類
+              </FormLabel>
+              <FormControl>
+                <RadioGroup
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  className="flex flex-col"
+                >
+                  <FormItem className="flex items-center space-x-3 space-y-0 relative">
+                    <FormControl>
+                      <RadioGroupItem
+                        value="trading"
+                        className="text-blue-700"
+                      />
+                    </FormControl>
+                    <FormLabel className="tracking-lg leading-6 border-2 w-60 flex justify-center py-2 rounded-md cursor-pointer hover:bg-gray-50">
+                      取引掲示板
+                    </FormLabel>
+                  </FormItem>
+                  <FormItem className="flex items-center space-x-3 space-y-0 relative">
+                    <FormControl>
+                      <RadioGroupItem
+                        value="freeTalk"
+                        className="text-blue-700"
+                      />
+                    </FormControl>
+                    <FormLabel className="tracking-lg leading-6 border-2 w-60 flex justify-center py-2 rounded-md cursor-pointer hover:bg-gray-50">
+                      雑談掲示板
+                    </FormLabel>
+                  </FormItem>
+                  <FormItem className="flex items-center space-x-3 space-y-0 relative">
+                    <FormControl>
+                      <RadioGroupItem
+                        value="avatar"
+                        className="text-blue-700"
+                      />
+                    </FormControl>
+                    <FormLabel className="tracking-lg leading-6 border-2 w-60 flex justify-center py-2 rounded-md cursor-pointer hover:bg-gray-50">
+                      アバター掲示板
+                    </FormLabel>
+                  </FormItem>
+                </RadioGroup>
               </FormControl>
               <FormMessage />
             </FormItem>

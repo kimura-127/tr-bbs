@@ -35,12 +35,13 @@ import { Input } from './ui/input';
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  isVisibleSearch: boolean;
+  isVisibleCreateWithSearch: boolean;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  isVisibleCreateWithSearch,
 }: DataTableProps<TData, TValue>) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -60,25 +61,27 @@ export function DataTable<TData, TValue>({
   return (
     <div>
       <div className="flex items-center justify-end gap-6">
-        <div>
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger asChild>
-              <Button className="h- bg-gray-700 hover:bg-gray-700 hover:text-gray-300 font-semibold gap-2 text-base tracking-wide">
-                <SquarePen />
-                新規作成
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-4xl max-h-screen overflow-auto">
-              <DialogHeader>
-                <DialogTitle>新規スレッド作成</DialogTitle>
-                <DialogDescription className="py-2">
-                  タイトルとコメントを入力してください
-                </DialogDescription>
-              </DialogHeader>
-              <CreateThreadForm setIsDialogOpen={setIsDialogOpen} />
-            </DialogContent>
-          </Dialog>
-        </div>
+        {isVisibleCreateWithSearch && (
+          <div>
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger asChild>
+                <Button className="h- bg-gray-700 hover:bg-gray-700 hover:text-gray-300 font-semibold gap-2 text-base tracking-wide">
+                  <SquarePen />
+                  新規作成
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-4xl max-h-screen overflow-auto">
+                <DialogHeader>
+                  <DialogTitle>新規スレッド作成</DialogTitle>
+                  <DialogDescription className="py-2">
+                    タイトルとコメントを入力してください
+                  </DialogDescription>
+                </DialogHeader>
+                <CreateThreadForm setIsDialogOpen={setIsDialogOpen} />
+              </DialogContent>
+            </Dialog>
+          </div>
+        )}
         <Input
           placeholder={'装備・アイテムを検索'}
           value={(table.getColumn('title')?.getFilterValue() as string) ?? ''}

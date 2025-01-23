@@ -3,7 +3,7 @@ import { ThreadList } from '@/components/ThreadList';
 import { columns } from '@/components/columns';
 import { DataTableSkeleton } from '@/components/data-table-skeleton';
 import { Suspense } from 'react';
-import { getTradingThreads } from './actions/getThread';
+import { getFreeTalkThreads } from '../actions/getThread';
 
 export const metadata = {
   title: 'チョコットランド取引掲示板 | 装備売り買い・交換BBS',
@@ -13,12 +13,12 @@ export const metadata = {
 
 export const revalidate = 3600; // 1時間ごとに再検証
 
-export default function Home() {
+export default function FreeTalkPage() {
   return (
     <main className="container mx-auto py-4">
-      <ThreadHeader title="取引掲示板" />
+      <ThreadHeader title="雑談掲示板" />
       <Suspense fallback={<DataTableSkeleton />}>
-        <ThreadList columns={columns} getThreads={getTradingThreads} />
+        <ThreadList columns={columns} getThreads={getFreeTalkThreads} />
       </Suspense>
     </main>
   );

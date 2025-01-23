@@ -150,7 +150,7 @@ export function NotificationSettingForm({
             <DataTable
               columns={columnsWithDelete}
               data={notificationData}
-              isVisibleSearch={false}
+              isVisibleCreateWithSearch={false}
             />
           </div>
         </div>
