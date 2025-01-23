@@ -1,3 +1,4 @@
+import { ThreadHeader } from '@/components/ThreadHeader';
 import { NotificationSettingForm } from '@/components/ui/notification-setting/notification-setting-form';
 import type { Metadata } from 'next';
 import { deleteNotificationSetting, getNotificationSettings } from './actions';
@@ -10,7 +11,8 @@ export const metadata: Metadata = {
 
 export default function NotificationSettingPage() {
   return (
-    <div className="container mx-auto py-1.5">
+    <div className="container mx-auto py-4">
+      <ThreadHeader title="通知設定" />
       <NotificationSettingForm
         getNotificationSettings={getNotificationSettings}
         deleteNotificationSetting={deleteNotificationSetting}

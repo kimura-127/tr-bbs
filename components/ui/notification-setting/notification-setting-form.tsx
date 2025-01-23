@@ -89,14 +89,6 @@ export function NotificationSettingForm({
   return (
     <div>
       <div className="mb-4">
-        <div className="bg-gray-700 text-base pl-8 h-12 flex items-center rounded-lg mb-2">
-          <h1
-            className="max-md:text-sm text-base
-             font-semibold text-white tracking-wider leading-7"
-          >
-            通知設定
-          </h1>
-        </div>
         <Breadcrumb className="mb-4 ml-2">
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -115,7 +107,6 @@ export function NotificationSettingForm({
           </BreadcrumbList>
         </Breadcrumb>
       </div>
-
       <Card className="p-6">
         <h2 className="text-2xl font-bold mb-6">通知設定</h2>
 

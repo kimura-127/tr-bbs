@@ -6,6 +6,8 @@ import { createClient } from '@/utils/supabase/server';
 export async function getThreads(): Promise<Payment[]> {
   const supabase = await createClient();
 
+  await new Promise((resolve) => setTimeout(resolve, 3000));
+
   const { data: articles, error } = await supabase
     .from('articles')
     .select('id, title, content, user_id, updated_at, replies_count')
