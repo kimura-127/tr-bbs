@@ -1,9 +1,9 @@
+import { getAvatarThreads } from '@/app/actions/getThread';
 import { ThreadHeader } from '@/components/ThreadHeader';
 import { ThreadList } from '@/components/ThreadList';
-import { columns } from '@/components/columns';
+import { avatarColumns } from '@/components/columns';
 import { DataTableSkeleton } from '@/components/data-table-skeleton';
 import { Suspense } from 'react';
-import { getAvatarThreads } from '../actions/getThread';
 
 export const metadata = {
   title: 'チョコットランド取引掲示板 | 装備売り買い・交換BBS',
@@ -18,7 +18,7 @@ export default function AvatarPage() {
     <main className="container mx-auto py-4">
       <ThreadHeader title="アバター掲示板" />
       <Suspense fallback={<DataTableSkeleton />}>
-        <ThreadList columns={columns} getThreads={getAvatarThreads} />
+        <ThreadList columns={avatarColumns} getThreads={getAvatarThreads} />
       </Suspense>
     </main>
   );

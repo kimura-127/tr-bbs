@@ -1,17 +1,17 @@
 import { ThreadView } from '@/components/ThreadView';
 import { notFound } from 'next/navigation';
 import { Suspense } from 'react';
-import { getThread } from './actions';
+import { getFreeTalkThread } from './action';
 
 export const revalidate = 0; // キャッシュを無効化
 
-export default async function ThreadPage({
+export default async function FreeTalkThreadPage({
   params,
 }: {
   params: Promise<{ threadId: string }>;
 }) {
   const { threadId } = await params;
-  const thread = await getThread(threadId);
+  const thread = await getFreeTalkThread(threadId);
 
   if (!thread) {
     notFound();
@@ -19,7 +19,7 @@ export default async function ThreadPage({
 
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <ThreadView thread={thread} type="trade" />
+      <ThreadView thread={thread} type="free-talk" />
     </Suspense>
   );
 }
