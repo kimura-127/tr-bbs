@@ -22,8 +22,6 @@ import { useState } from 'react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 
-const TABLE_RESPONSIVE_INDEX = 0;
-
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
@@ -72,9 +70,10 @@ export function DataTable<TData, TValue>({
                   return (
                     <TableHead
                       key={header.id}
-                      className={
-                        index === TABLE_RESPONSIVE_INDEX ? '' : 'max-md:hidden'
-                      }
+                      className={`
+                        ${index === 0 ? 'w-[60%]' : ''} 
+                        ${index > 0 ? 'max-md:hidden' : ''}
+                      `}
                     >
                       {header.isPlaceholder
                         ? null
@@ -100,21 +99,32 @@ export function DataTable<TData, TValue>({
                   >
                     {tableCells.map((cell, index) => (
                       <TableCell
-                        className={`${cell.column.id === 'title' ? 'w-2/3' : ''} ${index === TABLE_RESPONSIVE_INDEX ? '' : 'max-md:hidden'}`}
                         key={cell.id}
+                        className={`
+                          ${index === 0 ? 'w-[60%] p-0' : ''} 
+                          ${index > 0 ? 'max-md:hidden' : ''}
+                          ${cell.row.getIsExpanded() ? 'pb-0' : ''}
+                        `}
                       >
                         <div className="flex flex-col">
                           {flexRender(
                             cell.column.columnDef.cell,
                             cell.getContext()
                           )}
-                          <div className="md:hidden">
-                            （{String(tableCells[2].getValue())}）
-                          </div>
-                        </div>
-                        <div className="md:hidden flex gap-2">
-                          <p>{String(tableCells[3].getValue())}</p>:
-                          <p>{String(tableCells[1].getValue())}</p>
+                          {index === 0 && (
+                            <div className="md:hidden text-xs text-muted-foreground py-1 px-4 bg-gray-50">
+                              <div className="flex gap-2">
+                                <span>
+                                  {tableCells[1].getValue() as string}
+                                </span>
+                                <span>•</span>
+                                <span>
+                                  {tableCells[2].getValue() as string}件
+                                </span>
+                              </div>
+                              <div>{tableCells[3].getValue() as string}</div>
+                            </div>
+                          )}
                         </div>
                       </TableCell>
                     ))}

@@ -8,7 +8,7 @@ export async function getThreads(): Promise<Payment[]> {
 
   const { data: articles, error } = await supabase
     .from('articles')
-    .select('id, title, user_id, updated_at, replies_count')
+    .select('id, title, content, user_id, updated_at, replies_count')
     .order('updated_at', { ascending: false });
 
   if (error) {
@@ -19,6 +19,7 @@ export async function getThreads(): Promise<Payment[]> {
   return articles.map((article) => ({
     id: article.id,
     title: article.title,
+    content: article.content,
     name: '名無し',
     replyCount: article.replies_count,
     createdAt: new Date(article.updated_at).toLocaleString('ja-JP', {
