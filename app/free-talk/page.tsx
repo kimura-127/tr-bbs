@@ -1,6 +1,6 @@
 import { ThreadHeader } from '@/components/ThreadHeader';
 import { ThreadList } from '@/components/ThreadList';
-import { columns } from '@/components/columns';
+import { freeTalkColumns } from '@/components/columns';
 import { DataTableSkeleton } from '@/components/data-table-skeleton';
 import { Suspense } from 'react';
 import { getFreeTalkThreads } from '../actions/getThread';
@@ -18,7 +18,7 @@ export default function FreeTalkPage() {
     <main className="container mx-auto py-4">
       <ThreadHeader title="雑談掲示板" />
       <Suspense fallback={<DataTableSkeleton />}>
-        <ThreadList columns={columns} getThreads={getFreeTalkThreads} />
+        <ThreadList columns={freeTalkColumns} getThreads={getFreeTalkThreads} />
       </Suspense>
     </main>
   );

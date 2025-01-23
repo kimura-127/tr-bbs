@@ -1,5 +1,13 @@
 'use client';
 
+import {
+  bumpAvatarThread,
+  createAvatarComment,
+} from '@/app/avatar/thread/[threadId]/action';
+import {
+  bumpFreeTalkThread,
+  createFreeTalkComment,
+} from '@/app/free-talk/thread/[threadId]/action';
 import type { Thread } from '@/app/thread/[threadId]/actions';
 import { bumpThread, createComment } from '@/app/thread/[threadId]/actions';
 import { NotificationSettingsDialog } from '@/components/NotificationSettingsDialog';
@@ -25,6 +33,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { FileCheck2, RotateCw } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
@@ -67,13 +76,15 @@ const formSchema = z.object({
 
 interface ThreadViewProps {
   thread: Thread;
+  type: 'free-talk' | 'avatar' | 'trade';
 }
 
-export function ThreadView({ thread }: ThreadViewProps) {
+export function ThreadView({ thread, type }: ThreadViewProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [isBumping, setIsBumping] = useState(false);
   const [bumpSuccess, setBumpSuccess] = useState(false);
   const [resetImages, setResetImages] = useState(false);
+  const router = useRouter();
   const { toast } = useToast();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -114,6 +125,29 @@ export function ThreadView({ thread }: ThreadViewProps) {
     }
   }
 
+  // typeに応じた関数を選択
+  const getCreateCommentFunction = (type: 'free-talk' | 'avatar' | 'trade') => {
+    switch (type) {
+      case 'free-talk':
+        return createFreeTalkComment;
+      case 'avatar':
+        return createAvatarComment;
+      case 'trade':
+        return createComment;
+    }
+  };
+
+  const getBumpThreadFunction = (type: 'free-talk' | 'avatar' | 'trade') => {
+    switch (type) {
+      case 'free-talk':
+        return bumpFreeTalkThread;
+      case 'avatar':
+        return bumpAvatarThread;
+      case 'trade':
+        return bumpThread;
+    }
+  };
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     setResetImages(false);
@@ -133,7 +167,8 @@ export function ThreadView({ thread }: ThreadViewProps) {
         imageUrls = uploadResult.imageUrls || [];
       }
 
-      const result = await createComment(thread.id, {
+      const createCommentFunction = getCreateCommentFunction(type);
+      const result = await createCommentFunction(thread.id, {
         content: values.content,
         imageUrls,
       });
@@ -206,10 +241,15 @@ export function ThreadView({ thread }: ThreadViewProps) {
         <Breadcrumb className="mb-4 ml-2">
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link href={'/'} prefetch={true}>
-                  トップページ
-                </Link>
+              <BreadcrumbLink
+                className="cursor-pointer"
+                onClick={() => router.back()}
+              >
+                {type === 'free-talk'
+                  ? '雑談掲示板'
+                  : type === 'avatar'
+                    ? 'アバター掲示板'
+                    : '取引掲示板'}
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
@@ -236,7 +276,8 @@ export function ThreadView({ thread }: ThreadViewProps) {
             setIsBumping(true);
             setBumpSuccess(false);
             try {
-              const result = await bumpThread(thread.id);
+              const bumpThreadFunction = getBumpThreadFunction(type);
+              const result = await bumpThreadFunction(thread.id);
               if (result.error) {
                 toast({
                   variant: 'destructive',
