@@ -1,7 +1,6 @@
 'use server';
 
 import { sendCommentNotification } from '@/app/actions/sendCommentNotification';
-import type { Database } from '@/types/supabase';
 import { createClient } from '@/utils/supabase/server';
 import { revalidatePath } from 'next/cache';
 
@@ -82,7 +81,6 @@ export async function createFreeTalkComment(
   formData: { content: string; imageUrls: string[] }
 ) {
   const supabase = await createClient();
-  console.log('メール通知を送信');
 
   try {
     // 1. 現在の記事データを取得
@@ -137,7 +135,7 @@ export async function createFreeTalkComment(
       commentContent: formData.content,
     });
 
-    revalidatePath(`/thread/${threadId}`);
+    revalidatePath(`/free-talk/thread/${threadId}`);
     return { success: true };
   } catch (error) {
     console.error('Error in createComment:', error);
@@ -159,8 +157,8 @@ export async function bumpFreeTalkThread(threadId: string) {
     };
   }
 
-  revalidatePath('/');
-  revalidatePath(`/thread/${threadId}`);
+  revalidatePath('/free-talk');
+  revalidatePath(`/free-talk/thread/${threadId}`);
 
   return { success: true };
 }
