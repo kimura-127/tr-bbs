@@ -1,7 +1,6 @@
 'use server';
 
 import { sendCommentNotification } from '@/app/actions/sendCommentNotification';
-import type { Database } from '@/types/supabase';
 import { createClient } from '@/utils/supabase/server';
 import { revalidatePath } from 'next/cache';
 
@@ -137,7 +136,7 @@ export async function createAvatarComment(
       commentContent: formData.content,
     });
 
-    revalidatePath(`/thread/${threadId}`);
+    revalidatePath(`/avatar/thread/${threadId}`);
     return { success: true };
   } catch (error) {
     console.error('Error in createComment:', error);
@@ -159,8 +158,8 @@ export async function bumpAvatarThread(threadId: string) {
     };
   }
 
-  revalidatePath('/');
-  revalidatePath(`/thread/${threadId}`);
+  revalidatePath('/avatar');
+  revalidatePath(`/avatar/thread/${threadId}`);
 
   return { success: true };
 }
