@@ -5,6 +5,7 @@ import { ImagePlus, X } from 'lucide-react';
 import Image from 'next/image';
 import { useCallback, useEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
+import { Input } from './ui/input';
 
 interface ImageUploadProps {
   onChange: (files: File[]) => void;
@@ -59,29 +60,8 @@ export function ImageUpload({
 
   return (
     <div className="space-y-4">
-      <div
-        {...getRootProps()}
-        className={`
-          border-2 border-dashed rounded-lg p-4 text-center cursor-pointer
-          transition-colors
-          ${isDragActive ? 'border-primary' : 'border-gray-300'}
-          ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
-        `}
-      >
-        <input {...getInputProps()} />
-        <div className="flex flex-col items-center justify-center gap-2">
-          <ImagePlus className="h-8 w-8 text-gray-500" />
-          <p className="text-sm text-gray-500">
-            ドラッグ＆ドロップ、またはクリックして画像をアップロード
-          </p>
-          <p className="text-xs text-gray-400">
-            JPG, PNG形式 / 1枚5MB以内 / 最大4枚まで
-          </p>
-        </div>
-      </div>
-
       {preview.length > 0 && (
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {preview.map((url, index) => (
             <div key={url} className="relative group">
               <div className="aspect-square relative">
@@ -105,6 +85,26 @@ export function ImageUpload({
           ))}
         </div>
       )}
+      <div
+        {...getRootProps()}
+        className={`
+          border-2 border-dashed rounded-lg p-4 text-center cursor-pointer
+          transition-colors
+          ${isDragActive ? 'border-primary' : 'border-gray-300'}
+          ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
+        `}
+      >
+        <Input {...getInputProps()} />
+        <div className="flex flex-col items-center justify-center gap-2">
+          <ImagePlus className="h-8 w-8 text-gray-500" />
+          <p className="text-sm text-gray-500">
+            ドラッグ＆ドロップ、またはクリックして画像をアップロード
+          </p>
+          <p className="text-xs text-gray-400">
+            JPG, PNG形式 / 1枚5MB以内 / 最大4枚まで
+          </p>
+        </div>
+      </div>
     </div>
   );
 }

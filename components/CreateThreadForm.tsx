@@ -228,6 +228,27 @@ export function CreateThreadForm({
             </FormItem>
           )}
         />
+
+        <FormField
+          control={form.control}
+          name="images"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="font-semibold tracking-wider">
+                画像
+              </FormLabel>
+              <FormControl>
+                <ImageUpload
+                  disabled={isLoading}
+                  onChange={field.onChange}
+                  value={[]}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <FormField
           control={form.control}
           name="boardType"
@@ -240,7 +261,7 @@ export function CreateThreadForm({
                 <RadioGroup
                   onValueChange={field.onChange}
                   defaultValue={field.value}
-                  className="flex flex-col"
+                  className="flex flex-col max-md:gap-4"
                 >
                   <FormItem className="flex items-center space-x-3 space-y-0 relative">
                     <FormControl>
@@ -281,29 +302,10 @@ export function CreateThreadForm({
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="images"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="font-semibold tracking-wider">
-                画像
-              </FormLabel>
-              <FormControl>
-                <ImageUpload
-                  disabled={isLoading}
-                  onChange={field.onChange}
-                  value={[]}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <div className="flex justify-center">
+        <div className="flex justify-center pt-10">
           <Button
             type="submit"
-            className="h-12 w-80 bg-gray-700 hover:bg-gray-800 font-semibold gap-2 text-base tracking-wide"
+            className="h-16 w-80 bg-gray-700 hover:bg-gray-800 font-semibold gap-2 text-base tracking-wide"
             disabled={isLoading}
           >
             {isLoading ? '作成中...' : 'スレッド作成'}

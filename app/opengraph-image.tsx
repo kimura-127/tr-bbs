@@ -44,7 +44,7 @@ export default async function OGImage() {
         >
           チョコットランド
           <br />
-          取引掲示板
+          総合掲示板
         </h1>
         <p
           style={{
@@ -54,7 +54,7 @@ export default async function OGImage() {
             opacity: 0.8,
           }}
         >
-          装備品取引・雑談・アバター取引
+          装備取引・雑談・アバター取引
         </p>
       </div>
     </div>,

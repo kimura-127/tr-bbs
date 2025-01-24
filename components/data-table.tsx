@@ -70,7 +70,7 @@ export function DataTable<TData, TValue>({
                   新規作成
                 </Button>
               </DialogTrigger>
-              <DialogContent className="max-w-4xl max-h-screen overflow-auto">
+              <DialogContent className="max-w-4xl max-h-screen overflow-auto pb-32">
                 <DialogHeader>
                   <DialogTitle>新規スレッド作成</DialogTitle>
                   <DialogDescription className="py-2">
