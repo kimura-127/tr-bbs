@@ -11,7 +11,7 @@ export const metadata = {
     'チョコットランドの取引掲示板（BBS）です。アイテムや装備の売買や交換の取引ができます。スレッドの作成、コメントの投稿、通知機能で快適な取引環境を提供します。',
 };
 
-export const revalidate = 3600; // 1時間ごとに再検証
+export const revalidate = 0;
 
 export default function AvatarPage() {
   return (
