@@ -43,12 +43,21 @@ export const metadata: Metadata = {
     siteName: 'チョコットランド取引掲示板',
     locale: 'ja_JP',
     type: 'website',
+    images: [
+      {
+        url: '/opengraph-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'チョコットランド取引掲示板',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'チョコットランド 取引掲示板 | 装備売り買い・交換BBS',
     description:
       'チョコットランドの取引掲示板（BBS）です。アイテムの売買や交換の取引ができます。スレッドの作成、コメントの投稿、通知機能で快適な取引環境を提供します。',
+    images: ['/opengraph-image.png'],
   },
   robots: {
     index: true,
