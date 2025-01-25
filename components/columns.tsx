@@ -75,12 +75,12 @@ export const avatarColumns: ColumnDef<Payment>[] = [
         <div className="w-full">
           <Accordion type="single" collapsible>
             <AccordionItem value={row.original.id} className="border-none">
-              <AccordionTrigger className="hover:no-underline h-fit flex gap-4 px-4">
+              <AccordionTrigger className="hover:no-underline h-fit flex gap-16 px-4">
                 <Link
                   onClick={() => ReadThreads.markAsRead(row.original.id)}
                   href={`/avatar/thread/${row.original.id}`}
                   prefetch={true}
-                  className={`text-green-700 hover:underline ${isRead && 'text-red-500'}`}
+                  className={`text-green-700 hover:underline text-left ${isRead && 'text-red-500'}`}
                 >
                   {row.original.title}
                 </Link>
@@ -120,12 +120,12 @@ export const freeTalkColumns: ColumnDef<Payment>[] = [
         <div className="w-full">
           <Accordion type="single" collapsible>
             <AccordionItem value={row.original.id} className="border-none">
-              <AccordionTrigger className="hover:no-underline h-fit flex gap-4 px-4">
+              <AccordionTrigger className="hover:no-underline h-fit flex gap-16 px-4">
                 <Link
                   onClick={() => ReadThreads.markAsRead(row.original.id)}
                   href={`/free-talk/thread/${row.original.id}`}
                   prefetch={true}
-                  className={`text-green-700 hover:underline ${isRead && 'text-red-500'}`}
+                  className={`text-green-700 hover:underline text-left ${isRead && 'text-red-500'}`}
                 >
                   {row.original.title}
                 </Link>
