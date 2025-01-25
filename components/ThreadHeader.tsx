@@ -25,7 +25,9 @@ export function ThreadHeader({ title }: { title: string }) {
         description: '更新中にエラーが発生しました',
       });
     } finally {
-      setIsRefreshing(false);
+      setTimeout(() => {
+        setIsRefreshing(false);
+      }, 100);
     }
   };
 
@@ -38,7 +40,7 @@ export function ThreadHeader({ title }: { title: string }) {
         <Button
           onClick={handleRefresh}
           disabled={isRefreshing}
-          className="md:hidden bg-gray-700 hover:bg-gray-800 font-bold text-base"
+          className="md:hidden bg-gray-700 hover:bg-transparent font-bold text-base"
         >
           <RotateCw className={isRefreshing ? 'animate-spin' : ''} />
           {isRefreshing ? '更新中...' : '更新'}
