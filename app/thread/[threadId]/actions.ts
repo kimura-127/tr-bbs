@@ -80,7 +80,8 @@ export async function createComment(
   formData: { content: string; imageUrls: string[] }
 ) {
   const supabase = await createClient();
-  console.log('メール通知を送信');
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL;
+  console.log('コメント作成開始:', { threadId, content: formData.content });
 
   try {
     // 1. 現在の記事データを取得
@@ -91,6 +92,7 @@ export async function createComment(
       .single();
 
     if (fetchError) {
+      console.error('記事取得エラー:', fetchError);
       return {
         error: '記事の取得に失敗しました',
       };
@@ -108,6 +110,7 @@ export async function createComment(
       .single();
 
     if (commentError) {
+      console.error('コメント作成エラー:', commentError);
       return {
         error: 'コメントの投稿に失敗しました',
       };
@@ -122,6 +125,7 @@ export async function createComment(
       .eq('id', threadId);
 
     if (articleError) {
+      console.error('記事更新エラー:', articleError);
       return {
         error: '記事の更新に失敗しました',
       };
@@ -134,6 +138,33 @@ export async function createComment(
       threadTitle: currentArticle.title,
       commentContent: formData.content,
     });
+
+    // 5. プッシュ通知を送信
+    console.log('プッシュ通知送信開始');
+    const notificationResponse = await fetch(
+      `${baseUrl}/api/push-notification/send`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          threadId,
+          title: `${currentArticle.title}に新しいコメント`,
+          body: formData.content,
+          url: `${baseUrl}/thread/${threadId}`,
+        }),
+      }
+    );
+    console.log('プッシュ通知送信レスポンス:', notificationResponse);
+    if (!notificationResponse.ok) {
+      console.error(
+        'プッシュ通知送信エラー:',
+        await notificationResponse.text()
+      );
+    } else {
+      console.log('プッシュ通知送信成功');
+    }
 
     revalidatePath(`/thread/${threadId}`);
     return { success: true };
