@@ -340,6 +340,47 @@ export type Database = {
           },
         ]
       }
+      push_subscriptions: {
+        Row: {
+          auth: string
+          created_at: string
+          endpoint: string
+          expires_at: string
+          id: string
+          p256dh: string
+          thread_id: string
+          updated_at: string
+        }
+        Insert: {
+          auth: string
+          created_at?: string
+          endpoint: string
+          expires_at: string
+          id?: string
+          p256dh: string
+          thread_id: string
+          updated_at?: string
+        }
+        Update: {
+          auth?: string
+          created_at?: string
+          endpoint?: string
+          expires_at?: string
+          id?: string
+          p256dh?: string
+          thread_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "push_subscriptions_thread_id_fkey"
+            columns: ["thread_id"]
+            isOneToOne: false
+            referencedRelation: "articles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       replies: {
         Row: {
           article_id: string
@@ -377,7 +418,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      cleanup_expired_push_subscriptions: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never
