@@ -11,7 +11,6 @@ const sendSchema = z.object({
 });
 
 export async function POST(request: Request) {
-  console.log('プッシュ通知送信リクエスト受信');
   try {
     const supabase = await createClient();
     const json = await request.json();
@@ -29,7 +28,7 @@ export async function POST(request: Request) {
 
     // VAPID設定
     webpush.setVapidDetails(
-      'mailto:cl.bbs1207@gmail.com',
+      `mailto:${process.env.VAPID_SUBJECT}`,
       process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || '',
       process.env.VAPID_PRIVATE_KEY || ''
     );
@@ -47,8 +46,6 @@ export async function POST(request: Request) {
         { status: 500 }
       );
     }
-
-    console.log('取得した購読情報:', subscriptions);
 
     // 各購読者に通知を送信
     const sendPromises = subscriptions.map(async (subscription) => {
@@ -68,7 +65,6 @@ export async function POST(request: Request) {
             threadId,
           })
         );
-        console.log('送信成功:', subscription.endpoint);
         // biome-ignore lint/suspicious/noExplicitAny: <explanation>
       } catch (error: any) {
         console.error('送信エラー:', subscription.endpoint, error);
@@ -85,7 +81,6 @@ export async function POST(request: Request) {
     });
 
     await Promise.all(sendPromises);
-    console.log('全ての通知送信完了');
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {

@@ -1,3 +1,4 @@
+import { PUSH_NOTIFICATION_EXPIRY_DAYS } from '@/app/constant';
 import { createClient } from '@/utils/supabase/server';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
@@ -9,10 +10,7 @@ const subscribeSchema = z.object({
   auth: z.string(),
 });
 
-const PUSH_NOTIFICATION_EXPIRY_DAYS = 30;
-
 export async function POST(request: Request) {
-  console.log('プッシュ通知購読リクエスト受信');
   try {
     const supabase = await createClient();
 
@@ -94,7 +92,6 @@ export async function POST(request: Request) {
       );
     }
 
-    console.log('プッシュ通知購読完了');
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {
     console.error('予期せぬエラー:', error);

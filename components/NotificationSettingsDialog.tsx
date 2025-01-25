@@ -1,6 +1,12 @@
 'use client';
 
 import { subscribeToEmailNotifications } from '@/app/actions/sendNotificationEmail';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -30,7 +36,7 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Bell } from 'lucide-react';
+import { Bell, Share } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -73,10 +79,6 @@ export function NotificationSettingsDialog({
 
       // ブラウザの対応確認
       if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
-        console.error('ブラウザが対応していません:', {
-          serviceWorker: 'serviceWorker' in navigator,
-          pushManager: 'PushManager' in window,
-        });
         toast({
           title: 'エラー',
           description: 'お使いのブラウザはプッシュ通知に対応していません',
@@ -87,7 +89,6 @@ export function NotificationSettingsDialog({
 
       // 通知の許可を確認
       const permission = await Notification.requestPermission();
-      console.log('通知許可の結果:', permission);
       if (permission !== 'granted') {
         toast({
           title: 'エラー',
@@ -99,7 +100,6 @@ export function NotificationSettingsDialog({
 
       // Service Workerの登録を確認
       const registrations = await navigator.serviceWorker.getRegistrations();
-      console.log('既存のService Worker登録:', registrations);
 
       let registration: ServiceWorkerRegistration;
       if (registrations.length > 0) {
@@ -107,7 +107,6 @@ export function NotificationSettingsDialog({
       } else {
         // Service Workerが登録されていない場合は新規登録
         registration = await navigator.serviceWorker.register('/worker.js');
-        console.log('Service Worker登録完了:', registration);
       }
 
       // Service Workerのアクティブ化を待機
@@ -129,13 +128,11 @@ export function NotificationSettingsDialog({
       }
 
       // プッシュ通知の購読
-      console.log('プッシュ通知の購読開始');
       const subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
       });
 
-      console.log('サーバーへの購読情報送信開始');
       const response = await fetch('/api/push-notification/subscribe', {
         method: 'POST',
         headers: {
@@ -150,7 +147,6 @@ export function NotificationSettingsDialog({
       });
 
       const responseData = await response.json();
-      console.log('サーバーレスポンス:', responseData);
 
       if (!response.ok) {
         throw new Error('プッシュ通知の設定に失敗しました');
@@ -160,7 +156,6 @@ export function NotificationSettingsDialog({
         description: 'プッシュ通知を設定しました',
       });
     } catch (error) {
-      console.error('プッシュ通知設定エラー:', error);
       toast({
         title: 'エラー',
         description: 'プッシュ通知の設定中にエラーが発生しました',
@@ -174,12 +169,10 @@ export function NotificationSettingsDialog({
   async function onSubmit(values: z.infer<typeof emailFormSchema>) {
     setIsLoading(true);
     try {
-      console.log('送信開始');
       const result = await subscribeToEmailNotifications({
         threadId,
         email: values.email,
       });
-      console.log('送信終了');
       if (result.error) {
         toast({
           variant: 'destructive',
@@ -217,11 +210,79 @@ export function NotificationSettingsDialog({
             このスレッドの通知設定を行います
           </DialogDescription>
         </DialogHeader>
-        <Tabs defaultValue="email" className="w-full">
+        <Tabs defaultValue="push" className="w-full">
           <TabsList className="grid w-full grid-cols-2 max-md:text-xs max-md:gap-1">
-            <TabsTrigger value="email">メール</TabsTrigger>
             <TabsTrigger value="push">プッシュ通知</TabsTrigger>
+            <TabsTrigger value="email">メール</TabsTrigger>
           </TabsList>
+          <TabsContent value="push">
+            <Card className="max-md:p-2">
+              <CardHeader className="max-md:p-4">
+                <CardTitle>プッシュ通知</CardTitle>
+                <CardDescription>
+                  新しいコメントがあった際にブラウザでプッシュ通知を受け取ります。
+                  <br />
+                  通知設定は1ヶ月間有効です。
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-2 max-md:p-4">
+                <Accordion type="single" collapsible className="w-full">
+                  <AccordionItem value="pc">
+                    <AccordionTrigger>PCの場合</AccordionTrigger>
+                    <AccordionContent>
+                      <div className="space-y-2">
+                        <p className="text-sm text-muted-foreground">
+                          ブラウザとデバイスの通知設定を有効にする必要があります。
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          ・ブラウザは「設定」→「プライバシーとセキュリティ」→「サイトの設定」
+                          の中で通知の設定を有効にできます。
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          ・デバイスは「設定」→「通知」の中でお使いのブラウザからの通知を有効にしてください。
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          ・通知をオフにしてしまった場合も「設定」→「プライバシーとセキュリティ」→「サイトの設定」
+                          の中で通知の設定を有効にできます。
+                        </p>
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                  <AccordionItem value="ios">
+                    <AccordionTrigger>iOSの場合</AccordionTrigger>
+                    <AccordionContent>
+                      <div className="space-y-2">
+                        <div className="flex items-center space-x-2">
+                          <Share size={20} className="text-muted-foreground" />
+                          <p className="text-sm text-muted-foreground">
+                            →「ホーム画面に追加」してご利用ください。
+                          </p>
+                        </div>
+                        <p className="text-sm text-muted-foreground">
+                          ・特に通知の設定は必要ありません。
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          ・通知をオフにしてしまった場合は「設定」→「アプリ」→「掲示板」
+                          の中で通知の設定を有効にできます。
+                        </p>
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
+              </CardContent>
+              <CardFooter className="max-md:p-4">
+                <Button
+                  onClick={handleSubscribePushNotification}
+                  disabled={isSubscribing}
+                  className="bg-gray-700 hover:bg-gray-800 px-8 h-12"
+                >
+                  {isSubscribing
+                    ? 'プッシュ通知を設定中...'
+                    : 'プッシュ通知を有効にする'}
+                </Button>
+              </CardFooter>
+            </Card>
+          </TabsContent>
           <TabsContent value="email">
             <Card className="max-md:p-2">
               <CardHeader className="max-md:p-4">
@@ -253,47 +314,16 @@ export function NotificationSettingsDialog({
                     />
                   </CardContent>
                   <CardFooter className="max-md:p-4">
-                    <Button type="submit" disabled={isLoading}>
+                    <Button
+                      className="bg-gray-700 hover:bg-gray-800 px-8 h-12"
+                      type="submit"
+                      disabled={isLoading}
+                    >
                       {isLoading ? '設定中...' : '設定を保存'}
                     </Button>
                   </CardFooter>
                 </form>
               </Form>
-            </Card>
-          </TabsContent>
-          <TabsContent value="push">
-            <Card className="max-md:p-2">
-              <CardHeader className="max-md:p-4">
-                <CardTitle>プッシュ通知</CardTitle>
-                <CardDescription>
-                  新しいコメントがあった際にブラウザでプッシュ通知を受け取ります。
-                  通知設定は1週間有効です。
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-2 max-md:p-4">
-                <div className="space-y-4">
-                  <div className="flex items-center space-x-2">
-                    <p className="text-sm text-muted-foreground">
-                      ※ブラウザの通知設定を有効にする必要があります
-                    </p>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <p className="text-sm text-muted-foreground">
-                      ※iOSの場合は「ホーム画面に追加」してご利用ください
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-              <CardFooter className="max-md:p-4">
-                <Button
-                  onClick={handleSubscribePushNotification}
-                  disabled={isSubscribing}
-                >
-                  {isSubscribing
-                    ? 'プッシュ通知を設定中...'
-                    : 'プッシュ通知を有効にする'}
-                </Button>
-              </CardFooter>
             </Card>
           </TabsContent>
         </Tabs>
