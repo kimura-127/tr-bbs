@@ -7,7 +7,6 @@ import {
 } from '@/components/ui/accordion';
 import { useReadThreads } from '@/hooks/useReadThreads';
 import type { ColumnDef } from '@tanstack/react-table';
-import { ChevronDown } from 'lucide-react';
 import Link from 'next/link';
 
 export type Payment = {
@@ -31,12 +30,12 @@ export const columns: ColumnDef<Payment>[] = [
         <div className="w-full">
           <Accordion type="single" collapsible>
             <AccordionItem value={row.original.id} className="border-none">
-              <AccordionTrigger className="hover:no-underline h-fit flex gap-4 px-4">
+              <AccordionTrigger className="hover:no-underline h-fit flex gap-16 px-4">
                 <Link
                   onClick={() => ReadThreads.markAsRead(row.original.id)}
                   href={`/thread/${row.original.id}`}
                   prefetch={true}
-                  className={`text-green-700 hover:underline ${isRead && 'text-red-500'}`}
+                  className={`text-green-700 hover:underline text-left ${isRead && 'text-red-500'}`}
                 >
                   {row.original.title}
                 </Link>

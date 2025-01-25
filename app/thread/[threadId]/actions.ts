@@ -132,7 +132,7 @@ export async function createComment(
     }
 
     // 4. メール通知を送信
-    await sendCommentNotification({
+    sendCommentNotification({
       threadId,
       replyId: newReply.id,
       threadTitle: currentArticle.title,
@@ -140,31 +140,18 @@ export async function createComment(
     });
 
     // 5. プッシュ通知を送信
-    console.log('プッシュ通知送信開始');
-    const notificationResponse = await fetch(
-      `${baseUrl}/api/push-notification/send`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          threadId,
-          title: `${currentArticle.title}に新しいコメント`,
-          body: formData.content,
-          url: `${baseUrl}/thread/${threadId}`,
-        }),
-      }
-    );
-    console.log('プッシュ通知送信レスポンス:', notificationResponse);
-    if (!notificationResponse.ok) {
-      console.error(
-        'プッシュ通知送信エラー:',
-        await notificationResponse.text()
-      );
-    } else {
-      console.log('プッシュ通知送信成功');
-    }
+    fetch(`${baseUrl}/api/push-notification/send`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        threadId,
+        title: `${currentArticle.title}に新しいコメント`,
+        body: formData.content,
+        url: `${baseUrl}/thread/${threadId}`,
+      }),
+    });
 
     revalidatePath(`/thread/${threadId}`);
     return { success: true };

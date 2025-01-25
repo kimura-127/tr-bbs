@@ -317,7 +317,9 @@ export function ThreadView({ thread, type }: ThreadViewProps) {
             </div>
           )}
         </Button>
-        <NotificationSettingsDialog threadId={thread.id} />
+        {type === 'trade' && (
+          <NotificationSettingsDialog threadId={thread.id} />
+        )}
       </div>
 
       <div className="flex items-center">

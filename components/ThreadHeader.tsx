@@ -1,12 +1,48 @@
 'use client';
 
+import { useToast } from '@/hooks/use-toast';
+import { RotateCw } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { Button } from './ui/button';
+
 export function ThreadHeader({ title }: { title: string }) {
+  const router = useRouter();
+  const { toast } = useToast();
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const handleRefresh = async () => {
+    try {
+      setIsRefreshing(true);
+      router.refresh();
+      toast({
+        description: '記事一覧を更新しました',
+      });
+    } catch (error) {
+      toast({
+        variant: 'destructive',
+        title: 'エラー',
+        description: '更新中にエラーが発生しました',
+      });
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
+
   return (
     <div>
-      <div className="flex gap-1 bg-gray-700 rounded-lg px-8 h-12 items-center">
+      <div className="flex gap-1 bg-gray-700 rounded-lg px-8 h-12 items-center justify-between">
         <p className="text-white font-bold tracking-widest text-lg leading-9">
           {title}
         </p>
+        <Button
+          onClick={handleRefresh}
+          disabled={isRefreshing}
+          className="md:hidden bg-gray-700 hover:bg-gray-800 font-bold text-base"
+        >
+          <RotateCw className={isRefreshing ? 'animate-spin' : ''} />
+          {isRefreshing ? '更新中...' : '更新'}
+        </Button>
       </div>
       <div className="my-4 ml-4 text-xs border rounded-lg p-4 text-muted-foreground">
         <h1 className="sr-only">チョコットランド 取引掲示板</h1>

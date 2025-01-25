@@ -1,6 +1,15 @@
 'use client';
 
 import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { useToast } from '@/hooks/use-toast';
+import {
   type ColumnDef,
   type ColumnFiltersState,
   flexRender,
@@ -9,16 +18,9 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
+import { RotateCw } from 'lucide-react';
 import { SquarePen } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { CreateThreadForm } from './CreateThreadForm';
 import { Button } from './ui/button';
@@ -58,9 +60,40 @@ export function DataTable<TData, TValue>({
     },
   });
 
+  const router = useRouter();
+  const { toast } = useToast();
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const handleRefresh = async () => {
+    try {
+      setIsRefreshing(true);
+      router.refresh();
+      toast({
+        description: '記事一覧を更新しました',
+      });
+    } catch (error) {
+      toast({
+        variant: 'destructive',
+        title: 'エラー',
+        description: '更新中にエラーが発生しました',
+      });
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
+
   return (
     <div>
-      <div className="flex items-center justify-end gap-6">
+      <div className="flex justify-start gap-6">
+        <Button
+          onClick={handleRefresh}
+          disabled={isRefreshing}
+          className="max-md:hidden bg-gray-700 hover:bg-gray-800 font-semibold text-base"
+        >
+          <RotateCw className={isRefreshing ? 'animate-spin' : ''} />
+          {isRefreshing ? '更新中...' : '更新'}
+        </Button>
+
         {isVisibleCreateWithSearch && (
           <div>
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -88,7 +121,6 @@ export function DataTable<TData, TValue>({
           onChange={(event) =>
             table.getColumn('title')?.setFilterValue(event.target.value)
           }
-          className="max-w-lg"
         />
       </div>
       <div className="rounded-md border shadow mt-5">
