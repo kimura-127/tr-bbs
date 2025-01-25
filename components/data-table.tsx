@@ -78,7 +78,9 @@ export function DataTable<TData, TValue>({
         description: '更新中にエラーが発生しました',
       });
     } finally {
-      setIsRefreshing(false);
+      setTimeout(() => {
+        setIsRefreshing(false);
+      }, 100);
     }
   };
 
@@ -91,7 +93,7 @@ export function DataTable<TData, TValue>({
           className="max-md:hidden bg-gray-700 hover:bg-gray-800 font-semibold text-base"
         >
           <RotateCw className={isRefreshing ? 'animate-spin' : ''} />
-          {isRefreshing ? '更新中...' : '更新'}
+          更新
         </Button>
 
         {isVisibleCreateWithSearch && (
