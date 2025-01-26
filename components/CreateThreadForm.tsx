@@ -222,7 +222,7 @@ export function CreateThreadForm({
                 コメント
               </FormLabel>
               <FormControl>
-                <Textarea className="h-40 2xl:h-96" {...field} />
+                <Textarea className="h-56 2xl:h-96" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
