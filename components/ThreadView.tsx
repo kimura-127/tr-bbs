@@ -360,7 +360,7 @@ export function ThreadView({ thread, type }: ThreadViewProps) {
                   <FormControl>
                     <Textarea
                       placeholder="コメントを入力"
-                      className="mb-4"
+                      className="mb-4 h-32"
                       {...field}
                     />
                   </FormControl>
