@@ -4,21 +4,22 @@ import type { NotificationSettingWithArticle } from '@/types';
 import { createClient } from '@/utils/supabase/server';
 
 // サーバーアクション: 通知設定の取得
-export async function getNotificationSettings(
-  email: string
-): Promise<NotificationSettingWithArticle[]> {
+export async function getNotificationSettings(email: string) {
   const supabase = await createClient();
-
-  const { data: settings, error } = await supabase
+  const { data, error } = await supabase
     .from('notification_settings')
     .select(`
+      id,
       thread_id,
+      email,
+      type,
+      created_at,
+      updated_at,
       articles (
         id,
         title,
-        user_id,
+        content,
         created_at,
-        updated_at,
         replies_count
       )
     `)
@@ -26,35 +27,26 @@ export async function getNotificationSettings(
     .eq('type', 'email');
 
   if (error) {
-    console.error('通知設定の取得エラー:', error);
-    throw new Error('通知設定の取得に失敗しました');
+    throw error;
   }
 
-  if (!settings) {
-    return [];
-  }
-
-  return settings;
+  return data as unknown as NotificationSettingWithArticle[];
 }
 
 // サーバーアクション: 通知設定の削除
 export async function deleteNotificationSetting(
   articleId: string,
   email: string
-): Promise<void> {
+) {
   const supabase = await createClient();
-
   const { error } = await supabase
     .from('notification_settings')
     .delete()
-    .match({
-      thread_id: articleId,
-      email: email,
-      type: 'email',
-    });
+    .eq('thread_id', articleId)
+    .eq('email', email)
+    .eq('type', 'email');
 
   if (error) {
-    console.error('通知設定の削除エラー:', error);
-    throw new Error('通知設定の削除に失敗しました');
+    throw error;
   }
 }
