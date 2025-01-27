@@ -81,7 +81,6 @@ export async function createComment(
 ) {
   const supabase = await createClient();
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL;
-  console.log('コメント作成開始:', { threadId, content: formData.content });
 
   try {
     // 1. 現在の記事データを取得

@@ -143,8 +143,8 @@ export function PushNotificationList() {
 
   return (
     <div>
-      <div className="mt-2 space-y-2">
-        <p className="text-sm text-muted-foreground">
+      <div className="my-4 space-y-2">
+        <p className="text-sm">
           プッシュ通知の設定は各スレッドの詳細画面から行えます。
           設定済みの通知は下の一覧から確認・解除できます。
         </p>

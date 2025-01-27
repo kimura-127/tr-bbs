@@ -155,7 +155,7 @@ export function DataTable<TData, TValue>({
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => {
                 const tableCells = row.getVisibleCells();
-
+                console.log(tableCells);
                 return (
                   <TableRow
                     key={row.id}
@@ -177,16 +177,35 @@ export function DataTable<TData, TValue>({
                           )}
                           {index === 0 && (
                             <div className="md:hidden text-xs text-muted-foreground py-1 px-4 bg-gray-50">
-                              <div className="flex gap-2">
-                                <span>
-                                  {tableCells[1].getValue() as string}
-                                </span>
-                                <span>•</span>
-                                <span>
-                                  {tableCells[2].getValue() as string}件
-                                </span>
+                              <div className="flex justify-between items-center">
+                                <div>
+                                  <div className="flex gap-2">
+                                    <span>
+                                      {tableCells[1].getValue()?.toString()}
+                                    </span>
+                                    <span>•</span>
+                                    <span>
+                                      {tableCells[2].getValue()?.toString() ??
+                                        '0'}
+                                      件
+                                    </span>
+                                  </div>
+                                  <div>
+                                    {tableCells[3].getValue()?.toString()}
+                                  </div>
+                                </div>
+                                {tableCells[4] && (
+                                  <div className="py-1">
+                                    {flexRender(
+                                      tableCells[tableCells.length - 1].column
+                                        .columnDef.cell,
+                                      tableCells[
+                                        tableCells.length - 1
+                                      ].getContext()
+                                    )}
+                                  </div>
+                                )}
                               </div>
-                              <div>{tableCells[3].getValue() as string}</div>
                             </div>
                           )}
                         </div>
