@@ -33,10 +33,11 @@ export async function POST(request: Request) {
       process.env.VAPID_PRIVATE_KEY || ''
     );
 
-    // 有効な購読情報を取得
+    // 有効な購読情報を取得（特定のスレッドの購読者のみ）
     const { data: subscriptions, error: fetchError } = await supabase
       .from('push_subscriptions')
       .select('*')
+      .eq('thread_id', threadId) // 特定のスレッドの購読者のみを取得
       .gt('expires_at', new Date().toISOString());
 
     if (fetchError) {
