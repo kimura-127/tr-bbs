@@ -14,8 +14,14 @@
 https://cl-bbs.com
 
 ## デモ動画
-### YouTube
-[![チョコットランド総合掲示板](http://img.youtube.com/vi/KviR4u3XIXI/0.jpg)](https://www.youtube.com/watch?v=KviR4u3XIXI)
+### トップページ(取引掲示板)
+[![チョコットランド総合掲示板](http://img.youtube.com/vi/bj8xkguYpsc/0.jpg)](https://www.youtube.com/watch?v=bj8xkguYpsc)
+
+### 雑談掲示板
+[![チョコットランド総合掲示板](http://img.youtube.com/vi/ciOOn1OFhns/0.jpg)](https://www.youtube.com/watch?v=ciOOn1OFhns)
+
+### 通知設定画面
+[![チョコットランド総合掲示板](http://img.youtube.com/vi/VHsrfeMyla0/0.jpg)](https://www.youtube.com/watch?v=VHsrfeMyla0)
 
 ### スクリーンショット
 #### トップページ
@@ -26,7 +32,7 @@ https://cl-bbs.com
 
 #### スマートフォン表示
 <div align="center">
-  <img src="screenshots/mobile.png" width="300" alt="スマートフォン表示" />
+  <img src="/public/images/mobile.png" width="300" alt="スマートフォン表示" />
 </div>
 
 ## 概要
@@ -54,6 +60,9 @@ https://cl-bbs.com
 - Supabase
   - データベース
   - ストレージ
+- Next.js 15（App Router）
+  - Server Actions
+  - API Routes
 
 ### インフラ
 - Vercel（ホスティング）
