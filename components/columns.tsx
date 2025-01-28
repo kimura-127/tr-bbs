@@ -102,6 +102,13 @@ export const avatarColumns: ColumnDef<Payment>[] = [
     },
   },
   {
+    accessorKey: 'content',
+    header: () => null,
+    cell: () => {
+      return null;
+    },
+  },
+  {
     accessorKey: 'name',
     header: '投稿者',
   },
@@ -144,6 +151,13 @@ export const freeTalkColumns: ColumnDef<Payment>[] = [
           </Accordion>
         </div>
       );
+    },
+  },
+  {
+    accessorKey: 'content',
+    header: () => null,
+    cell: () => {
+      return null;
     },
   },
   {
