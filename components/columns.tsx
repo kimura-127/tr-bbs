@@ -6,7 +6,7 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { useReadThreads } from '@/hooks/useReadThreads';
-import type { ColumnDef, FilterFn, RowData } from '@tanstack/react-table';
+import type { ColumnDef } from '@tanstack/react-table';
 import Link from 'next/link';
 
 export type Payment = {
