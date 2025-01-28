@@ -102,7 +102,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <div>
-      <div className="flex justify-between">
+      <div className="flex items-center justify-between gap-6">
         <div className="flex justify-start gap-6">
           <Button
             onClick={handleRefresh}
@@ -117,8 +117,8 @@ export function DataTable<TData, TValue>({
             <div>
               <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogTrigger asChild>
-                  <Button className="h- bg-gray-700 hover:bg-gray-700 hover:text-gray-300 font-semibold gap-2 text-base tracking-wide">
-                    <SquarePen />
+                  <Button className="h- bg-gray-700 hover:bg-gray-700 hover:text-gray-300 font-semibold gap-2 text-base tracking-wide max-md:text-xs">
+                    <SquarePen className="max-sm:hidden" />
                     新規作成
                   </Button>
                 </DialogTrigger>
@@ -135,9 +135,9 @@ export function DataTable<TData, TValue>({
             </div>
           )}
         </div>
-        <div className="">
+        <div>
           <PlaceholdersAndVanishInput
-            placeholders={['装備・アイテムを検索']}
+            placeholders={['装備を検索', 'アイテムを検索']}
             value={(table.getColumn('title')?.getFilterValue() as string) ?? ''}
             onChange={(event) => {
               const searchValue = event.target.value;
@@ -176,7 +176,7 @@ export function DataTable<TData, TValue>({
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => {
                 const tableCells = row.getVisibleCells();
-                console.log(tableCells);
+
                 return (
                   <TableRow
                     key={row.id}
