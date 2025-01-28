@@ -36,7 +36,7 @@ export function ThreadHeader({ title }: { title: string }) {
     <div>
       <div className="flex gap-1 bg-gray-700 rounded-lg px-8 h-12 items-center justify-between">
         <HyperText
-          className="text-lg font-bold text-white tracking-widest leading-9 dark:text-gray-700"
+          className="text-lg font-bold text-white tracking-widest leading-9"
           text={title}
         />
         <Button

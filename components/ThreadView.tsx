@@ -32,6 +32,7 @@ import { createClient } from '@/utils/supabase/client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FileCheck2, RotateCw } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -243,15 +244,23 @@ export function ThreadView({ thread, type }: ThreadViewProps) {
           <Breadcrumb className="my-2 ml-4">
             <BreadcrumbList>
               <BreadcrumbItem>
-                <BreadcrumbLink
-                  className="cursor-pointer"
-                  onClick={() => router.back()}
-                >
-                  {type === 'free-talk'
-                    ? '雑談掲示板'
-                    : type === 'avatar'
-                      ? 'アバター掲示板'
-                      : '取引掲示板'}
+                <BreadcrumbLink asChild>
+                  <Link
+                    prefetch={true}
+                    href={
+                      type === 'free-talk'
+                        ? '/free-talk'
+                        : type === 'avatar'
+                          ? '/avatar'
+                          : '/'
+                    }
+                  >
+                    {type === 'free-talk'
+                      ? '雑談掲示板'
+                      : type === 'avatar'
+                        ? 'アバター掲示板'
+                        : '取引掲示板'}
+                  </Link>
                 </BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
