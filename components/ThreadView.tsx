@@ -33,12 +33,13 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { FileCheck2, RotateCw } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
 import { ImageUpload } from './image-upload';
 import { Button } from './ui/button';
+import { InteractiveHoverButton } from './ui/interactive-button';
 import { Textarea } from './ui/textarea';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
@@ -83,6 +84,7 @@ export function ThreadView({ thread, type }: ThreadViewProps) {
   const [isBumping, setIsBumping] = useState(false);
   const [bumpSuccess, setBumpSuccess] = useState(false);
   const [resetImages, setResetImages] = useState(false);
+  const commentFormRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const { toast } = useToast();
   const form = useForm<z.infer<typeof formSchema>>({
@@ -228,7 +230,7 @@ export function ThreadView({ thread, type }: ThreadViewProps) {
     // NOTE: スレッドビュー
     <div className="container mx-auto py-1.5">
       <div className="mb-4">
-        <div className="bg-gray-700 text-base px-4 h-12 flex items-center rounded-lg mb-2">
+        <div className="bg-gray-700 text-base px-4 h-12 flex items-center rounded-lg">
           <h1
             className={`max-md:text-sm ${
               thread.title.length > 30 ? 'text-sm' : 'text-xl'
@@ -237,32 +239,61 @@ export function ThreadView({ thread, type }: ThreadViewProps) {
             {thread.title}
           </h1>
         </div>
-        <Breadcrumb className="mb-4 ml-2">
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink
-                className="cursor-pointer"
-                onClick={() => router.back()}
-              >
-                {type === 'free-talk'
-                  ? '雑談掲示板'
-                  : type === 'avatar'
-                    ? 'アバター掲示板'
-                    : '取引掲示板'}
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbLink className="cursor-pointer">
-                {thread.title}
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
+        <div className="flex max-md:flex-col justify-between items-start">
+          <Breadcrumb className="my-2 ml-4">
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink
+                  className="cursor-pointer"
+                  onClick={() => router.back()}
+                >
+                  {type === 'free-talk'
+                    ? '雑談掲示板'
+                    : type === 'avatar'
+                      ? 'アバター掲示板'
+                      : '取引掲示板'}
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbLink className="cursor-pointer">
+                  {thread.title}
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+          <InteractiveHoverButton
+            className="w-44 text-sm my-2 max-md:hidden text-gray-700"
+            text="ページ下部へ"
+            arrow="down"
+            onClick={() => {
+              commentFormRef.current?.scrollIntoView({
+                behavior: 'smooth',
+                block: 'end',
+              });
+            }}
+          />
+        </div>
         <div className="rounded-lg border p-4 shadow">
-          <p className="text-gray-500">日時: {thread.createdAt}</p>
-          <p className="text-gray-500 mb-4">投稿者: 名無し</p>
-          <div className="whitespace-pre-wrap leading-6 tracing-wide">
+          <div className="flex justify-between">
+            <div>
+              <p className="text-gray-500">日時: {thread.createdAt}</p>
+              <p className="text-gray-500 mb-4">投稿者: 名無し</p>
+            </div>
+            <Button
+              onClick={() => {
+                commentFormRef.current?.scrollIntoView({
+                  behavior: 'smooth',
+                  block: 'end',
+                });
+              }}
+              variant="outline"
+              className="md:hidden text-xs text-gray-500"
+            >
+              下へ
+            </Button>
+          </div>
+          <div className="whitespace-pre-wrap leading-8 tracking-wider max-md:leading-6 max-md:text-sm">
             {thread.content}
           </div>
           <ImageGallery urls={thread.image_urls} />
@@ -338,7 +369,7 @@ export function ThreadView({ thread, type }: ThreadViewProps) {
               <div key={reply.id} className="rounded-lg border p-4 shadow">
                 <p className="text-gray-500">日時: {reply.createdAt}</p>
                 <p className="text-gray-500 mb-2">投稿者: 名無し</p>
-                <div className="whitespace-pre-wrap leading-6 tracking-wide">
+                <div className="whitespace-pre-wrap leading-8 tracking-wider max-md:leading-6 max-md:text-sm">
                   {reply.content}
                 </div>
                 <ImageGallery urls={reply.image_urls} />
@@ -349,7 +380,35 @@ export function ThreadView({ thread, type }: ThreadViewProps) {
       )}
 
       {/* NOTE: コメント投稿フォーム */}
-      <div className="border rounded-lg p-4 shadow tracking-wide leading-7 mb-40">
+      <div
+        ref={commentFormRef}
+        className="border rounded-lg p-4 pt-2 shadow tracking-wide leading-7 mb-40"
+      >
+        <div className="flex justify-end">
+          <InteractiveHoverButton
+            className="w-44 text-sm mb-2 max-md:hidden text-gray-700"
+            text="ページ上部へ"
+            arrow="up"
+            onClick={() => {
+              window.scrollTo({
+                top: 0,
+                behavior: 'smooth',
+              });
+            }}
+          />
+          <Button
+            variant="outline"
+            className="md:hidden text-xs mb-2 text-gray-500"
+            onClick={() => {
+              window.scrollTo({
+                top: 0,
+                behavior: 'smooth',
+              });
+            }}
+          >
+            上へ
+          </Button>
+        </div>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
@@ -360,7 +419,7 @@ export function ThreadView({ thread, type }: ThreadViewProps) {
                   <FormControl>
                     <Textarea
                       placeholder="コメントを入力"
-                      className="mb-4 h-32"
+                      className="mb-4 h-32 leading-8 tracking-wider max-md:leading-6 max-md:text-sm"
                       {...field}
                     />
                   </FormControl>
