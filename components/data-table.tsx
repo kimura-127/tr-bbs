@@ -12,6 +12,7 @@ import { useToast } from '@/hooks/use-toast';
 import {
   type ColumnDef,
   type ColumnFiltersState,
+  type FilterFn,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
@@ -33,11 +34,18 @@ import {
   DialogTrigger,
 } from './ui/dialog';
 import { Input } from './ui/input';
+import { PlaceholdersAndVanishInput } from './ui/placeholder-and-vinish-input';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   isVisibleCreateWithSearch: boolean;
+}
+
+declare module '@tanstack/react-table' {
+  interface FilterFns {
+    customFilter: FilterFn<'customFilter'>;
+  }
 }
 
 export function DataTable<TData, TValue>({
@@ -55,6 +63,14 @@ export function DataTable<TData, TValue>({
     getPaginationRowModel: getPaginationRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
+    filterFns: {
+      customFilter: (row, columnId, filterValue) => {
+        const title = row.original.title?.toLowerCase() || '';
+        const content = row.original.content?.toLowerCase() || '';
+        const searchValue = filterValue.toLowerCase();
+        return title.includes(searchValue) || content.includes(searchValue);
+      },
+    },
     state: {
       columnFilters,
     },
@@ -86,44 +102,49 @@ export function DataTable<TData, TValue>({
 
   return (
     <div>
-      <div className="flex justify-start gap-6">
-        <Button
-          onClick={handleRefresh}
-          disabled={isRefreshing}
-          className="max-md:hidden bg-gray-700 hover:bg-gray-800 font-semibold text-base"
-        >
-          <RotateCw className={isRefreshing ? 'animate-spin' : ''} />
-          更新
-        </Button>
+      <div className="flex justify-between">
+        <div className="flex justify-start gap-6">
+          <Button
+            onClick={handleRefresh}
+            disabled={isRefreshing}
+            className="max-md:hidden bg-gray-700 hover:bg-gray-800 font-semibold text-base"
+          >
+            <RotateCw className={isRefreshing ? 'animate-spin' : ''} />
+            更新
+          </Button>
 
-        {isVisibleCreateWithSearch && (
-          <div>
-            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-              <DialogTrigger asChild>
-                <Button className="h- bg-gray-700 hover:bg-gray-700 hover:text-gray-300 font-semibold gap-2 text-base tracking-wide">
-                  <SquarePen />
-                  新規作成
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-4xl max-h-screen overflow-auto pb-32">
-                <DialogHeader>
-                  <DialogTitle>新規スレッド作成</DialogTitle>
-                  <DialogDescription className="py-2">
-                    タイトルとコメントを入力してください
-                  </DialogDescription>
-                </DialogHeader>
-                <CreateThreadForm setIsDialogOpen={setIsDialogOpen} />
-              </DialogContent>
-            </Dialog>
-          </div>
-        )}
-        <Input
-          placeholder={'装備・アイテムを検索'}
-          value={(table.getColumn('title')?.getFilterValue() as string) ?? ''}
-          onChange={(event) =>
-            table.getColumn('title')?.setFilterValue(event.target.value)
-          }
-        />
+          {isVisibleCreateWithSearch && (
+            <div>
+              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button className="h- bg-gray-700 hover:bg-gray-700 hover:text-gray-300 font-semibold gap-2 text-base tracking-wide">
+                    <SquarePen />
+                    新規作成
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-4xl max-h-screen overflow-auto pb-32">
+                  <DialogHeader>
+                    <DialogTitle>新規スレッド作成</DialogTitle>
+                    <DialogDescription className="py-2">
+                      タイトルとコメントを入力してください
+                    </DialogDescription>
+                  </DialogHeader>
+                  <CreateThreadForm setIsDialogOpen={setIsDialogOpen} />
+                </DialogContent>
+              </Dialog>
+            </div>
+          )}
+        </div>
+        <div className="">
+          <PlaceholdersAndVanishInput
+            placeholders={['装備・アイテムを検索']}
+            value={(table.getColumn('title')?.getFilterValue() as string) ?? ''}
+            onChange={(event) => {
+              const searchValue = event.target.value;
+              table.getColumn('title')?.setFilterValue(searchValue);
+            }}
+          />
+        </div>
       </div>
       <div className="rounded-md border shadow mt-5">
         <Table>

@@ -6,7 +6,7 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { useReadThreads } from '@/hooks/useReadThreads';
-import type { ColumnDef } from '@tanstack/react-table';
+import type { ColumnDef, FilterFn, RowData } from '@tanstack/react-table';
 import Link from 'next/link';
 
 export type Payment = {
@@ -22,6 +22,7 @@ export const columns: ColumnDef<Payment>[] = [
   {
     accessorKey: 'title',
     header: 'トピックス',
+    filterFn: 'customFilter',
     cell: ({ row }) => {
       const ReadThreads = useReadThreads();
       const isRead = ReadThreads.isRead(row.original.id);
@@ -67,6 +68,7 @@ export const avatarColumns: ColumnDef<Payment>[] = [
   {
     accessorKey: 'title',
     header: 'トピックス',
+    filterFn: 'customFilter',
     cell: ({ row }) => {
       const ReadThreads = useReadThreads();
       const isRead = ReadThreads.isRead(row.original.id);
@@ -112,6 +114,7 @@ export const freeTalkColumns: ColumnDef<Payment>[] = [
   {
     accessorKey: 'title',
     header: 'トピックス',
+    filterFn: 'customFilter',
     cell: ({ row }) => {
       const ReadThreads = useReadThreads();
       const isRead = ReadThreads.isRead(row.original.id);
