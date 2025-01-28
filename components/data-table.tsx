@@ -93,7 +93,7 @@ export function DataTable<TData, TValue>({
       }, 100);
     }
   };
-  console.log(data);
+
   return (
     <div>
       <div className="flex items-center justify-between gap-6">
@@ -195,20 +195,20 @@ export function DataTable<TData, TValue>({
                                 <div>
                                   <div className="flex gap-2">
                                     <span>
-                                      {tableCells[1].getValue()?.toString()}
+                                      {tableCells[2].getValue()?.toString()}
                                     </span>
                                     <span>•</span>
                                     <span>
-                                      {tableCells[2].getValue()?.toString() ??
+                                      {tableCells[3].getValue()?.toString() ??
                                         '0'}
                                       件
                                     </span>
                                   </div>
                                   <div>
-                                    {tableCells[3].getValue()?.toString()}
+                                    {tableCells[4].getValue()?.toString()}
                                   </div>
                                 </div>
-                                {tableCells[4] && (
+                                {tableCells[5] && (
                                   <div className="py-1">
                                     {flexRender(
                                       tableCells[tableCells.length - 1].column
