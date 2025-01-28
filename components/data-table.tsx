@@ -42,12 +42,6 @@ interface DataTableProps<TData, TValue> {
   isVisibleCreateWithSearch: boolean;
 }
 
-declare module '@tanstack/react-table' {
-  interface FilterFns {
-    customFilter: FilterFn<'customFilter'>;
-  }
-}
-
 export function DataTable<TData, TValue>({
   columns,
   data,
@@ -55,24 +49,24 @@ export function DataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [globalFilter, setGlobalFilter] = useState('');
 
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    onColumnFiltersChange: setColumnFilters,
+    onGlobalFilterChange: setGlobalFilter,
     getFilteredRowModel: getFilteredRowModel(),
-    filterFns: {
-      customFilter: (row, columnId, filterValue) => {
-        const title = row.original.title?.toLowerCase() || '';
-        const content = row.original.content?.toLowerCase() || '';
-        const searchValue = filterValue.toLowerCase();
-        return title.includes(searchValue) || content.includes(searchValue);
-      },
+    globalFilterFn: (row, columnId, filterValue) => {
+      const title = String(row.getValue('title')).toLowerCase();
+      const content = String(row.getValue('content')).toLowerCase();
+      const searchValue = String(filterValue).toLowerCase();
+      return title.includes(searchValue) || content.includes(searchValue);
     },
     state: {
       columnFilters,
+      globalFilter,
     },
   });
 
@@ -99,7 +93,7 @@ export function DataTable<TData, TValue>({
       }, 100);
     }
   };
-
+  console.log(data);
   return (
     <div>
       <div className="flex items-center justify-between gap-6">
@@ -138,10 +132,9 @@ export function DataTable<TData, TValue>({
         <div>
           <PlaceholdersAndVanishInput
             placeholders={['装備を検索', 'アイテムを検索']}
-            value={(table.getColumn('title')?.getFilterValue() as string) ?? ''}
+            value={globalFilter}
             onChange={(event) => {
-              const searchValue = event.target.value;
-              table.getColumn('title')?.setFilterValue(searchValue);
+              setGlobalFilter(event.target.value);
             }}
           />
         </div>
