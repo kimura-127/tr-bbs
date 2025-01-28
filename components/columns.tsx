@@ -22,7 +22,6 @@ export const columns: ColumnDef<Payment>[] = [
   {
     accessorKey: 'title',
     header: 'トピックス',
-    filterFn: 'customFilter',
     cell: ({ row }) => {
       const ReadThreads = useReadThreads();
       const isRead = ReadThreads.isRead(row.original.id);
@@ -51,6 +50,13 @@ export const columns: ColumnDef<Payment>[] = [
     },
   },
   {
+    accessorKey: 'content',
+    header: () => null,
+    cell: () => {
+      return null;
+    },
+  },
+  {
     accessorKey: 'name',
     header: '投稿者',
   },
@@ -68,7 +74,6 @@ export const avatarColumns: ColumnDef<Payment>[] = [
   {
     accessorKey: 'title',
     header: 'トピックス',
-    filterFn: 'customFilter',
     cell: ({ row }) => {
       const ReadThreads = useReadThreads();
       const isRead = ReadThreads.isRead(row.original.id);
@@ -114,7 +119,6 @@ export const freeTalkColumns: ColumnDef<Payment>[] = [
   {
     accessorKey: 'title',
     header: 'トピックス',
-    filterFn: 'customFilter',
     cell: ({ row }) => {
       const ReadThreads = useReadThreads();
       const isRead = ReadThreads.isRead(row.original.id);
