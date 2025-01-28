@@ -167,12 +167,6 @@ export function PlaceholdersAndVanishInput({
     animateFrame(start);
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && !animating) {
-      vanishAndSubmit();
-    }
-  };
-
   const vanishAndSubmit = () => {
     setAnimating(true);
     draw();
@@ -214,12 +208,11 @@ export function PlaceholdersAndVanishInput({
             onChange?.(e);
           }
         }}
-        onKeyDown={handleKeyDown}
         ref={inputRef}
         value={value}
         type="text"
         className={cn(
-          'w-full relative text-sm sm:text-base z-50 border-none  bg-transparent text-black h-full rounded-full focus:outline-none focus:ring-0 pl-4 sm:pl-10 pr-20',
+          'w-full relative text-sm sm:text-base z-10 border-none  cursor-pointer  bg-transparent text-black h-full rounded-full focus:outline-none focus:ring-0 pl-4 sm:pl-10 pr-20',
           animating && 'text-transparent '
         )}
       />
@@ -227,7 +220,7 @@ export function PlaceholdersAndVanishInput({
       <button
         disabled={!value}
         type="submit"
-        className="absolute right-2 top-1/2 z-50 -translate-y-1/2 h-8 w-8 rounded-full disabled:bg-gray-100 bg-black transition duration-200 flex items-center justify-center"
+        className="absolute right-2 top-1/2 z-20 -translate-y-1/2 h-8 w-8 rounded-full disabled:bg-gray-100 bg-black transition duration-200 flex items-center justify-center"
       >
         <Trash2 className="text-gray-300 h-4 w-4" />
       </button>
