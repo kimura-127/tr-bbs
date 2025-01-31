@@ -19,7 +19,7 @@ export default async function AvatarThreadPage({
 
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <ThreadView thread={thread} type="avatar" />
+      <ThreadView thread={thread} threadType="avatar" />
     </Suspense>
   );
 }

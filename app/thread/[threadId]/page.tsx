@@ -19,7 +19,7 @@ export default async function ThreadPage({
 
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <ThreadView thread={thread} type="trade" />
+      <ThreadView thread={thread} threadType="trade" />
     </Suspense>
   );
 }

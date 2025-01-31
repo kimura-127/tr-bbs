@@ -18,7 +18,11 @@ export default function FreeTalkPage() {
     <main className="container mx-auto py-4">
       <ThreadHeader title="雑談掲示板" />
       <Suspense fallback={<DataTableSkeleton />}>
-        <ThreadList columns={freeTalkColumns} getThreads={getFreeTalkThreads} />
+        <ThreadList
+          threadType="free-talk"
+          columns={freeTalkColumns}
+          getThreads={getFreeTalkThreads}
+        />
       </Suspense>
     </main>
   );

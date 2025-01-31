@@ -35,3 +35,5 @@ export type PushSubscriptionWithArticle = {
   p256dh: string;
   articles: FormattedArticle;
 };
+
+export type ThreadType = 'free-talk' | 'avatar' | 'trade';

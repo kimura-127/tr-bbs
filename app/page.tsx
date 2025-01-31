@@ -18,7 +18,11 @@ export default function Home() {
     <main className="container mx-auto py-4">
       <ThreadHeader title="取引掲示板" />
       <Suspense fallback={<DataTableSkeleton />}>
-        <ThreadList columns={columns} getThreads={getTradingThreads} />
+        <ThreadList
+          threadType="trade"
+          columns={columns}
+          getThreads={getTradingThreads}
+        />
       </Suspense>
     </main>
   );

@@ -18,7 +18,11 @@ export default function AvatarPage() {
     <main className="container mx-auto py-4">
       <ThreadHeader title="アバター掲示板" />
       <Suspense fallback={<DataTableSkeleton />}>
-        <ThreadList columns={avatarColumns} getThreads={getAvatarThreads} />
+        <ThreadList
+          threadType="avatar"
+          columns={avatarColumns}
+          getThreads={getAvatarThreads}
+        />
       </Suspense>
     </main>
   );

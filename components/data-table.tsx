@@ -12,7 +12,6 @@ import { useToast } from '@/hooks/use-toast';
 import {
   type ColumnDef,
   type ColumnFiltersState,
-  type FilterFn,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
@@ -34,12 +33,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from './ui/dialog';
-import { Input } from './ui/input';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   isVisibleCreateWithSearch: boolean;
+  threadType: 'free-talk' | 'avatar' | 'trade';
 }
 
 // ダイナミックインポートの設定
@@ -57,6 +56,7 @@ export function DataTable<TData, TValue>({
   columns,
   data,
   isVisibleCreateWithSearch,
+  threadType,
 }: DataTableProps<TData, TValue>) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -133,7 +133,10 @@ export function DataTable<TData, TValue>({
                       タイトルとコメントを入力してください
                     </DialogDescription>
                   </DialogHeader>
-                  <CreateThreadForm setIsDialogOpen={setIsDialogOpen} />
+                  <CreateThreadForm
+                    threadType={threadType}
+                    setIsDialogOpen={setIsDialogOpen}
+                  />
                 </DialogContent>
               </Dialog>
             </div>

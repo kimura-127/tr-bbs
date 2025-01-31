@@ -235,11 +235,15 @@ export function NotificationSettingsDialog({
                           ブラウザとデバイスの通知設定を有効にする必要があります。
                         </p>
                         <p className="text-sm text-muted-foreground">
-                          ・ブラウザは「設定」→「プライバシーとセキュリティ」→「サイトの設定」
+                          ・ブラウザ
+                          <br />
+                          ブラウザの「設定」→「プライバシーとセキュリティ」→「サイトの設定」
                           の中で通知の設定を有効にできます。
                         </p>
                         <p className="text-sm text-muted-foreground">
-                          ・デバイスは「設定」→「通知」の中でお使いのブラウザからの通知を有効にしてください。
+                          ・デバイス
+                          <br />
+                          端末の「設定」→「通知」の中でお使いのブラウザからの通知を有効にしてください。
                         </p>
                         <p className="text-sm text-muted-foreground">
                           ・通知をオフにしてしまった場合も「設定」→「プライバシーとセキュリティ」→「サイトの設定」
@@ -262,7 +266,7 @@ export function NotificationSettingsDialog({
                           ・特に通知の設定は必要ありません。
                         </p>
                         <p className="text-sm text-muted-foreground">
-                          ・通知をオフにしてしまった場合は「設定」→「アプリ」→「掲示板」
+                          ・通知をオフにしてしまった場合は、端末の「設定」→「アプリ」→「掲示板」
                           の中で通知の設定を有効にできます。
                         </p>
                       </div>
