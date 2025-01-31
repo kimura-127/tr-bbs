@@ -5,7 +5,7 @@ import { Input } from './input';
 const AnimateInput = React.forwardRef<
   HTMLInputElement,
   React.ComponentProps<'input'>
->(({ placeholder, className }) => {
+>(({ placeholder, className }, ref) => {
   const id = useId();
   return (
     <div className="group relative min-w-[300px]">
@@ -15,7 +15,7 @@ const AnimateInput = React.forwardRef<
       >
         <span className="inline-flex bg-background px-2">{placeholder}</span>
       </label>
-      <Input id={id} placeholder="" className={className} />
+      <Input ref={ref} id={id} placeholder="" className={className} />
     </div>
   );
 });
