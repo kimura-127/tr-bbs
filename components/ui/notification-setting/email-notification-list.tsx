@@ -126,6 +126,7 @@ export function EmailNotificationList({
           />
         </div>
         <DataTable
+          threadType="trade"
           columns={[
             ...columns,
             {
