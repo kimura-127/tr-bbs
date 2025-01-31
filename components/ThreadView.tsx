@@ -40,6 +40,7 @@ import { useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
 import { ImageUpload } from './image-upload';
+import { AnimateTextarea } from './ui/animate-text-area';
 import { Button } from './ui/button';
 import { InteractiveHoverButton } from './ui/interactive-button';
 import { Textarea } from './ui/textarea';
@@ -421,22 +422,30 @@ export function ThreadView({ thread, threadType }: ThreadViewProps) {
         </div>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="content"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Textarea
-                      placeholder="コメントを入力"
-                      className="mb-4 h-32 leading-8 tracking-wider max-md:leading-6 max-md:text-sm"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="relative">
+              <FormField
+                control={form.control}
+                name="content"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <AnimateTextarea
+                        placeholder="コメントを入力"
+                        className="mb-4 h-40 md:h-32 leading-8 tracking-wider max-md:leading-6 max-md:text-sm"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <InteractiveHoverButton
+                type="submit"
+                disabled={isLoading}
+                className="absolute max-md:hidden bottom-2 right-2 h-10 w-28 bg-transparent hover:bg-gray-800 font-semibold gap-2 text-base tracking-wide transition-colors"
+                text={isLoading ? '送信中...' : '返信'}
+              />
+            </div>
             <FormField
               control={form.control}
               name="images"
@@ -457,11 +466,11 @@ export function ThreadView({ thread, threadType }: ThreadViewProps) {
                 </FormItem>
               )}
             />
-            <div className="flex justify-center">
+            <div className="flex justify-center md:hidden py-6">
               <Button
                 type="submit"
                 disabled={isLoading}
-                className="h-12 w-80 bg-gray-700 hover:bg-gray-800 font-semibold gap-2 text-base tracking-wide"
+                className="h-16 w-80 bg-gray-700 hover:bg-gray-800 font-semibold gap-2 text-base tracking-wide"
               >
                 {isLoading ? '送信中...' : 'このスレッドに返信'}
               </Button>
