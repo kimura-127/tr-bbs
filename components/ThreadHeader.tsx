@@ -2,10 +2,18 @@
 
 import { useToast } from '@/hooks/use-toast';
 import { RotateCw } from 'lucide-react';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { Suspense } from 'react';
 import { Button } from './ui/button';
-import { HyperText } from './ui/hyper-text';
+
+const HyperText = dynamic(
+  () => import('./ui/hyper-text').then((mod) => mod.HyperText),
+  {
+    ssr: false,
+  }
+);
 
 export function ThreadHeader({ title }: { title: string }) {
   const router = useRouter();
@@ -35,10 +43,12 @@ export function ThreadHeader({ title }: { title: string }) {
   return (
     <div>
       <div className="flex gap-1 bg-gray-700 rounded-lg px-8 h-12 items-center justify-between">
-        <HyperText
-          className="text-lg font-bold text-white tracking-widest leading-9"
-          text={title}
-        />
+        <Suspense>
+          <HyperText
+            className="text-lg font-bold text-white tracking-widest leading-9"
+            text={title}
+          />
+        </Suspense>
         <Button
           onClick={handleRefresh}
           disabled={isRefreshing}
