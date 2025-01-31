@@ -1,11 +1,11 @@
-import { Textarea } from '@/components/ui/textarea';
 import React from 'react';
 import { useId } from 'react';
+import { Input } from './input';
 
-const AnimateTextarea = React.forwardRef<
-  HTMLTextAreaElement,
-  React.ComponentProps<'textarea'>
->(({ placeholder, className, ...props }) => {
+const AnimateInput = React.forwardRef<
+  HTMLInputElement,
+  React.ComponentProps<'input'>
+>(({ placeholder, className }) => {
   const id = useId();
   return (
     <div className="group relative min-w-[300px]">
@@ -15,11 +15,11 @@ const AnimateTextarea = React.forwardRef<
       >
         <span className="inline-flex bg-background px-2">{placeholder}</span>
       </label>
-      <Textarea id={id} placeholder="" className={className} {...props} />
+      <Input id={id} placeholder="" className={className} />
     </div>
   );
 });
 
-AnimateTextarea.displayName = 'AnimateTextarea';
+AnimateInput.displayName = 'AnimateInput';
 
-export { AnimateTextarea };
+export { AnimateInput };
