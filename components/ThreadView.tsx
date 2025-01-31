@@ -442,7 +442,11 @@ export function ThreadView({ thread, threadType }: ThreadViewProps) {
               <InteractiveHoverButton
                 type="submit"
                 disabled={isLoading}
-                className="absolute max-md:hidden bottom-2 right-2 h-10 w-28 bg-transparent hover:bg-gray-800 font-semibold gap-2 text-base tracking-wide transition-colors"
+                className={`absolute border-2 flex items-center justify-center max-md:hidden bottom-2 right-2 h-10 w-28 font-semibold gap-2 text-base tracking-wide transition-colors ${
+                  form.watch('content')
+                    ? 'bg-transparent'
+                    : 'bg-gray-700 hover:bg-gray-800 text-white'
+                }`}
                 text={isLoading ? '送信中...' : '返信'}
               />
             </div>
