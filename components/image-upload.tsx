@@ -59,7 +59,7 @@ export function ImageUpload({
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 max-md:px-10">
       {preview.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {preview.map((url, index) => (
@@ -98,7 +98,7 @@ export function ImageUpload({
         <div className="flex flex-col items-center justify-center gap-2">
           <ImagePlus className="h-8 w-8 text-gray-500" />
           <p className="text-sm text-gray-500">
-            ドラッグ＆ドロップ、またはクリックして画像をアップロード
+            クリックして画像をアップロード
           </p>
           <p className="text-xs text-gray-400">
             JPG, PNG形式 / 1枚5MB以内 / 最大4枚まで

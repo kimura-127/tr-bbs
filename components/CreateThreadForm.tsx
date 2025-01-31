@@ -19,6 +19,7 @@ import { Input } from '@/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
+import type { ThreadType } from '@/types';
 import { createClient } from '@/utils/supabase/client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
@@ -69,8 +70,10 @@ interface ThreadResult {
 }
 
 export function CreateThreadForm({
+  threadType,
   setIsDialogOpen,
 }: {
+  threadType: ThreadType;
   setIsDialogOpen: (open: boolean) => void;
 }) {
   const router = useRouter();
@@ -260,15 +263,12 @@ export function CreateThreadForm({
               <FormControl>
                 <RadioGroup
                   onValueChange={field.onChange}
-                  defaultValue={field.value}
+                  defaultValue={threadType}
                   className="flex flex-col max-md:gap-4"
                 >
                   <FormItem className="flex items-center space-x-3 space-y-0 relative">
                     <FormControl>
-                      <RadioGroupItem
-                        value="trading"
-                        className="text-blue-700"
-                      />
+                      <RadioGroupItem value="trade" className="text-blue-700" />
                     </FormControl>
                     <FormLabel className="tracking-lg leading-6 border-2 w-60 flex justify-center py-2 rounded-md cursor-pointer hover:bg-gray-50">
                       取引掲示板
@@ -277,7 +277,7 @@ export function CreateThreadForm({
                   <FormItem className="flex items-center space-x-3 space-y-0 relative">
                     <FormControl>
                       <RadioGroupItem
-                        value="freeTalk"
+                        value="free-talk"
                         className="text-blue-700"
                       />
                     </FormControl>

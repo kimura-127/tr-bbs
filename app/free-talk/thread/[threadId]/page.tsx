@@ -19,7 +19,7 @@ export default async function FreeTalkThreadPage({
 
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <ThreadView thread={thread} type="free-talk" />
+      <ThreadView thread={thread} threadType="free-talk" />
     </Suspense>
   );
 }

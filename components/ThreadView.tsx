@@ -28,6 +28,7 @@ import {
 } from '@/components/ui/form';
 
 import { useToast } from '@/hooks/use-toast';
+import type { ThreadType } from '@/types';
 import { createClient } from '@/utils/supabase/client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FileCheck2, RotateCw } from 'lucide-react';
@@ -39,6 +40,7 @@ import { useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
 import { ImageUpload } from './image-upload';
+import { AnimateTextarea } from './ui/animate-text-area';
 import { Button } from './ui/button';
 import { InteractiveHoverButton } from './ui/interactive-button';
 import { Textarea } from './ui/textarea';
@@ -77,10 +79,10 @@ const formSchema = z.object({
 
 interface ThreadViewProps {
   thread: Thread;
-  type: 'free-talk' | 'avatar' | 'trade';
+  threadType: ThreadType;
 }
 
-export function ThreadView({ thread, type }: ThreadViewProps) {
+export function ThreadView({ thread, threadType }: ThreadViewProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [isBumping, setIsBumping] = useState(false);
   const [bumpSuccess, setBumpSuccess] = useState(false);
@@ -169,7 +171,7 @@ export function ThreadView({ thread, type }: ThreadViewProps) {
         imageUrls = uploadResult.imageUrls || [];
       }
 
-      const createCommentFunction = getCreateCommentFunction(type);
+      const createCommentFunction = getCreateCommentFunction(threadType);
       const result = await createCommentFunction(thread.id, {
         content: values.content,
         imageUrls,
@@ -248,16 +250,16 @@ export function ThreadView({ thread, type }: ThreadViewProps) {
                   <Link
                     prefetch={true}
                     href={
-                      type === 'free-talk'
+                      threadType === 'free-talk'
                         ? '/free-talk'
-                        : type === 'avatar'
+                        : threadType === 'avatar'
                           ? '/avatar'
                           : '/'
                     }
                   >
-                    {type === 'free-talk'
+                    {threadType === 'free-talk'
                       ? '雑談掲示板'
-                      : type === 'avatar'
+                      : threadType === 'avatar'
                         ? 'アバター掲示板'
                         : '取引掲示板'}
                   </Link>
@@ -315,7 +317,7 @@ export function ThreadView({ thread, type }: ThreadViewProps) {
             setIsBumping(true);
             setBumpSuccess(false);
             try {
-              const bumpThreadFunction = getBumpThreadFunction(type);
+              const bumpThreadFunction = getBumpThreadFunction(threadType);
               const result = await bumpThreadFunction(thread.id);
               if (result.error) {
                 toast({
@@ -357,7 +359,7 @@ export function ThreadView({ thread, type }: ThreadViewProps) {
             </div>
           )}
         </Button>
-        {type === 'trade' && (
+        {threadType === 'trade' && (
           <NotificationSettingsDialog threadId={thread.id} />
         )}
       </div>
@@ -420,22 +422,30 @@ export function ThreadView({ thread, type }: ThreadViewProps) {
         </div>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="content"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Textarea
-                      placeholder="コメントを入力"
-                      className="mb-4 h-32 leading-8 tracking-wider max-md:leading-6 max-md:text-sm"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="relative">
+              <FormField
+                control={form.control}
+                name="content"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <AnimateTextarea
+                        placeholder="コメントを入力"
+                        className="mb-4 h-40 md:h-32 leading-8 tracking-wider max-md:leading-6 max-md:text-sm"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <InteractiveHoverButton
+                type="submit"
+                disabled={isLoading}
+                className="absolute max-md:hidden bottom-2 right-2 h-10 w-28 bg-transparent hover:bg-gray-800 font-semibold gap-2 text-base tracking-wide transition-colors"
+                text={isLoading ? '送信中...' : '返信'}
+              />
+            </div>
             <FormField
               control={form.control}
               name="images"
@@ -456,11 +466,11 @@ export function ThreadView({ thread, type }: ThreadViewProps) {
                 </FormItem>
               )}
             />
-            <div className="flex justify-center">
+            <div className="flex justify-center md:hidden py-6">
               <Button
                 type="submit"
                 disabled={isLoading}
-                className="h-12 w-80 bg-gray-700 hover:bg-gray-800 font-semibold gap-2 text-base tracking-wide"
+                className="h-16 w-80 bg-gray-700 hover:bg-gray-800 font-semibold gap-2 text-base tracking-wide"
               >
                 {isLoading ? '送信中...' : 'このスレッドに返信'}
               </Button>
