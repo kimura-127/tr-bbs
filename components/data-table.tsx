@@ -21,6 +21,7 @@ import {
 } from '@tanstack/react-table';
 import { RotateCw } from 'lucide-react';
 import { SquarePen } from 'lucide-react';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { CreateThreadForm } from './CreateThreadForm';
@@ -34,13 +35,23 @@ import {
   DialogTrigger,
 } from './ui/dialog';
 import { Input } from './ui/input';
-import { PlaceholdersAndVanishInput } from './ui/placeholder-and-vinish-input';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   isVisibleCreateWithSearch: boolean;
 }
+
+// ダイナミックインポートの設定
+const PlaceholdersAndVanishInput = dynamic(
+  () =>
+    import('./ui/placeholder-and-vinish-input').then(
+      (mod) => mod.PlaceholdersAndVanishInput
+    ),
+  {
+    ssr: false, // クライアントサイドのみでレンダリング
+  }
+);
 
 export function DataTable<TData, TValue>({
   columns,
@@ -106,7 +117,6 @@ export function DataTable<TData, TValue>({
             <RotateCw className={isRefreshing ? 'animate-spin' : ''} />
             更新
           </Button>
-
           {isVisibleCreateWithSearch && (
             <div>
               <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -135,6 +145,10 @@ export function DataTable<TData, TValue>({
             value={globalFilter}
             onChange={(event) => {
               setGlobalFilter(event.target.value);
+            }}
+            onSubmit={(e) => {
+              e.preventDefault();
+              setGlobalFilter('');
             }}
           />
         </div>
