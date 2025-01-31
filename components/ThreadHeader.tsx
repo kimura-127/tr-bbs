@@ -5,7 +5,6 @@ import { RotateCw } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { Suspense } from 'react';
 import { Button } from './ui/button';
 
 const HyperText = dynamic(
@@ -43,9 +42,10 @@ export function ThreadHeader({ title }: { title: string }) {
   return (
     <div>
       <div className="flex gap-1 bg-gray-700 rounded-lg px-8 h-12 items-center justify-between">
-        <h1 className="text-lg font-bold text-white tracking-widest leading-9">
-          {title}
-        </h1>
+        <HyperText
+          text={title}
+          className="text-lg font-bold text-white tracking-widest leading-9"
+        />
         <Button
           onClick={handleRefresh}
           disabled={isRefreshing}
