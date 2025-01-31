@@ -150,6 +150,7 @@ export function PushNotificationList() {
         </p>
       </div>
       <DataTable
+        threadType="trade"
         columns={[
           ...columns,
           {

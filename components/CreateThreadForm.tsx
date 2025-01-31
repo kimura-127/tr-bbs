@@ -312,6 +312,7 @@ export function CreateThreadForm({
             </FormItem>
           )}
         />
+
         <div className="flex justify-center pt-10">
           <Button
             type="submit"
@@ -321,6 +322,11 @@ export function CreateThreadForm({
             {isLoading ? '作成中...' : 'スレッド作成'}
           </Button>
         </div>
+        <p className="text-sm text-gray-500 text-center">
+          スレッド詳細ページで通知設定が可能です。
+          <br />
+          コメントが投稿された際に通知を受け取ることができます。
+        </p>
       </form>
     </Form>
   );

@@ -5,7 +5,7 @@ import { useId } from 'react';
 const AnimateTextarea = React.forwardRef<
   HTMLTextAreaElement,
   React.ComponentProps<'textarea'>
->(({ placeholder, className, ...props }) => {
+>(({ placeholder, className, ...props }, ref) => {
   const id = useId();
   return (
     <div className="group relative min-w-[300px]">
@@ -15,7 +15,13 @@ const AnimateTextarea = React.forwardRef<
       >
         <span className="inline-flex bg-background px-2">{placeholder}</span>
       </label>
-      <Textarea id={id} placeholder="" className={className} {...props} />
+      <Textarea
+        id={id}
+        ref={ref}
+        placeholder=""
+        className={className}
+        {...props}
+      />
     </div>
   );
 });

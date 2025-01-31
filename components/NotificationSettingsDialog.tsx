@@ -34,11 +34,11 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useToast } from '@/hooks/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Bell, Share } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import { z } from 'zod';
 
 interface NotificationSettingsDialogProps {
@@ -53,7 +53,6 @@ export function NotificationSettingsDialog({
   threadId,
 }: NotificationSettingsDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const { toast } = useToast();
   const form = useForm<z.infer<typeof emailFormSchema>>({
     resolver: zodResolver(emailFormSchema),
     defaultValues: {
@@ -79,10 +78,8 @@ export function NotificationSettingsDialog({
 
       // ブラウザの対応確認
       if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
-        toast({
-          title: 'エラー',
+        toast.info('通知機能', {
           description: 'お使いのブラウザはプッシュ通知に対応していません',
-          variant: 'destructive',
         });
         return;
       }
@@ -90,76 +87,98 @@ export function NotificationSettingsDialog({
       // 通知の許可を確認
       const permission = await Notification.requestPermission();
       if (permission !== 'granted') {
-        toast({
-          title: 'エラー',
-          description: 'プッシュ通知の許可が必要です',
-          variant: 'destructive',
+        toast.info('通知機能', {
+          description:
+            'プッシュ通知の許可が必要です。設定を有効にしてください。ブロックしてしまった場合の対処法は通知許可ボタンの上に記載しています。',
         });
         return;
       }
 
-      // Service Workerの登録を確認
-      const registrations = await navigator.serviceWorker.getRegistrations();
+      try {
+        // Service Workerの登録を確認
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        let registration: ServiceWorkerRegistration;
 
-      let registration: ServiceWorkerRegistration;
-      if (registrations.length > 0) {
-        registration = registrations[0];
-      } else {
-        // Service Workerが登録されていない場合は新規登録
-        registration = await navigator.serviceWorker.register('/worker.js');
-      }
+        if (registrations.length > 0) {
+          registration = registrations[0];
+        } else {
+          // Service Workerが登録されていない場合のみ新規登録
+          registration = await navigator.serviceWorker.register('/worker.js');
 
-      // Service Workerのアクティブ化を待機
-      if (registration.waiting) {
-        await new Promise((resolve) => {
-          // メッセージハンドラーを設定
-          navigator.serviceWorker.addEventListener('message', (event) => {
-            if (event.data && event.data.type === 'WORKER_READY') {
-              resolve(true);
-            }
+          // Service Workerがアクティブになるまで待機
+          if (registration.installing) {
+            await new Promise<void>((resolve) => {
+              registration.installing?.addEventListener(
+                'statechange',
+                function () {
+                  if (this.state === 'activated') {
+                    console.log('Service Worker is now activated');
+                    resolve();
+                  }
+                }
+              );
+            });
+          }
+        }
+
+        // Service Workerの準備完了を待機
+        await navigator.serviceWorker.ready;
+
+        // 既存の購読を取得
+        const subscription = await registration.pushManager.getSubscription();
+        let pushSubscription: PushSubscription;
+
+        if (subscription) {
+          // 既存の購読を使用
+          pushSubscription = subscription;
+        } else {
+          // 新規購読を作成
+          pushSubscription = await registration.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
           });
+        }
 
-          // skipWaitingをリクエスト
-          registration.waiting?.postMessage({ type: 'SKIP_WAITING' });
+        if (!pushSubscription) {
+          throw new Error('購読の作成に失敗しました');
+        }
+
+        // サーバーに購読情報を送信
+        const response = await fetch('/api/push-notification/subscribe', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            threadId,
+            endpoint: pushSubscription.endpoint,
+            auth: encodeToBase64(pushSubscription.getKey('auth')),
+            p256dh: encodeToBase64(pushSubscription.getKey('p256dh')),
+          }),
         });
 
-        // 新しいService Workerが確実にアクティブになるまで待機
-        registration = await navigator.serviceWorker.ready;
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(
+            errorData.error || 'プッシュ通知の設定に失敗しました'
+          );
+        }
+
+        toast.info('通知機能', {
+          description: 'プッシュ通知の設定を完了しました',
+        });
+      } catch (error) {
+        toast.info('通知機能', {
+          description: 'Service Workerの設定中にエラーが発生しました',
+        });
+        return;
       }
-
-      // プッシュ通知の購読
-      const subscription = await registration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
-      });
-
-      const response = await fetch('/api/push-notification/subscribe', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          threadId,
-          endpoint: subscription.endpoint,
-          auth: encodeToBase64(subscription.getKey('auth')),
-          p256dh: encodeToBase64(subscription.getKey('p256dh')),
-        }),
-      });
-
-      const responseData = await response.json();
-
-      if (!response.ok) {
-        throw new Error('プッシュ通知の設定に失敗しました');
-      }
-
-      toast({
-        description: 'プッシュ通知を設定しました',
-      });
     } catch (error) {
-      toast({
-        title: 'エラー',
-        description: 'プッシュ通知の設定中にエラーが発生しました',
-        variant: 'destructive',
+      toast.info('通知機能', {
+        description:
+          error instanceof Error
+            ? error.message
+            : 'プッシュ通知の設定中にエラーが発生しました',
       });
     } finally {
       setIsSubscribing(false);
@@ -174,24 +193,20 @@ export function NotificationSettingsDialog({
         email: values.email,
       });
       if (result.error) {
-        toast({
-          variant: 'destructive',
-          title: 'エラー',
+        toast.info('通知機能', {
           description: result.error,
         });
       } else {
-        toast({
-          description: 'メール通知を設定しました',
-        });
         form.reset();
       }
     } catch (error) {
-      toast({
-        variant: 'destructive',
-        title: 'エラー',
-        description: 'エラーが発生しました',
+      toast.info('通知機能', {
+        description: 'メール通知の設定中にエラーが発生しました',
       });
     } finally {
+      toast.info('通知機能', {
+        description: 'メール通知の設定を完了しました',
+      });
       setIsLoading(false);
     }
   }
