@@ -43,12 +43,9 @@ export function ThreadHeader({ title }: { title: string }) {
   return (
     <div>
       <div className="flex gap-1 bg-gray-700 rounded-lg px-8 h-12 items-center justify-between">
-        <Suspense>
-          <HyperText
-            className="text-lg font-bold text-white tracking-widest leading-9"
-            text={title}
-          />
-        </Suspense>
+        <h1 className="text-lg font-bold text-white tracking-widest leading-9">
+          {title}
+        </h1>
         <Button
           onClick={handleRefresh}
           disabled={isRefreshing}
@@ -59,7 +56,7 @@ export function ThreadHeader({ title }: { title: string }) {
         </Button>
       </div>
       <div className="my-4 ml-4 text-xs border rounded-lg p-4 text-muted-foreground">
-        <h1 className="sr-only">チョコットランド 取引掲示板</h1>
+        <h2 className="sr-only">チョコットランド 取引掲示板</h2>
         <p className="leading-4 tracking-wide">
           チョコットランド（チョコラン）の取引掲示板（BBS）へようこそ。
           アイテムの売買や交換の取引ができる避難所として、安全な取引の場を提供しています。
