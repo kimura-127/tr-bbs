@@ -27,7 +27,6 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
-import { AnimateInput } from './ui/animate-input';
 import { AnimateTextarea } from './ui/animate-text-area';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
@@ -212,7 +211,7 @@ export function CreateThreadForm({
                 タイトル
               </FormLabel>
               <FormControl>
-                <AnimateInput
+                <Input
                   placeholder="タイトルを入力"
                   className="my-4 leading-8 tracking-wider max-md:leading-6 max-md:text-sm"
                   {...field}
