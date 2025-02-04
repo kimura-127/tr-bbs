@@ -41,7 +41,7 @@ const formSchema = z.object({
     .string()
     .min(10, { message: 'コメントは10文字以上で入力してください' })
     .max(1000, { message: 'コメントは1000文字以内で入力してください' }),
-  boardType: z.enum(['trading', 'freeTalk', 'avatar'], {
+  boardType: z.enum(['trade', 'free-talk', 'avatar'], {
     required_error: '掲示板を選択してください',
   }),
   images: z
@@ -84,7 +84,7 @@ export function CreateThreadForm({
     defaultValues: {
       title: '',
       content: '',
-      boardType: 'trading',
+      boardType: threadType,
       images: [],
     },
   });
@@ -149,11 +149,11 @@ export function CreateThreadForm({
       // 選択された掲示板の種類に応じてスレッドを作成
       let result: ThreadResult;
       switch (values.boardType) {
-        case 'trading':
+        case 'trade':
           router.prefetch('/');
           result = await createTradingThread(threadData);
           break;
-        case 'freeTalk':
+        case 'free-talk':
           router.prefetch('/free-talk');
           result = await createFreeTalkThread(threadData);
           break;
@@ -176,10 +176,10 @@ export function CreateThreadForm({
         form.reset();
         // 掲示板の種類に応じてリダイレクト先を変更
         switch (values.boardType) {
-          case 'trading':
+          case 'trade':
             router.push('/');
             break;
-          case 'freeTalk':
+          case 'free-talk':
             router.push('/free-talk');
             break;
           case 'avatar':
