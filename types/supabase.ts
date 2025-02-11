@@ -46,6 +46,7 @@ export type Database = {
         Row: {
           content: string
           created_at: string
+          device_user_id: string | null
           id: string
           image_urls: string[] | null
           name: string | null
@@ -57,6 +58,7 @@ export type Database = {
         Insert: {
           content: string
           created_at?: string
+          device_user_id?: string | null
           id?: string
           image_urls?: string[] | null
           name?: string | null
@@ -68,6 +70,7 @@ export type Database = {
         Update: {
           content?: string
           created_at?: string
+          device_user_id?: string | null
           id?: string
           image_urls?: string[] | null
           name?: string | null
@@ -90,6 +93,7 @@ export type Database = {
         Row: {
           content: string
           created_at: string
+          device_user_id: string | null
           id: string
           image_urls: string[] | null
           name: string | null
@@ -101,6 +105,7 @@ export type Database = {
         Insert: {
           content: string
           created_at?: string
+          device_user_id?: string | null
           id?: string
           image_urls?: string[] | null
           name?: string | null
@@ -112,6 +117,7 @@ export type Database = {
         Update: {
           content?: string
           created_at?: string
+          device_user_id?: string | null
           id?: string
           image_urls?: string[] | null
           name?: string | null
@@ -135,6 +141,7 @@ export type Database = {
           article_id: string
           content: string
           created_at: string
+          device_user_id: string | null
           id: string
           image_urls: string[] | null
           name: string | null
@@ -144,6 +151,7 @@ export type Database = {
           article_id: string
           content: string
           created_at?: string
+          device_user_id?: string | null
           id?: string
           image_urls?: string[] | null
           name?: string | null
@@ -153,6 +161,7 @@ export type Database = {
           article_id?: string
           content?: string
           created_at?: string
+          device_user_id?: string | null
           id?: string
           image_urls?: string[] | null
           name?: string | null
@@ -242,6 +251,7 @@ export type Database = {
         Row: {
           content: string
           created_at: string
+          device_user_id: string | null
           id: string
           image_urls: string[] | null
           name: string | null
@@ -253,6 +263,7 @@ export type Database = {
         Insert: {
           content: string
           created_at?: string
+          device_user_id?: string | null
           id?: string
           image_urls?: string[] | null
           name?: string | null
@@ -264,6 +275,7 @@ export type Database = {
         Update: {
           content?: string
           created_at?: string
+          device_user_id?: string | null
           id?: string
           image_urls?: string[] | null
           name?: string | null
@@ -287,6 +299,7 @@ export type Database = {
           article_id: string
           content: string
           created_at: string
+          device_user_id: string | null
           id: string
           image_urls: string[] | null
           name: string | null
@@ -296,6 +309,7 @@ export type Database = {
           article_id: string
           content: string
           created_at?: string
+          device_user_id?: string | null
           id?: string
           image_urls?: string[] | null
           name?: string | null
@@ -305,6 +319,7 @@ export type Database = {
           article_id?: string
           content?: string
           created_at?: string
+          device_user_id?: string | null
           id?: string
           image_urls?: string[] | null
           name?: string | null
@@ -401,6 +416,7 @@ export type Database = {
           article_id: string
           content: string
           created_at: string
+          device_user_id: string | null
           id: string
           image_urls: string[] | null
           name: string | null
@@ -409,6 +425,7 @@ export type Database = {
           article_id: string
           content: string
           created_at?: string
+          device_user_id?: string | null
           id?: string
           image_urls?: string[] | null
           name?: string | null
@@ -417,6 +434,7 @@ export type Database = {
           article_id?: string
           content?: string
           created_at?: string
+          device_user_id?: string | null
           id?: string
           image_urls?: string[] | null
           name?: string | null

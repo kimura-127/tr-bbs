@@ -19,6 +19,7 @@ import { Input } from '@/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useToast } from '@/hooks/use-toast';
 import type { ThreadType } from '@/types';
+import { getWebGLFingerprint } from '@/utils/getWebGLFingerprint';
 import { createClient } from '@/utils/supabase/client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
@@ -151,12 +152,24 @@ export function CreateThreadForm({
         image_urls = uploadResult.imageUrls || [];
       }
 
+      // デバイス情報を取得
+      const webglInfo = await getWebGLFingerprint();
+      const deviceFingerprint = {
+        renderHash: webglInfo?.renderHash || null,
+        precision: {
+          rangeMin: webglInfo?.precision?.rangeMin || null,
+          rangeMax: webglInfo?.precision?.rangeMax || null,
+          precision: webglInfo?.precision?.precision || null,
+        },
+      };
+
       // スレッドデータを準備
       const threadData = {
         title: values.title,
         name: values.name,
         content: values.content,
         image_urls: image_urls,
+        device_info: deviceFingerprint,
       };
 
       // 選択された掲示板の種類に応じてスレッドを作成
