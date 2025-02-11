@@ -17,7 +17,6 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import type { ThreadType } from '@/types';
 import { createClient } from '@/utils/supabase/client';
@@ -37,6 +36,10 @@ const formSchema = z.object({
     .string()
     .min(2, { message: 'タイトルは2文字以上で入力してください' })
     .max(50, { message: 'タイトルは50文字以内で入力してください' }),
+  name: z
+    .string()
+    .min(1, { message: '名前は1文字以上で入力してください' })
+    .max(15, { message: '名前は15文字以内で入力してください' }),
   content: z
     .string()
     .min(10, { message: 'コメントは10文字以上で入力してください' })
@@ -83,6 +86,10 @@ export function CreateThreadForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: '',
+      name:
+        typeof window !== 'undefined'
+          ? localStorage.getItem('userName') || '名無し'
+          : '名無し',
       content: '',
       boardType: threadType,
       images: [],
@@ -124,6 +131,11 @@ export function CreateThreadForm({
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     try {
+      // 名前をローカルストレージに保存
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('userName', values.name);
+      }
+
       // 画像がある場合はアップロード
       let image_urls: string[] = [];
       if (values.images && values.images.length > 0) {
@@ -142,6 +154,7 @@ export function CreateThreadForm({
       // スレッドデータを準備
       const threadData = {
         title: values.title,
+        name: values.name,
         content: values.content,
         image_urls: image_urls,
       };
@@ -213,6 +226,25 @@ export function CreateThreadForm({
               <FormControl>
                 <Input
                   placeholder="タイトルを入力"
+                  className="my-4 leading-8 tracking-wider max-md:leading-6 max-md:text-sm"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="font-semibold tracking-wide">
+                名前
+              </FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="お名前を入力"
                   className="my-4 leading-8 tracking-wider max-md:leading-6 max-md:text-sm"
                   {...field}
                 />

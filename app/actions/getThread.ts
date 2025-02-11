@@ -9,7 +9,7 @@ export async function getTradingThreads(): Promise<Payment[]> {
 
   const { data: articles, error } = await supabase
     .from('articles')
-    .select('id, title, content, user_id, updated_at, replies_count')
+    .select('id, title, content, user_id, updated_at, replies_count, name')
     .order('updated_at', { ascending: false });
 
   if (error) {
@@ -21,7 +21,7 @@ export async function getTradingThreads(): Promise<Payment[]> {
     id: article.id,
     title: article.title,
     content: article.content,
-    name: '名無し',
+    name: article.name ?? '名無し',
     replyCount: article.replies_count,
     createdAt: new Date(article.updated_at).toLocaleString('ja-JP', {
       timeZone: 'Asia/Tokyo',
@@ -41,7 +41,7 @@ export async function getFreeTalkThreads(): Promise<Payment[]> {
 
   const { data: articles, error } = await supabase
     .from('free_talk_articles')
-    .select('id, title, content, user_id, updated_at, replies_count')
+    .select('id, title, content, user_id, updated_at, replies_count, name')
     .order('updated_at', { ascending: false });
 
   if (error) {
@@ -53,7 +53,7 @@ export async function getFreeTalkThreads(): Promise<Payment[]> {
     id: article.id,
     title: article.title,
     content: article.content,
-    name: '名無し',
+    name: article.name ?? '名無し',
     replyCount: article.replies_count,
     createdAt: new Date(article.updated_at).toLocaleString('ja-JP', {
       timeZone: 'Asia/Tokyo',
@@ -73,7 +73,7 @@ export async function getAvatarThreads(): Promise<Payment[]> {
 
   const { data: articles, error } = await supabase
     .from('avatar_articles')
-    .select('id, title, content, user_id, updated_at, replies_count')
+    .select('id, title, content, user_id, updated_at, replies_count, name')
     .order('updated_at', { ascending: false });
 
   if (error) {
@@ -85,7 +85,7 @@ export async function getAvatarThreads(): Promise<Payment[]> {
     id: article.id,
     title: article.title,
     content: article.content,
-    name: '名無し',
+    name: article.name ?? '名無し',
     replyCount: article.replies_count,
     createdAt: new Date(article.updated_at).toLocaleString('ja-JP', {
       timeZone: 'Asia/Tokyo',

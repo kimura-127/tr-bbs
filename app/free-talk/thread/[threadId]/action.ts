@@ -7,6 +7,7 @@ import { revalidatePath } from 'next/cache';
 export interface Thread {
   id: string;
   title: string;
+  name: string;
   content: string;
   createdAt: string;
   image_urls: string[] | null;
@@ -15,6 +16,7 @@ export interface Thread {
     content: string;
     createdAt: string;
     image_urls: string[] | null;
+    name: string;
   }[];
 }
 
@@ -48,11 +50,13 @@ export async function getFreeTalkThread(
   return {
     id: article.id,
     title: article.title,
+    name: article.name ?? '名無し',
     content: article.content,
     image_urls: article.image_urls,
     replies: replies.map((reply) => ({
       id: reply.id,
       content: reply.content,
+      name: reply.name ?? '名無し',
       image_urls: reply.image_urls,
       createdAt: new Date(reply.created_at).toLocaleString('ja-JP', {
         timeZone: 'Asia/Tokyo',
@@ -78,7 +82,7 @@ export async function getFreeTalkThread(
 
 export async function createFreeTalkComment(
   threadId: string,
-  formData: { content: string; imageUrls: string[] }
+  formData: { content: string; imageUrls: string[]; name: string }
 ) {
   const supabase = await createClient();
 
@@ -101,6 +105,7 @@ export async function createFreeTalkComment(
       .from('free_talk_replies')
       .insert({
         article_id: threadId,
+        name: formData.name,
         content: formData.content,
         image_urls: formData.imageUrls,
       })
