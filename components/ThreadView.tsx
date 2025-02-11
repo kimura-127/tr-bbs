@@ -34,7 +34,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { FileCheck2, RotateCw } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
@@ -42,13 +41,17 @@ import { z } from 'zod';
 import { ImageUpload } from './image-upload';
 import { AnimateTextarea } from './ui/animate-text-area';
 import { Button } from './ui/button';
+import { Input } from './ui/input';
 import { InteractiveHoverButton } from './ui/interactive-button';
-import { Textarea } from './ui/textarea';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png'];
 
 const formSchema = z.object({
+  name: z
+    .string()
+    .min(1, { message: 'お名前を入力してください' })
+    .max(15, { message: 'お名前は15文字以内で入力してください' }),
   content: z
     .string()
     .min(1, {
@@ -88,12 +91,15 @@ export function ThreadView({ thread, threadType }: ThreadViewProps) {
   const [bumpSuccess, setBumpSuccess] = useState(false);
   const [resetImages, setResetImages] = useState(false);
   const commentFormRef = useRef<HTMLDivElement>(null);
-  const router = useRouter();
   const { toast } = useToast();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       content: '',
+      name:
+        typeof window !== 'undefined'
+          ? localStorage.getItem('userName') || '名無し'
+          : '名無し',
       images: [],
     },
   });
@@ -156,6 +162,11 @@ export function ThreadView({ thread, threadType }: ThreadViewProps) {
     setIsLoading(true);
     setResetImages(false);
     try {
+      // 名前をローカルストレージに保存
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('userName', values.name);
+      }
+
       // 画像がある場合はアップロード
       let imageUrls: string[] = [];
       if (values.images && values.images.length > 0) {
@@ -174,6 +185,7 @@ export function ThreadView({ thread, threadType }: ThreadViewProps) {
       const createCommentFunction = getCreateCommentFunction(threadType);
       const result = await createCommentFunction(thread.id, {
         content: values.content,
+        name: values.name,
         imageUrls,
       });
 
@@ -187,7 +199,11 @@ export function ThreadView({ thread, threadType }: ThreadViewProps) {
         toast({
           description: 'コメントを投稿しました',
         });
-        form.reset();
+        form.reset({
+          content: '',
+          name: values.name,
+          images: [],
+        });
         setResetImages(true);
       }
     } catch (error) {
@@ -289,7 +305,7 @@ export function ThreadView({ thread, threadType }: ThreadViewProps) {
           <div className="flex justify-between">
             <div>
               <p className="text-gray-500">日時: {thread.createdAt}</p>
-              <p className="text-gray-500 mb-4">投稿者: 名無し</p>
+              <p className="text-gray-500 mb-4">投稿者: {thread.name}</p>
             </div>
             <Button
               onClick={() => {
@@ -379,7 +395,7 @@ export function ThreadView({ thread, threadType }: ThreadViewProps) {
             {thread.replies.map((reply) => (
               <div key={reply.id} className="rounded-lg border p-4 shadow">
                 <p className="text-gray-500">日時: {reply.createdAt}</p>
-                <p className="text-gray-500 mb-2">投稿者: 名無し</p>
+                <p className="text-gray-500 mb-2">投稿者: {reply.name}</p>
                 <div className="whitespace-pre-wrap leading-8 tracking-wider max-md:leading-6 max-md:text-sm">
                   {reply.content}
                 </div>
@@ -395,33 +411,52 @@ export function ThreadView({ thread, threadType }: ThreadViewProps) {
         ref={commentFormRef}
         className="border rounded-lg p-4 pt-2 shadow tracking-wide leading-7 mb-40"
       >
-        <div className="flex justify-end">
-          <InteractiveHoverButton
-            className="w-44 text-sm mb-2 max-md:hidden text-gray-700"
-            text="ページ上部へ"
-            arrow="up"
-            onClick={() => {
-              window.scrollTo({
-                top: 0,
-                behavior: 'smooth',
-              });
-            }}
-          />
-          <Button
-            variant="outline"
-            className="md:hidden text-xs mb-2 text-gray-500"
-            onClick={() => {
-              window.scrollTo({
-                top: 0,
-                behavior: 'smooth',
-              });
-            }}
-          >
-            上へ
-          </Button>
-        </div>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <div className="flex justify-between">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input
+                        className="w-44 leading-8 tracking-wider max-md:leading-6 max-md:text-sm"
+                        placeholder="お名前"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div>
+                <InteractiveHoverButton
+                  className="w-44 h-10 text-sm mb-2 max-md:hidden text-gray-700"
+                  text="ページ上部へ"
+                  arrow="up"
+                  onClick={() => {
+                    window.scrollTo({
+                      top: 0,
+                      behavior: 'smooth',
+                    });
+                  }}
+                />
+                <Button
+                  variant="outline"
+                  className="md:hidden text-xs mb-2 text-gray-500"
+                  onClick={() => {
+                    window.scrollTo({
+                      top: 0,
+                      behavior: 'smooth',
+                    });
+                  }}
+                >
+                  上へ
+                </Button>
+              </div>
+            </div>
+
             <div className="relative">
               <FormField
                 control={form.control}
@@ -431,7 +466,7 @@ export function ThreadView({ thread, threadType }: ThreadViewProps) {
                     <FormControl>
                       <AnimateTextarea
                         placeholder="コメントを入力"
-                        className="mb-4 h-40 md:h-32 leading-8 tracking-wider max-md:leading-6 max-md:text-sm"
+                        className="mb-4 h-40 md:h-32 leading-5 tracking-wider max-md:leading-6 max-md:text-sm"
                         {...field}
                       />
                     </FormControl>

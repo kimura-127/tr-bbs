@@ -5,6 +5,7 @@ import { revalidatePath } from 'next/cache';
 
 interface CreateThreadData {
   title: string;
+  name: string;
   content: string;
   image_urls?: string[];
 }
@@ -15,6 +16,7 @@ export async function createTradingThread(data: CreateThreadData) {
 
   const { error } = await supabase.from('articles').insert({
     title: data.title,
+    name: data.name,
     content: data.content,
     image_urls: data.image_urls,
   });
@@ -34,6 +36,7 @@ export async function createFreeTalkThread(data: CreateThreadData) {
 
   const { error } = await supabase.from('free_talk_articles').insert({
     title: data.title,
+    name: data.name,
     content: data.content,
     image_urls: data.image_urls,
   });
@@ -53,6 +56,7 @@ export async function createAvatarThread(data: CreateThreadData) {
 
   const { error } = await supabase.from('avatar_articles').insert({
     title: data.title,
+    name: data.name,
     content: data.content,
     image_urls: data.image_urls,
   });
