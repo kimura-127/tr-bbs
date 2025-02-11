@@ -37,3 +37,12 @@ export type PushSubscriptionWithArticle = {
 };
 
 export type ThreadType = 'free-talk' | 'avatar' | 'trade';
+
+export type DeviceInfo = {
+  renderHash: string | null;
+  precision: {
+    rangeMin: number | null;
+    rangeMax: number | null;
+    precision: number | null;
+  };
+};

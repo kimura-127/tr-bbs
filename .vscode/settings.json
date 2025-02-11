@@ -22,5 +22,6 @@
     "source.organizeImports.biome": "explicit",
     "quickfix.biome": "explicit",
     "source.formatDocument.biome": "explicit"
-  }
+  },
+  "cSpell.words": ["cryptorypto"]
 }

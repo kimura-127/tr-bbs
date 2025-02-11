@@ -1,6 +1,7 @@
 'use server';
 
 import { sendCommentNotification } from '@/app/actions/sendCommentNotification';
+import { generateMonthlyUserId } from '@/utils/generateMonthlyUserId';
 import { createClient } from '@/utils/supabase/server';
 import { revalidatePath } from 'next/cache';
 
@@ -48,13 +49,13 @@ export async function getThread(threadId: string): Promise<Thread | null> {
   return {
     id: article.id,
     title: article.title,
-    name: article.name ?? '名無し',
+    name: `${article.name ?? '名無し'}${article.device_user_id ? `@${article.device_user_id}` : ''}`,
     content: article.content,
     image_urls: article.image_urls,
     replies: replies.map((reply) => ({
       id: reply.id,
       content: reply.content,
-      name: reply.name ?? '名無し',
+      name: `${reply.name ?? '名無し'}${reply.device_user_id ? `@${reply.device_user_id}` : ''}`,
       image_urls: reply.image_urls,
       createdAt: new Date(reply.created_at).toLocaleString('ja-JP', {
         timeZone: 'Asia/Tokyo',
@@ -80,7 +81,19 @@ export async function getThread(threadId: string): Promise<Thread | null> {
 
 export async function createComment(
   threadId: string,
-  formData: { content: string; imageUrls: string[]; name: string }
+  formData: {
+    content: string;
+    imageUrls: string[];
+    name: string;
+    device_info: {
+      renderHash: string | null;
+      precision: {
+        rangeMin: number | null;
+        rangeMax: number | null;
+        precision: number | null;
+      };
+    };
+  }
 ) {
   const supabase = await createClient();
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL;
@@ -100,6 +113,8 @@ export async function createComment(
       };
     }
 
+    const monthlyUserId = generateMonthlyUserId(formData.device_info);
+
     // 2. コメントを追加
     const { data: newReply, error: commentError } = await supabase
       .from('replies')
@@ -108,6 +123,7 @@ export async function createComment(
         content: formData.content,
         image_urls: formData.imageUrls,
         name: formData.name,
+        device_user_id: monthlyUserId,
       })
       .select()
       .single();

@@ -29,6 +29,7 @@ import {
 
 import { useToast } from '@/hooks/use-toast';
 import type { ThreadType } from '@/types';
+import { getWebGLFingerprint } from '@/utils/getWebGLFingerprint';
 import { createClient } from '@/utils/supabase/client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FileCheck2, RotateCw } from 'lucide-react';
@@ -182,11 +183,23 @@ export function ThreadView({ thread, threadType }: ThreadViewProps) {
         imageUrls = uploadResult.imageUrls || [];
       }
 
+      // デバイス情報を取得
+      const webglInfo = await getWebGLFingerprint();
+      const deviceFingerprint = {
+        renderHash: webglInfo?.renderHash || null,
+        precision: {
+          rangeMin: webglInfo?.precision?.rangeMin || null,
+          rangeMax: webglInfo?.precision?.rangeMax || null,
+          precision: webglInfo?.precision?.precision || null,
+        },
+      };
+
       const createCommentFunction = getCreateCommentFunction(threadType);
       const result = await createCommentFunction(thread.id, {
         content: values.content,
         name: values.name,
         imageUrls,
+        device_info: deviceFingerprint,
       });
 
       if (result.error) {
