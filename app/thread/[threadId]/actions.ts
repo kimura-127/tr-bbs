@@ -1,7 +1,7 @@
 'use server';
 
 import { sendCommentNotification } from '@/app/actions/sendCommentNotification';
-import { generateMonthlyUserId } from '@/utils/generateMonthlyUserId';
+import { generateFinalUserId } from '@/utils/generateUserIdentifier';
 import { createClient } from '@/utils/supabase/server';
 import { revalidatePath } from 'next/cache';
 
@@ -85,14 +85,7 @@ export async function createComment(
     content: string;
     imageUrls: string[];
     name: string;
-    device_info: {
-      renderHash: string | null;
-      precision: {
-        rangeMin: number | null;
-        rangeMax: number | null;
-        precision: number | null;
-      };
-    };
+    client_id: string;
   }
 ) {
   const supabase = await createClient();
@@ -113,7 +106,8 @@ export async function createComment(
       };
     }
 
-    const monthlyUserId = generateMonthlyUserId(formData.device_info);
+    // クライアントIDからユーザーIDを生成
+    const deviceUserId = await generateFinalUserId(formData.client_id);
 
     // 2. コメントを追加
     const { data: newReply, error: commentError } = await supabase
@@ -123,7 +117,7 @@ export async function createComment(
         content: formData.content,
         image_urls: formData.imageUrls,
         name: formData.name,
-        device_user_id: monthlyUserId,
+        device_user_id: deviceUserId,
       })
       .select()
       .single();

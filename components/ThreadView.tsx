@@ -27,9 +27,8 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 
-import { useToast } from '@/hooks/use-toast';
 import type { ThreadType } from '@/types';
-import { getWebGLFingerprint } from '@/utils/getWebGLFingerprint';
+import { getClientId, setClientId } from '@/utils/generateUserIdentifier';
 import { createClient } from '@/utils/supabase/client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FileCheck2, RotateCw } from 'lucide-react';
@@ -37,6 +36,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
 import { ImageUpload } from './image-upload';
@@ -92,7 +92,6 @@ export function ThreadView({ thread, threadType }: ThreadViewProps) {
   const [bumpSuccess, setBumpSuccess] = useState(false);
   const [resetImages, setResetImages] = useState(false);
   const commentFormRef = useRef<HTMLDivElement>(null);
-  const { toast } = useToast();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -173,45 +172,43 @@ export function ThreadView({ thread, threadType }: ThreadViewProps) {
       if (values.images && values.images.length > 0) {
         const uploadResult = await uploadImages(values.images);
         if (uploadResult.error) {
-          toast({
-            variant: 'destructive',
-            title: 'エラー',
-            description: uploadResult.error,
-          });
+          toast.error(uploadResult.error);
           return;
         }
         imageUrls = uploadResult.imageUrls || [];
       }
 
       // デバイス情報を取得
-      const webglInfo = await getWebGLFingerprint();
-      const deviceFingerprint = {
-        renderHash: webglInfo?.renderHash || null,
-        precision: {
-          rangeMin: webglInfo?.precision?.rangeMin || null,
-          rangeMax: webglInfo?.precision?.rangeMax || null,
-          precision: webglInfo?.precision?.precision || null,
-        },
-      };
+      let clientId = getClientId();
+      if (!clientId) {
+        // IPアドレスの取得はバックエンドで行う
+        const response = await fetch('/api/get-client-id');
+        const data = await response.json();
+        clientId = data.clientId;
+        if (clientId) {
+          setClientId(clientId);
+        }
+      }
+
+      if (!clientId) {
+        toast.info('クライアントIDの取得に失敗しました', {
+          description: 'IPアドレスからクライアントIDを取得できませんでした',
+        });
+        return;
+      }
 
       const createCommentFunction = getCreateCommentFunction(threadType);
       const result = await createCommentFunction(thread.id, {
         content: values.content,
         name: values.name,
         imageUrls,
-        device_info: deviceFingerprint,
+        client_id: clientId,
       });
 
       if (result.error) {
-        toast({
-          variant: 'destructive',
-          title: 'エラー',
-          description: result.error,
-        });
+        toast.error(result.error);
       } else {
-        toast({
-          description: 'コメントを投稿しました',
-        });
+        toast.success('コメントを投稿しました');
         form.reset({
           content: '',
           name: values.name,
@@ -220,11 +217,7 @@ export function ThreadView({ thread, threadType }: ThreadViewProps) {
         setResetImages(true);
       }
     } catch (error) {
-      toast({
-        variant: 'destructive',
-        title: 'エラー',
-        description: 'エラーが発生しました',
-      });
+      toast.error('エラーが発生しました');
     } finally {
       setIsLoading(false);
     }
@@ -349,26 +342,16 @@ export function ThreadView({ thread, threadType }: ThreadViewProps) {
               const bumpThreadFunction = getBumpThreadFunction(threadType);
               const result = await bumpThreadFunction(thread.id);
               if (result.error) {
-                toast({
-                  variant: 'destructive',
-                  title: 'エラー',
-                  description: result.error,
-                });
+                toast.error(result.error);
               } else {
                 setBumpSuccess(true);
                 setTimeout(() => {
                   setBumpSuccess(false);
                 }, 1000);
-                toast({
-                  description: 'スレッドを上位に表示しました',
-                });
+                toast.success('スレッドを上位に表示しました');
               }
             } catch (error) {
-              toast({
-                variant: 'destructive',
-                title: 'エラー',
-                description: 'エラーが発生しました',
-              });
+              toast.error('エラーが発生しました');
             } finally {
               setIsBumping(false);
             }
