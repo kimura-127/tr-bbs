@@ -17,7 +17,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import type { ThreadType } from '@/types';
+import type { CreateResult, ThreadType } from '@/types';
 import { getClientId, setClientId } from '@/utils/generateUserIdentifier';
 import { createClient } from '@/utils/supabase/client';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -67,12 +67,6 @@ const formSchema = z.object({
     .optional()
     .default([]),
 });
-
-// 戻り値の型を定義
-interface ThreadResult {
-  error?: string;
-  success?: boolean;
-}
 
 export function CreateThreadForm({
   threadType,
@@ -176,7 +170,7 @@ export function CreateThreadForm({
       };
 
       // 選択された掲示板の種類に応じてスレッドを作成
-      let result: ThreadResult;
+      let result: CreateResult;
       switch (values.boardType) {
         case 'trade':
           router.prefetch('/');
@@ -193,9 +187,12 @@ export function CreateThreadForm({
       }
 
       if (result?.error) {
-        toast.info(result.error);
-      } else {
-        toast.info('スレッドを作成しました');
+        toast.info(`このアカウントはブロックされています: ${result.error}`);
+      } else if (result?.success) {
+        result.warning
+          ? toast.warning(`警告があります: ${result.warning}`)
+          : toast.success('スレッドを作成しました');
+
         form.reset();
         // 掲示板の種類に応じてリダイレクト先を変更
         switch (values.boardType) {

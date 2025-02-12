@@ -1,6 +1,7 @@
 'use server';
 
 import { sendCommentNotification } from '@/app/actions/sendCommentNotification';
+import { checkBlockStatus } from '@/utils/checkBlockStatus';
 import { generateFinalUserId } from '@/utils/generateUserIdentifier';
 import { createClient } from '@/utils/supabase/server';
 import { revalidatePath } from 'next/cache';
@@ -110,6 +111,12 @@ export async function createAvatarComment(
     // クライアントIDからユーザーIDを生成
     const deviceUserId = await generateFinalUserId(formData.client_id);
 
+    // ブロック状態をチェック
+    const blockCheck = await checkBlockStatus(supabase, deviceUserId);
+    if (blockCheck.error) {
+      return blockCheck;
+    }
+
     // 2. コメントを追加
     const { data: newReply, error: commentError } = await supabase
       .from('avatar_replies')
@@ -152,7 +159,7 @@ export async function createAvatarComment(
     });
 
     revalidatePath(`/avatar/thread/${threadId}`);
-    return { success: true };
+    return { success: true, warning: blockCheck.warning };
   } catch (error) {
     console.error('Error in createComment:', error);
     return { error: 'エラーが発生しました' };

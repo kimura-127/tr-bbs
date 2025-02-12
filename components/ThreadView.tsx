@@ -26,8 +26,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-
-import type { ThreadType } from '@/types';
+import type { CreateResult, ThreadType } from '@/types';
 import { getClientId, setClientId } from '@/utils/generateUserIdentifier';
 import { createClient } from '@/utils/supabase/client';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -198,7 +197,7 @@ export function ThreadView({ thread, threadType }: ThreadViewProps) {
       }
 
       const createCommentFunction = getCreateCommentFunction(threadType);
-      const result = await createCommentFunction(thread.id, {
+      const result: CreateResult = await createCommentFunction(thread.id, {
         content: values.content,
         name: values.name,
         imageUrls,
@@ -206,9 +205,12 @@ export function ThreadView({ thread, threadType }: ThreadViewProps) {
       });
 
       if (result.error) {
-        toast.error(result.error);
+        toast.info(`このアカウントはブロックされています: ${result.error}`);
       } else {
-        toast.success('コメントを投稿しました');
+        result.warning
+          ? toast.warning(`警告があります: ${result.warning}`)
+          : toast.success('コメントを投稿しました');
+
         form.reset({
           content: '',
           name: values.name,
