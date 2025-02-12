@@ -433,6 +433,7 @@ export function ThreadView({ thread, threadType }: ThreadViewProps) {
                   className="w-44 h-10 text-sm mb-2 max-md:hidden text-gray-700"
                   text="ページ上部へ"
                   arrow="up"
+                  type="button"
                   onClick={() => {
                     window.scrollTo({
                       top: 0,
@@ -441,6 +442,7 @@ export function ThreadView({ thread, threadType }: ThreadViewProps) {
                   }}
                 />
                 <Button
+                  type="button"
                   variant="outline"
                   className="md:hidden text-xs mb-2 text-gray-500"
                   onClick={() => {
