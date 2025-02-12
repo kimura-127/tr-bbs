@@ -46,3 +46,10 @@ export type DeviceInfo = {
     precision: number | null;
   };
 };
+
+// 戻り値の型を定義
+export interface CreateResult {
+  error?: string;
+  success?: boolean;
+  warning?: string;
+}
