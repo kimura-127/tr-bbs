@@ -17,14 +17,14 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { useToast } from '@/hooks/use-toast';
 import type { ThreadType } from '@/types';
-import { getWebGLFingerprint } from '@/utils/getWebGLFingerprint';
+import { getClientId, setClientId } from '@/utils/generateUserIdentifier';
 import { createClient } from '@/utils/supabase/client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
 import { AnimateTextarea } from './ui/animate-text-area';
@@ -96,7 +96,6 @@ export function CreateThreadForm({
       images: [],
     },
   });
-  const { toast } = useToast();
 
   async function uploadImages(files: File[]) {
     const supabase = createClient();
@@ -142,26 +141,30 @@ export function CreateThreadForm({
       if (values.images && values.images.length > 0) {
         const uploadResult = await uploadImages(values.images);
         if (uploadResult.error) {
-          toast({
-            variant: 'destructive',
-            title: 'エラー',
-            description: uploadResult.error,
-          });
+          toast.info('画像のアップロードに失敗しました');
           return;
         }
         image_urls = uploadResult.imageUrls || [];
       }
 
       // デバイス情報を取得
-      const webglInfo = await getWebGLFingerprint();
-      const deviceFingerprint = {
-        renderHash: webglInfo?.renderHash || null,
-        precision: {
-          rangeMin: webglInfo?.precision?.rangeMin || null,
-          rangeMax: webglInfo?.precision?.rangeMax || null,
-          precision: webglInfo?.precision?.precision || null,
-        },
-      };
+      let clientId = getClientId();
+      if (!clientId) {
+        // IPアドレスの取得はバックエンドで行う
+        const response = await fetch('/api/get-client-id');
+        const data = await response.json();
+        clientId = data.clientId;
+        if (clientId) {
+          setClientId(clientId);
+        }
+      }
+
+      if (!clientId) {
+        toast.info('クライアントIDの取得に失敗しました', {
+          description: 'IPアドレスからクライアントIDを取得できませんでした',
+        });
+        return;
+      }
 
       // スレッドデータを準備
       const threadData = {
@@ -169,7 +172,7 @@ export function CreateThreadForm({
         name: values.name,
         content: values.content,
         image_urls: image_urls,
-        device_info: deviceFingerprint,
+        client_id: clientId,
       };
 
       // 選択された掲示板の種類に応じてスレッドを作成
@@ -190,15 +193,9 @@ export function CreateThreadForm({
       }
 
       if (result?.error) {
-        toast({
-          variant: 'destructive',
-          title: 'エラー',
-          description: result.error,
-        });
+        toast.info(result.error);
       } else {
-        toast({
-          description: 'スレッドを作成しました',
-        });
+        toast.info('スレッドを作成しました');
         form.reset();
         // 掲示板の種類に応じてリダイレクト先を変更
         switch (values.boardType) {
@@ -214,11 +211,7 @@ export function CreateThreadForm({
         }
       }
     } catch (error) {
-      toast({
-        variant: 'destructive',
-        title: 'エラー',
-        description: 'エラーが発生しました',
-      });
+      toast.info('エラーが発生しました');
     } finally {
       setIsLoading(false);
       setIsDialogOpen(false);
@@ -277,7 +270,7 @@ export function CreateThreadForm({
               <FormControl>
                 <AnimateTextarea
                   placeholder="スレッドの内容を入力"
-                  className="my-4 h-56 2xl:h-96"
+                  className="my-4 min-h-[14rem] 2xl:min-h-[24rem]"
                   {...field}
                 />
               </FormControl>

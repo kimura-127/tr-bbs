@@ -1,7 +1,6 @@
 'use server';
 
-import type { DeviceInfo } from '@/types';
-import { generateMonthlyUserId } from '@/utils/generateMonthlyUserId';
+import { generateFinalUserId } from '@/utils/generateUserIdentifier';
 import { createClient } from '@/utils/supabase/server';
 import { revalidatePath } from 'next/cache';
 
@@ -10,21 +9,22 @@ interface CreateThreadData {
   name: string;
   content: string;
   image_urls?: string[];
-  device_info: DeviceInfo;
+  client_id: string;
 }
 
 // 取引スレッド作成
 export async function createTradingThread(data: CreateThreadData) {
   const supabase = await createClient();
 
-  const monthlyUserId = generateMonthlyUserId(data.device_info);
+  // クライアントIDからユーザーIDを生成
+  const deviceUserId = await generateFinalUserId(data.client_id);
 
   const { error } = await supabase.from('articles').insert({
     title: data.title,
     name: data.name,
     content: data.content,
     image_urls: data.image_urls,
-    device_user_id: monthlyUserId,
+    device_user_id: deviceUserId,
   });
 
   if (error) {
@@ -40,14 +40,15 @@ export async function createTradingThread(data: CreateThreadData) {
 export async function createFreeTalkThread(data: CreateThreadData) {
   const supabase = await createClient();
 
-  const monthlyUserId = generateMonthlyUserId(data.device_info);
+  // クライアントIDからユーザーIDを生成
+  const deviceUserId = await generateFinalUserId(data.client_id);
 
   const { error } = await supabase.from('free_talk_articles').insert({
     title: data.title,
     name: data.name,
     content: data.content,
     image_urls: data.image_urls,
-    device_user_id: monthlyUserId,
+    device_user_id: deviceUserId,
   });
 
   if (error) {
@@ -63,14 +64,15 @@ export async function createFreeTalkThread(data: CreateThreadData) {
 export async function createAvatarThread(data: CreateThreadData) {
   const supabase = await createClient();
 
-  const monthlyUserId = generateMonthlyUserId(data.device_info);
+  // クライアントIDからユーザーIDを生成
+  const deviceUserId = await generateFinalUserId(data.client_id);
 
   const { error } = await supabase.from('avatar_articles').insert({
     title: data.title,
     name: data.name,
     content: data.content,
     image_urls: data.image_urls,
-    device_user_id: monthlyUserId,
+    device_user_id: deviceUserId,
   });
 
   if (error) {
