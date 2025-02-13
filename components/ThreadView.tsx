@@ -341,16 +341,43 @@ export function ThreadView({ thread, threadType }: ThreadViewProps) {
             setIsBumping(true);
             setBumpSuccess(false);
             try {
+              // デバイス情報を取得
+              let clientId = getClientId();
+              if (!clientId) {
+                // IPアドレスの取得はバックエンドで行う
+                const response = await fetch('/api/get-client-id');
+                const data = await response.json();
+                clientId = data.clientId;
+                if (clientId) {
+                  setClientId(clientId);
+                }
+              }
+
+              if (!clientId) {
+                toast.info('クライアントIDの取得に失敗しました', {
+                  description:
+                    'IPアドレスからクライアントIDを取得できませんでした',
+                });
+                return;
+              }
+
               const bumpThreadFunction = getBumpThreadFunction(threadType);
-              const result = await bumpThreadFunction(thread.id);
+              const result: CreateResult = await bumpThreadFunction(
+                thread.id,
+                clientId
+              );
               if (result.error) {
-                toast.error(result.error);
+                toast.info(
+                  `このアカウントはブロックされています: ${result.error}`
+                );
               } else {
                 setBumpSuccess(true);
                 setTimeout(() => {
                   setBumpSuccess(false);
                 }, 1000);
-                toast.success('スレッドを上位に表示しました');
+                result.warning
+                  ? toast.warning(`警告があります: ${result.warning}`)
+                  : toast.success('スレッドを上位に表示しました');
               }
             } catch (error) {
               toast.error('エラーが発生しました');

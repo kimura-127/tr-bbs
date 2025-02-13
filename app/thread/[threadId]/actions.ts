@@ -181,8 +181,17 @@ export async function createComment(
   }
 }
 
-export async function bumpThread(threadId: string) {
+export async function bumpThread(threadId: string, client_id: string) {
   const supabase = await createClient();
+
+  // クライアントIDからユーザーIDを生成
+  const deviceUserId = await generateFinalUserId(client_id);
+
+  // ブロック状態をチェック
+  const blockCheck = await checkBlockStatus(supabase, deviceUserId);
+  if (blockCheck.error) {
+    return blockCheck;
+  }
 
   const { error: updateError } = await supabase
     .from('articles')
@@ -198,5 +207,8 @@ export async function bumpThread(threadId: string) {
   revalidatePath('/');
   revalidatePath(`/thread/${threadId}`);
 
-  return { success: true };
+  return {
+    success: true,
+    warning: blockCheck.warning,
+  };
 }

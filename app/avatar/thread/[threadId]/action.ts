@@ -166,8 +166,17 @@ export async function createAvatarComment(
   }
 }
 
-export async function bumpAvatarThread(threadId: string) {
+export async function bumpAvatarThread(threadId: string, client_id: string) {
   const supabase = await createClient();
+
+  // クライアントIDからユーザーIDを生成
+  const deviceUserId = await generateFinalUserId(client_id);
+
+  // ブロック状態をチェック
+  const blockCheck = await checkBlockStatus(supabase, deviceUserId);
+  if (blockCheck.error) {
+    return blockCheck;
+  }
 
   const { error: updateError } = await supabase
     .from('avatar_articles')
@@ -183,5 +192,8 @@ export async function bumpAvatarThread(threadId: string) {
   revalidatePath('/avatar');
   revalidatePath(`/avatar/thread/${threadId}`);
 
-  return { success: true };
+  return {
+    success: true,
+    warning: blockCheck.warning,
+  };
 }
