@@ -165,8 +165,17 @@ export async function createFreeTalkComment(
   }
 }
 
-export async function bumpFreeTalkThread(threadId: string) {
+export async function bumpFreeTalkThread(threadId: string, client_id: string) {
   const supabase = await createClient();
+
+  // クライアントIDからユーザーIDを生成
+  const deviceUserId = await generateFinalUserId(client_id);
+
+  // ブロック状態をチェック
+  const blockCheck = await checkBlockStatus(supabase, deviceUserId);
+  if (blockCheck.error) {
+    return blockCheck;
+  }
 
   const { error: updateError } = await supabase
     .from('free_talk_articles')
@@ -182,5 +191,8 @@ export async function bumpFreeTalkThread(threadId: string) {
   revalidatePath('/free-talk');
   revalidatePath(`/free-talk/thread/${threadId}`);
 
-  return { success: true };
+  return {
+    success: true,
+    warning: blockCheck.warning,
+  };
 }
