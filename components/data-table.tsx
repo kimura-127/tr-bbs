@@ -1,5 +1,6 @@
 'use client';
 
+import { PAGINATION_PAGE_SIZE } from '@/app/constant';
 import {
   Table,
   TableBody,
@@ -69,6 +70,11 @@ export function DataTable<TData, TValue>({
     getPaginationRowModel: getPaginationRowModel(),
     onGlobalFilterChange: setGlobalFilter,
     getFilteredRowModel: getFilteredRowModel(),
+    initialState: {
+      pagination: {
+        pageSize: PAGINATION_PAGE_SIZE,
+      },
+    },
     globalFilterFn: (row, columnId, filterValue) => {
       const title = String(row.getValue('title')).toLowerCase();
       const content = String(row.getValue('content')).toLowerCase();
@@ -165,7 +171,7 @@ export function DataTable<TData, TValue>({
                   return (
                     <TableHead
                       key={header.id}
-                      className={`
+                      className={`text-nowrap
                         ${index === 0 ? 'w-[60%]' : ''} 
                         ${index > 0 ? 'max-md:hidden' : ''}
                       `}
@@ -216,13 +222,14 @@ export function DataTable<TData, TValue>({
                                     </span>
                                     <span>•</span>
                                     <span>
-                                      {tableCells[3].getValue()?.toString() ??
+                                      {tableCells[4].getValue()?.toString() ??
                                         '0'}
                                       件
                                     </span>
                                   </div>
                                   <div>
-                                    {tableCells[4].getValue()?.toString()}
+                                    閲覧数:
+                                    {tableCells[3].getValue()?.toString()}
                                   </div>
                                 </div>
                                 {tableCells[5] && (

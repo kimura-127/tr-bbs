@@ -61,6 +61,10 @@ export const columns: ColumnDef<Payment>[] = [
     header: '投稿者',
   },
   {
+    accessorKey: 'viewsCount',
+    header: '閲覧数',
+  },
+  {
     accessorKey: 'replyCount',
     header: '返信',
   },
@@ -113,6 +117,10 @@ export const avatarColumns: ColumnDef<Payment>[] = [
     header: '投稿者',
   },
   {
+    accessorKey: 'viewsCount',
+    header: '閲覧数',
+  },
+  {
     accessorKey: 'replyCount',
     header: '返信',
   },
@@ -163,6 +171,10 @@ export const freeTalkColumns: ColumnDef<Payment>[] = [
   {
     accessorKey: 'name',
     header: '投稿者',
+  },
+  {
+    accessorKey: 'viewsCount',
+    header: '閲覧数',
   },
   {
     accessorKey: 'replyCount',
