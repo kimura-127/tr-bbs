@@ -27,6 +27,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import type { CreateResult, ThreadType } from '@/types';
+import { fetcher } from '@/utils/fetcher';
 import { getClientId, setClientId } from '@/utils/generateUserIdentifier';
 import { createClient } from '@/utils/supabase/client';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -36,6 +37,7 @@ import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
+import useSWR from 'swr';
 import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
 import { ImageUpload } from './image-upload';
@@ -85,6 +87,11 @@ interface ThreadViewProps {
   threadType: ThreadType;
 }
 
+interface ViewCountResponse {
+  success: boolean;
+  error?: string;
+}
+
 export function ThreadView({ thread, threadType }: ThreadViewProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [isBumping, setIsBumping] = useState(false);
@@ -103,31 +110,32 @@ export function ThreadView({ thread, threadType }: ThreadViewProps) {
     },
   });
 
-  useEffect(() => {
-    // 実際のページ表示時にのみ閲覧数を更新
-    const updateViewCount = async () => {
-      try {
-        const response = await fetch('/api/view-count', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            threadId: thread.id,
-            threadType,
-          }),
-        });
+  // 閲覧数を更新
+  const { error } = useSWR<ViewCountResponse>(
+    ['/api/view-count', thread.id],
+    async ([url, id]) =>
+      fetcher(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          threadId: id,
+          threadType,
+        }),
+      }),
+    {
+      // 一度だけ実行
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+      // エラー時は3回まで再試行
+      errorRetryCount: 3,
+    }
+  );
 
-        if (!response.ok) {
-          console.error('Failed to update view count');
-        }
-      } catch (error) {
-        console.error('Error updating view count:', error);
-      }
-    };
-
-    updateViewCount();
-  }, [thread.id, threadType]);
+  if (error) {
+    console.error('Error updating view count:', error);
+  }
 
   // 画像アップロード処理
   async function uploadImages(files: File[]) {
