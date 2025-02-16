@@ -50,15 +50,14 @@ export async function getFreeTalkThread(
   }
 
   // NOTE: 閲覧数をプラス1する処理
-  const { error: updateError } = await supabase
-    .from('free_talk_articles')
-    .update({ views_count: article.views_count + 1 })
-    .eq('id', threadId);
+  // const { error: updateError } = await supabase
+  //   .from('free_talk_articles')
+  //   .update({ views_count: article.views_count + 1 })
+  //   .eq('id', threadId);
 
-  if (updateError) {
-    console.error('閲覧数の更新に失敗しました:', updateError);
-  }
-  console.log('閲覧数の更新に成功しました');
+  // if (updateError) {
+  //   console.error('閲覧数の更新に失敗しました:', updateError);
+  // }
 
   return {
     id: article.id,
