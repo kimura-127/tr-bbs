@@ -33,7 +33,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { FileCheck2, RotateCw } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { v4 as uuidv4 } from 'uuid';
@@ -102,6 +102,32 @@ export function ThreadView({ thread, threadType }: ThreadViewProps) {
       images: [],
     },
   });
+
+  useEffect(() => {
+    // 実際のページ表示時にのみ閲覧数を更新
+    const updateViewCount = async () => {
+      try {
+        const response = await fetch('/api/view-count', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            threadId: thread.id,
+            threadType,
+          }),
+        });
+
+        if (!response.ok) {
+          console.error('Failed to update view count');
+        }
+      } catch (error) {
+        console.error('Error updating view count:', error);
+      }
+    };
+
+    updateViewCount();
+  }, [thread.id, threadType]);
 
   // 画像アップロード処理
   async function uploadImages(files: File[]) {

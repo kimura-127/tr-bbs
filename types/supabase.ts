@@ -497,6 +497,13 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
+      increment_views_count: {
+        Args: {
+          table_name: string
+          record_id: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never
