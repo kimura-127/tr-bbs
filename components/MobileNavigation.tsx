@@ -6,29 +6,6 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-const useScroll = () => {
-  const [scrollDirection, setScrollDirection] = useState<'up' | 'down'>('up');
-  const [lastScrollY, setLastScrollY] = useState(0);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      if (currentScrollY > lastScrollY) {
-        setScrollDirection('down');
-      } else {
-        setScrollDirection('up');
-      }
-
-      setLastScrollY(currentScrollY);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [lastScrollY]);
-
-  return { scrollDirection, isTop: lastScrollY === 0 };
-};
-
 const MENU_ITEMS = [
   {
     icon: ShoppingCart,
@@ -62,13 +39,29 @@ export function MobileNavigation() {
     const currentMenuItem = MENU_ITEMS.find((item) => item.href === pathname);
     return currentMenuItem?.label || '';
   });
-  const { scrollDirection, isTop } = useScroll();
+
+  const [isScrollingDown, setIsScrollingDown] = useState(false);
+  const [isTop, setIsTop] = useState(true);
+
+  useEffect(() => {
+    let lastScrollY = window.scrollY;
+
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      setIsScrollingDown(currentScrollY > lastScrollY);
+      setIsTop(currentScrollY === 0);
+      lastScrollY = currentScrollY;
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
     <nav
       className={cn(
         'md:hidden fixed bottom-0 left-0 right-0 bg-background border-t border-border backdrop-blur-sm z-50 transition-opacity duration-200',
-        scrollDirection === 'down' || !isTop ? 'opacity-40' : 'opacity-100'
+        isScrollingDown || !isTop ? 'opacity-40' : 'opacity-100'
       )}
     >
       <div className="flex justify-around items-center h-16">
