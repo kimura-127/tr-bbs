@@ -41,16 +41,23 @@ export function MobileNavigation() {
   });
 
   const [isScrollingDown, setIsScrollingDown] = useState(false);
-  const [isTop, setIsTop] = useState(true);
 
   useEffect(() => {
-    let lastScrollY = window.scrollY;
+    let lastScrollY = 0;
+    let ticking = false;
 
     const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      setIsScrollingDown(currentScrollY > lastScrollY);
-      setIsTop(currentScrollY === 0);
-      lastScrollY = currentScrollY;
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const currentScrollY = window.pageYOffset;
+          setIsScrollingDown(
+            currentScrollY > lastScrollY && currentScrollY > 10
+          );
+          lastScrollY = currentScrollY;
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -61,7 +68,7 @@ export function MobileNavigation() {
     <nav
       className={cn(
         'md:hidden fixed bottom-0 left-0 right-0 bg-background border-t border-border backdrop-blur-sm z-50 transition-opacity duration-200',
-        isScrollingDown || !isTop ? 'opacity-40' : 'opacity-100'
+        isScrollingDown ? 'opacity-40' : 'opacity-100'
       )}
     >
       <div className="flex justify-around items-center h-16">
