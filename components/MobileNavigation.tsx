@@ -9,11 +9,11 @@ import { useEffect, useState } from 'react';
 const useScroll = () => {
   const [scrollDirection, setScrollDirection] = useState<'up' | 'down'>('up');
   const [lastScrollY, setLastScrollY] = useState(0);
+  const isTop = window.scrollY === 0;
 
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-
       if (currentScrollY > lastScrollY) {
         setScrollDirection('down');
       } else {
@@ -27,7 +27,7 @@ const useScroll = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [lastScrollY]);
 
-  return scrollDirection;
+  return { scrollDirection, isTop };
 };
 
 const MENU_ITEMS = [
@@ -63,15 +63,13 @@ export function MobileNavigation() {
     const currentMenuItem = MENU_ITEMS.find((item) => item.href === pathname);
     return currentMenuItem?.label || '';
   });
-  const scrollDirection = useScroll();
+  const { scrollDirection, isTop } = useScroll();
 
   return (
     <nav
       className={cn(
         'md:hidden fixed bottom-0 left-0 right-0 bg-background border-t border-border backdrop-blur-sm z-50 transition-opacity duration-200',
-        scrollDirection === 'down' || window.screenY === 0
-          ? 'opacity-40'
-          : 'opacity-100'
+        scrollDirection === 'down' || isTop ? 'opacity-40' : 'opacity-100'
       )}
     >
       <div className="flex justify-around items-center h-16">
