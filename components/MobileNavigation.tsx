@@ -9,7 +9,6 @@ import { useEffect, useState } from 'react';
 const useScroll = () => {
   const [scrollDirection, setScrollDirection] = useState<'up' | 'down'>('up');
   const [lastScrollY, setLastScrollY] = useState(0);
-  const isTop = window.scrollY === 0;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -27,7 +26,7 @@ const useScroll = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [lastScrollY]);
 
-  return { scrollDirection, isTop };
+  return { scrollDirection, isTop: lastScrollY === 0 };
 };
 
 const MENU_ITEMS = [
