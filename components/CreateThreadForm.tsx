@@ -223,13 +223,13 @@ export function CreateThreadForm({
           name="title"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="font-semibold tracking-wide">
+              <FormLabel className="font-semibold tracking-wide text-foreground/90">
                 タイトル
               </FormLabel>
               <FormControl>
                 <Input
                   placeholder="タイトルを入力"
-                  className="my-4 leading-8 tracking-wider max-md:leading-6 max-md:text-sm"
+                  className="my-4 leading-8 tracking-wider max-md:leading-6 max-md:text-sm bg-background text-foreground"
                   {...field}
                 />
               </FormControl>
@@ -242,13 +242,13 @@ export function CreateThreadForm({
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="font-semibold tracking-wide">
+              <FormLabel className="font-semibold tracking-wide text-foreground/90">
                 名前
               </FormLabel>
               <FormControl>
                 <Input
                   placeholder="お名前を入力"
-                  className="my-4 leading-8 tracking-wider max-md:leading-6 max-md:text-sm"
+                  className="my-4 leading-8 tracking-wider max-md:leading-6 max-md:text-sm bg-background text-foreground"
                   {...field}
                 />
               </FormControl>
@@ -261,13 +261,13 @@ export function CreateThreadForm({
           name="content"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="font-semibold tracking-wider">
+              <FormLabel className="font-semibold tracking-wider text-foreground/90">
                 スレッドの内容
               </FormLabel>
               <FormControl>
                 <AnimateTextarea
                   placeholder="スレッドの内容を入力"
-                  className="my-4 min-h-[14rem] 2xl:min-h-[24rem]"
+                  className="my-4 min-h-[14rem] 2xl:min-h-[24rem] bg-background text-foreground"
                   {...field}
                 />
               </FormControl>
@@ -281,7 +281,7 @@ export function CreateThreadForm({
           name="images"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="font-semibold tracking-wider">
+              <FormLabel className="font-semibold tracking-wider text-foreground/90">
                 画像
               </FormLabel>
               <FormControl>
@@ -301,7 +301,7 @@ export function CreateThreadForm({
           name="boardType"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="font-semibold tracking-wider">
+              <FormLabel className="font-semibold tracking-wider text-foreground/90">
                 掲示板の種類
               </FormLabel>
               <FormControl>
@@ -312,9 +312,9 @@ export function CreateThreadForm({
                 >
                   <FormItem className="flex items-center space-x-3 space-y-0 relative">
                     <FormControl>
-                      <RadioGroupItem value="trade" className="text-blue-700" />
+                      <RadioGroupItem value="trade" className="text-primary" />
                     </FormControl>
-                    <FormLabel className="tracking-lg leading-6 border-2 w-60 flex justify-center py-2 rounded-md cursor-pointer hover:bg-gray-50">
+                    <FormLabel className="tracking-lg leading-6 border-2 border-border w-60 flex justify-center py-2 rounded-md cursor-pointer hover:bg-muted/80 dark:hover:bg-secondary/30 transition-colors duration-200">
                       取引掲示板
                     </FormLabel>
                   </FormItem>
@@ -322,21 +322,18 @@ export function CreateThreadForm({
                     <FormControl>
                       <RadioGroupItem
                         value="free-talk"
-                        className="text-blue-700"
+                        className="text-primary"
                       />
                     </FormControl>
-                    <FormLabel className="tracking-lg leading-6 border-2 w-60 flex justify-center py-2 rounded-md cursor-pointer hover:bg-gray-50">
+                    <FormLabel className="tracking-lg leading-6 border-2 border-border w-60 flex justify-center py-2 rounded-md cursor-pointer hover:bg-muted/80 dark:hover:bg-secondary/30 transition-colors duration-200">
                       雑談掲示板
                     </FormLabel>
                   </FormItem>
                   <FormItem className="flex items-center space-x-3 space-y-0 relative">
                     <FormControl>
-                      <RadioGroupItem
-                        value="avatar"
-                        className="text-blue-700"
-                      />
+                      <RadioGroupItem value="avatar" className="text-primary" />
                     </FormControl>
-                    <FormLabel className="tracking-lg leading-6 border-2 w-60 flex justify-center py-2 rounded-md cursor-pointer hover:bg-gray-50">
+                    <FormLabel className="tracking-lg leading-6 border-2 border-border w-60 flex justify-center py-2 rounded-md cursor-pointer hover:bg-muted/80 dark:hover:bg-secondary/30 transition-colors duration-200">
                       アバター掲示板
                     </FormLabel>
                   </FormItem>
@@ -350,13 +347,13 @@ export function CreateThreadForm({
         <div className="flex justify-center pt-10">
           <Button
             type="submit"
-            className="h-16 w-80 bg-gray-700 hover:bg-gray-800 font-semibold gap-2 text-base tracking-wide"
+            className="h-16 w-80 bg-gray-700 hover:bg-gray-800 dark:text-white font-semibold gap-2 text-base tracking-wide text-primary-foreground transition-colors duration-200"
             disabled={isLoading}
           >
             {isLoading ? '作成中...' : 'スレッド作成'}
           </Button>
         </div>
-        <p className="text-sm text-gray-500 text-center">
+        <p className="text-sm text-muted-foreground text-center">
           スレッド詳細ページで通知設定が可能です。
           <br />
           コメントが投稿された際に通知を受け取ることができます。

@@ -3,6 +3,7 @@ import { Geist } from 'next/font/google';
 import './globals.css';
 import { Footer } from '@/components/Footer';
 import { Header } from '@/components/Header';
+import { MobileNavigation } from '@/components/MobileNavigation';
 import { Toaster } from '@/components/ui/sonner';
 import type { Metadata, Viewport } from 'next';
 
@@ -96,9 +97,10 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <Header />
-          <main className="min-h-screen flex flex-col items-center">
+          <main className="min-h-screen flex flex-col items-center pb-16 md:pb-0">
             {children}
           </main>
+          <MobileNavigation />
           <Footer />
           <Toaster />
         </ThemeProvider>

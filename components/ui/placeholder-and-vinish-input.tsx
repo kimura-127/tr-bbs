@@ -34,10 +34,10 @@ export function PlaceholdersAndVanishInput({
   };
   const handleVisibilityChange = () => {
     if (document.visibilityState !== 'visible' && intervalRef.current) {
-      clearInterval(intervalRef.current); // Clear the interval when the tab is not visible
+      clearInterval(intervalRef.current);
       intervalRef.current = null;
     } else if (document.visibilityState === 'visible') {
-      startAnimation(); // Restart the interval when the tab becomes visible
+      startAnimation();
     }
   };
 
@@ -77,7 +77,10 @@ export function PlaceholdersAndVanishInput({
       computedStyles.getPropertyValue('font-size')
     );
     ctx.font = `${fontSize * 2}px ${computedStyles.fontFamily}`;
-    ctx.fillStyle = '#FFF';
+    // ダークモード時は白色で描画
+    ctx.fillStyle = document.documentElement.classList.contains('dark')
+      ? '#FFFFFF'
+      : '#FFF';
     ctx.fillText(value, 16, 40);
 
     const imageData = ctx.getImageData(0, 0, 800, 800);
@@ -186,18 +189,19 @@ export function PlaceholdersAndVanishInput({
     vanishAndSubmit();
     onSubmit?.(e);
   };
+
   return (
     <form
       className={cn(
-        'w-full relative max-w-xl mx-auto bg-white h-12 rounded-full overflow-hidden shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),_0px_1px_0px_0px_rgba(25,28,33,0.02),_0px_0px_0px_1px_rgba(25,28,33,0.08)] transition duration-200',
-        value && 'bg-gray-50'
+        'w-full relative max-w-xl mx-auto glass-effect h-12 rounded-full overflow-hidden transition duration-200 hover-glow dark:hover:bg-secondary/10',
+        value && 'bg-secondary/5 dark:bg-secondary/15'
       )}
       onSubmit={handleSubmit}
     >
       <canvas
         className={cn(
-          'absolute pointer-events-none  text-base transform scale-50 top-[20%] left-2 sm:left-8 origin-top-left filter invert  pr-20',
-          !animating ? 'opacity-0' : 'opacity-100'
+          'absolute pointer-events-none text-base transform scale-50 top-[20%] left-2 sm:left-8 origin-top-left filter dark:invert-0 invert pr-20',
+          !animating ? 'opacity-0' : 'opacity-100 dark:opacity-90'
         )}
         ref={canvasRef}
       />
@@ -212,8 +216,8 @@ export function PlaceholdersAndVanishInput({
         value={value}
         type="text"
         className={cn(
-          'w-full relative text-sm sm:text-base z-10 border-none  cursor-pointer  bg-transparent text-black h-full rounded-full focus:outline-none focus:ring-0 pl-4 sm:pl-10 pr-20',
-          animating && 'text-transparent '
+          'w-full relative text-sm sm:text-base z-10 border-none cursor-pointer bg-transparent text-foreground h-full rounded-full focus:outline-none focus:ring-0 pl-4 sm:pl-10 pr-20 placeholder-muted-foreground',
+          animating && 'text-transparent'
         )}
         onKeyDown={(e) => {
           if (e.key === 'Enter') {
@@ -225,9 +229,9 @@ export function PlaceholdersAndVanishInput({
       <button
         disabled={!value}
         type="submit"
-        className="absolute right-2 top-1/2 z-20 -translate-y-1/2 h-8 w-8 rounded-full disabled:bg-gray-100 bg-black transition duration-200 flex items-center justify-center"
+        className="absolute right-2 top-1/2 z-20 -translate-y-1/2 h-8 w-8 rounded-full disabled:bg-secondary/20 bg-primary transition duration-200 flex items-center justify-center hover:opacity-90 dark:disabled:bg-secondary/30 dark:hover:bg-primary/90"
       >
-        <Trash2 className="text-gray-300 h-4 w-4" />
+        <Trash2 className="text-primary-foreground h-4 w-4" />
       </button>
 
       <div className="absolute inset-0 flex items-center rounded-full pointer-events-none">
@@ -251,7 +255,7 @@ export function PlaceholdersAndVanishInput({
                 duration: 0.3,
                 ease: 'linear',
               }}
-              className="text-sm sm:text-base font-normal text-neutral-500 pl-4 sm:pl-12 text-left w-[calc(100%-2rem)] truncate"
+              className="text-sm sm:text-base font-normal text-muted-foreground dark:text-muted-foreground/90 pl-4 sm:pl-12 text-left w-[calc(100%-2rem)] truncate"
             >
               {placeholders[currentPlaceholder]}
             </motion.p>

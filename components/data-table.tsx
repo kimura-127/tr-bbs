@@ -118,7 +118,7 @@ export function DataTable<TData, TValue>({
           <Button
             onClick={handleRefresh}
             disabled={isRefreshing}
-            className="max-md:hidden bg-gray-700 hover:bg-gray-800 font-semibold text-base"
+            className="max-md:hidden bg-gray-700 hover:bg-gray-800 font-semibold text-base dark:text-white"
           >
             <RotateCw className={isRefreshing ? 'animate-spin' : ''} />
             更新
@@ -127,7 +127,7 @@ export function DataTable<TData, TValue>({
             <div>
               <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogTrigger asChild>
-                  <Button className="h- bg-gray-700 hover:bg-gray-700 hover:text-gray-300 font-semibold gap-2 text-base tracking-wide max-md:text-xs">
+                  <Button className="bg-gray-700 hover:bg-gray-800 hover:text-gray-300 font-semibold gap-2 text-base tracking-wide max-md:text-xs dark:text-white">
                     <SquarePen className="max-sm:hidden" />
                     新規作成
                   </Button>
@@ -213,7 +213,7 @@ export function DataTable<TData, TValue>({
                             cell.getContext()
                           )}
                           {index === 0 && (
-                            <div className="md:hidden text-xs text-muted-foreground py-1 px-4 bg-gray-50">
+                            <div className="md:hidden text-xs text-muted-foreground py-1 px-4 bg-gray-50 dark:bg-gray-900">
                               <div className="flex justify-between items-center">
                                 <div>
                                   <div className="flex gap-2">
