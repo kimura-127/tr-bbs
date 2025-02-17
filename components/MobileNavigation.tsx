@@ -83,7 +83,7 @@ export function MobileNavigation() {
               href={item.href}
               onClick={() => setActiveLabel(item.label)}
               className={cn(
-                'flex flex-col items-center justify-center w-full h-full space-y-1',
+                'flex flex-col items-center justify-start mt-2 w-full h-full space-y-1',
                 'transition-colors duration-200',
                 isActive ? item.iconColor : 'text-muted-foreground'
               )}
