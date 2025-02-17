@@ -3,6 +3,7 @@
 import { cn } from '@/lib/utils';
 import { Bell, MessageCircle, ShoppingCart, Speech } from 'lucide-react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 const useScroll = () => {
@@ -57,14 +58,18 @@ const MENU_ITEMS = [
 ];
 
 export function MobileNavigation() {
-  const [activeLabel, setActiveLabel] = useState<string>('');
+  const pathname = usePathname();
+  const [activeLabel, setActiveLabel] = useState<string>(() => {
+    const currentMenuItem = MENU_ITEMS.find((item) => item.href === pathname);
+    return currentMenuItem?.label || '';
+  });
   const scrollDirection = useScroll();
 
   return (
     <nav
       className={cn(
         'md:hidden fixed bottom-0 left-0 right-0 bg-background border-t border-border backdrop-blur-sm z-50 transition-opacity duration-200',
-        scrollDirection === 'down' ? 'opacity-30' : 'opacity-100'
+        scrollDirection === 'down' ? 'opacity-40' : 'opacity-100'
       )}
     >
       <div className="flex justify-around items-center h-16">
