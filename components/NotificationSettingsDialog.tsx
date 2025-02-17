@@ -214,7 +214,7 @@ export function NotificationSettingsDialog({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="w-52 bg-gray-700 hover:bg-gray-800 font-semibold gap-2 text-xs tracking-wide">
+        <Button className="w-52 bg-gray-700 hover:bg-gray-800 font-semibold gap-2 text-xs tracking-wide dark:text-white">
           <Bell /> コメント通知をオンにする
         </Button>
       </DialogTrigger>

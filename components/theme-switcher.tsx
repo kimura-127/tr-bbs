@@ -29,25 +29,22 @@ const ThemeSwitcher = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size={'sm'}>
+        <Button
+          variant="ghost"
+          className="border hover:bg-gray-900/70 hover:text-white"
+          size={'lg'}
+        >
           {theme === 'light' ? (
-            <Sun
-              key="light"
-              size={ICON_SIZE}
-              className={'text-muted-foreground'}
-            />
-          ) : theme === 'dark' ? (
-            <Moon
-              key="dark"
-              size={ICON_SIZE}
-              className={'text-muted-foreground'}
-            />
+            <Sun key="light" size={ICON_SIZE} />
+            // ) : theme === 'dark' ? (
           ) : (
-            <Laptop
-              key="system"
-              size={ICON_SIZE}
-              className={'text-muted-foreground'}
-            />
+            <Moon key="dark" size={ICON_SIZE} />
+            // ) : (
+            // <Laptop
+            //   key="system"
+            //   size={ICON_SIZE}
+            //   className={'text-muted-foreground'}
+            // />
           )}
         </Button>
       </DropdownMenuTrigger>
@@ -56,18 +53,24 @@ const ThemeSwitcher = () => {
           value={theme}
           onValueChange={(e) => setTheme(e)}
         >
-          <DropdownMenuRadioItem className="flex gap-2" value="light">
+          <DropdownMenuRadioItem
+            className="flex gap-2 pr-4 pl-8 py-3 text-base cursor-pointer"
+            value="light"
+          >
             <Sun size={ICON_SIZE} className="text-muted-foreground" />{' '}
             <span>Light</span>
           </DropdownMenuRadioItem>
-          <DropdownMenuRadioItem className="flex gap-2" value="dark">
+          <DropdownMenuRadioItem
+            className="flex gap-2 pr-4 pl-8 py-3 text-base cursor-pointer"
+            value="dark"
+          >
             <Moon size={ICON_SIZE} className="text-muted-foreground" />{' '}
             <span>Dark</span>
           </DropdownMenuRadioItem>
-          <DropdownMenuRadioItem className="flex gap-2" value="system">
+          {/* <DropdownMenuRadioItem className="flex gap-2" value="system">
             <Laptop size={ICON_SIZE} className="text-muted-foreground" />{' '}
             <span>System</span>
-          </DropdownMenuRadioItem>
+          </DropdownMenuRadioItem> */}
         </DropdownMenuRadioGroup>
       </DropdownMenuContent>
     </DropdownMenu>

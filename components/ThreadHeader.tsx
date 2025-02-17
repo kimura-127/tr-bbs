@@ -42,14 +42,16 @@ export function ThreadHeader({ title }: { title: string }) {
   return (
     <div>
       <div className="flex gap-1 bg-gray-700 rounded-lg px-8 h-12 items-center justify-between">
-        <HyperText
-          text={title}
-          className="text-lg font-bold text-white tracking-widest leading-9"
-        />
+        <div>
+          <HyperText
+            text={title}
+            className="text-lg font-bold text-white tracking-widest leading-9"
+          />
+        </div>
         <Button
           onClick={handleRefresh}
           disabled={isRefreshing}
-          className="md:hidden bg-gray-700 hover:bg-transparent font-bold text-base"
+          className="md:hidden bg-gray-700 hover:bg-transparent font-bold text-base dark:text-white"
         >
           <RotateCw className={isRefreshing ? 'animate-spin' : ''} />
           {isRefreshing ? '更新中...' : '更新'}

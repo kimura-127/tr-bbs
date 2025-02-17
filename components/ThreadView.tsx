@@ -289,7 +289,7 @@ export function ThreadView({ thread, threadType }: ThreadViewProps) {
 
   return (
     // NOTE: スレッドビュー
-    <div className="container mx-auto py-1.5">
+    <div className="container mx-auto py-4">
       <div className="mb-4">
         <div className="bg-gray-700 text-base px-4 h-12 flex items-center rounded-lg">
           <h1
@@ -332,7 +332,7 @@ export function ThreadView({ thread, threadType }: ThreadViewProps) {
             </BreadcrumbList>
           </Breadcrumb>
           <InteractiveHoverButton
-            className="w-44 text-sm my-2 max-md:hidden text-gray-700"
+            className="w-44 text-sm my-2 max-md:hidden text-gray-700 dark:text-white"
             text="ページ下部へ"
             arrow="down"
             onClick={() => {
@@ -357,7 +357,7 @@ export function ThreadView({ thread, threadType }: ThreadViewProps) {
                 });
               }}
               variant="outline"
-              className="md:hidden text-xs text-gray-500"
+              className="md:hidden text-xs text-gray-500 dark:text-white"
             >
               下へ
             </Button>
@@ -420,7 +420,7 @@ export function ThreadView({ thread, threadType }: ThreadViewProps) {
             }
           }}
           disabled={isBumping}
-          className="w-52 max-md:text-xs max-md:tracking-normal bg-gray-700 hover:bg-gray-800 font-semibold gap-2 text-xs tracking-wide"
+          className="w-52 max-md:text-xs max-md:tracking-normal bg-gray-700 hover:bg-gray-800 font-semibold gap-2 text-xs tracking-wide dark:text-white"
         >
           {bumpSuccess ? (
             <div className="flex items-center gap-2">
@@ -491,7 +491,7 @@ export function ThreadView({ thread, threadType }: ThreadViewProps) {
               />
               <div>
                 <InteractiveHoverButton
-                  className="w-44 h-10 text-sm mb-2 max-md:hidden text-gray-700"
+                  className="w-44 h-10 text-sm mb-2 max-md:hidden text-gray-700 dark:text-white"
                   text="ページ上部へ"
                   arrow="up"
                   type="button"
@@ -505,7 +505,7 @@ export function ThreadView({ thread, threadType }: ThreadViewProps) {
                 <Button
                   type="button"
                   variant="outline"
-                  className="md:hidden text-xs mb-2 text-gray-500"
+                  className="md:hidden text-xs mb-2 text-gray-500 dark:text-white"
                   onClick={() => {
                     window.scrollTo({
                       top: 0,
@@ -570,7 +570,7 @@ export function ThreadView({ thread, threadType }: ThreadViewProps) {
               <Button
                 type="submit"
                 disabled={isLoading}
-                className="h-16 w-80 bg-gray-700 hover:bg-gray-800 font-semibold gap-2 text-base tracking-wide"
+                className="h-16 w-80 bg-gray-700 hover:bg-gray-800 font-semibold gap-2 text-base tracking-wide dark:text-white"
               >
                 {isLoading ? '送信中...' : 'このスレッドに返信'}
               </Button>
