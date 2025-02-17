@@ -31,10 +31,11 @@ import { fetcher } from '@/utils/fetcher';
 import { getClientId, setClientId } from '@/utils/generateUserIdentifier';
 import { createClient } from '@/utils/supabase/client';
 import { zodResolver } from '@hookform/resolvers/zod';
+import Linkify from 'linkify-react';
 import { FileCheck2, RotateCw } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
+import { memo, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import useSWR from 'swr';
@@ -91,6 +92,32 @@ interface ViewCountResponse {
   success: boolean;
   error?: string;
 }
+
+// メモ化してパフォーマンスを改善
+const MemoizedContent = memo(({ content }: { content: string }) => (
+  <div className="whitespace-pre-wrap leading-8 tracking-wider max-md:leading-6 max-md:text-sm">
+    <Linkify
+      options={{
+        target: '_blank',
+        rel: 'noopener noreferrer',
+        className:
+          'text-blue-500 hover:text-blue-600 hover:underline break-all',
+        format: {
+          url: (value) => {
+            // 内部リンクの場合はパスのみを表示
+            if (value.includes(process.env.NEXT_PUBLIC_APP_URL || '')) {
+              return new URL(value).pathname;
+            }
+            return value;
+          },
+        },
+      }}
+    >
+      {content}
+    </Linkify>
+  </div>
+));
+MemoizedContent.displayName = 'MemoizedContent';
 
 export function ThreadView({ thread, threadType }: ThreadViewProps) {
   const [isLoading, setIsLoading] = useState(false);
@@ -287,6 +314,18 @@ export function ThreadView({ thread, threadType }: ThreadViewProps) {
     );
   };
 
+  // キーボードイベントハンドラを追加
+  const handleKeyDown = async (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && e.shiftKey && !isLoading) {
+      e.preventDefault();
+      const isValid = await form.trigger();
+      if (isValid) {
+        const formData = form.getValues();
+        await onSubmit(formData);
+      }
+    }
+  };
+
   return (
     // NOTE: スレッドビュー
     <div className="container mx-auto py-4">
@@ -362,9 +401,7 @@ export function ThreadView({ thread, threadType }: ThreadViewProps) {
               下へ
             </Button>
           </div>
-          <div className="whitespace-pre-wrap leading-8 tracking-wider max-md:leading-6 max-md:text-sm">
-            {thread.content}
-          </div>
+          <MemoizedContent content={thread.content} />
           <ImageGallery urls={thread.image_urls} />
         </div>
       </div>
@@ -455,9 +492,7 @@ export function ThreadView({ thread, threadType }: ThreadViewProps) {
               <div key={reply.id} className="rounded-lg border p-4 shadow">
                 <p className="text-gray-500">日時: {reply.createdAt}</p>
                 <p className="text-gray-500 mb-2">投稿者: {reply.name}</p>
-                <div className="whitespace-pre-wrap leading-8 tracking-wider max-md:leading-6 max-md:text-sm">
-                  {reply.content}
-                </div>
+                <MemoizedContent content={reply.content} />
                 <ImageGallery urls={reply.image_urls} />
               </div>
             ))}
@@ -526,6 +561,7 @@ export function ThreadView({ thread, threadType }: ThreadViewProps) {
                   <FormItem>
                     <FormControl>
                       <AnimateTextarea
+                        onKeyDown={handleKeyDown}
                         placeholder="コメントを入力"
                         className="mb-4 h-40 md:h-32 leading-5 tracking-wider max-md:leading-6 max-md:text-sm"
                         {...field}

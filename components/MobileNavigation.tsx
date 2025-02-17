@@ -69,7 +69,9 @@ export function MobileNavigation() {
     <nav
       className={cn(
         'md:hidden fixed bottom-0 left-0 right-0 bg-background border-t border-border backdrop-blur-sm z-50 transition-opacity duration-200',
-        scrollDirection === 'down' ? 'opacity-40' : 'opacity-100'
+        scrollDirection === 'down' || window.screenY === 0
+          ? 'opacity-40'
+          : 'opacity-100'
       )}
     >
       <div className="flex justify-around items-center h-16">
