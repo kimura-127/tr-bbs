@@ -15,7 +15,7 @@ export const revalidate = 0; // 1時間ごとに再検証
 
 export default function Home() {
   return (
-    <main className="container mx-auto py-4">
+    <main className="container mx-auto py-4 max-md:pt-8">
       <ThreadHeader title="取引掲示板" />
       <Suspense fallback={<DataTableSkeleton />}>
         <ThreadList
