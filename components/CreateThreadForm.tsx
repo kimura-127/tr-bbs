@@ -77,6 +77,19 @@ export function CreateThreadForm({
 }) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+
+  // キーボードイベントハンドラを追加
+  const handleKeyDown = async (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && e.shiftKey && !isLoading) {
+      e.preventDefault();
+      const isValid = await form.trigger();
+      if (isValid) {
+        const formData = form.getValues();
+        await onSubmit(formData);
+      }
+    }
+  };
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -268,6 +281,7 @@ export function CreateThreadForm({
                 <AnimateTextarea
                   placeholder="スレッドの内容を入力"
                   className="my-4 min-h-[14rem] 2xl:min-h-[24rem] bg-background text-foreground"
+                  onKeyDown={handleKeyDown}
                   {...field}
                 />
               </FormControl>
