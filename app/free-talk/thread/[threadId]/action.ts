@@ -49,16 +49,6 @@ export async function getFreeTalkThread(
     return null;
   }
 
-  // NOTE: 閲覧数をプラス1する処理
-  // const { error: updateError } = await supabase
-  //   .from('free_talk_articles')
-  //   .update({ views_count: article.views_count + 1 })
-  //   .eq('id', threadId);
-
-  // if (updateError) {
-  //   console.error('閲覧数の更新に失敗しました:', updateError);
-  // }
-
   return {
     id: article.id,
     title: article.title,
@@ -149,6 +139,7 @@ export async function createFreeTalkComment(
     const { error: articleError } = await supabase
       .from('free_talk_articles')
       .update({
+        updated_at: new Date().toISOString(),
         replies_count: (currentArticle?.replies_count ?? 0) + 1,
       })
       .eq('id', threadId);
