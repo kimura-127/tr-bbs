@@ -15,7 +15,7 @@ export const revalidate = 0;
 
 export default function FreeTalkPage() {
   return (
-    <main className="container mx-auto py-4">
+    <main className="container mx-auto py-4 max-md:pt-8">
       <ThreadHeader title="雑談掲示板" />
       <Suspense fallback={<DataTableSkeleton />}>
         <ThreadList

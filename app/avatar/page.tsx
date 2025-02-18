@@ -15,7 +15,7 @@ export const revalidate = 0;
 
 export default function AvatarPage() {
   return (
-    <main className="container mx-auto py-4">
+    <main className="container mx-auto py-4 max-md:pt-8">
       <ThreadHeader title="アバター掲示板" />
       <Suspense fallback={<DataTableSkeleton />}>
         <ThreadList
