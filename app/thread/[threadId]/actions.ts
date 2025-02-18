@@ -47,18 +47,6 @@ export async function getThread(threadId: string): Promise<Thread | null> {
     return null;
   }
 
-  // NOTE: 閲覧数をプラス1する処理（updated_atは更新しない）
-  // const { error: updateError } = await supabase
-  //   .from('articles')
-  //   .update({
-  //     views_count: article.views_count + 1,
-  //   })
-  //   .eq('id', threadId);
-
-  // if (updateError) {
-  //   console.error('閲覧数の更新に失敗しました:', updateError);
-  // }
-
   return {
     id: article.id,
     title: article.title,
@@ -152,6 +140,7 @@ export async function createComment(
     const { error: articleError } = await supabase
       .from('articles')
       .update({
+        updated_at: new Date().toISOString(),
         replies_count: (currentArticle?.replies_count ?? 0) + 1,
       })
       .eq('id', threadId);

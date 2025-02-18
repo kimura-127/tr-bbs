@@ -49,16 +49,6 @@ export async function getAvatarThread(
     return null;
   }
 
-  // NOTE: 閲覧数をプラス1する処理
-  // const { error: updateError } = await supabase
-  //   .from('avatar_articles')
-  //   .update({ views_count: article.views_count + 1 })
-  //   .eq('id', threadId);
-
-  // if (updateError) {
-  //   console.error('閲覧数の更新に失敗しました:', updateError);
-  // }
-
   return {
     id: article.id,
     title: article.title,
@@ -102,7 +92,6 @@ export async function createAvatarComment(
   }
 ) {
   const supabase = await createClient();
-  console.log('メール通知を送信');
 
   try {
     // 1. 現在の記事データを取得
@@ -150,6 +139,7 @@ export async function createAvatarComment(
     const { error: articleError } = await supabase
       .from('avatar_articles')
       .update({
+        updated_at: new Date().toISOString(),
         replies_count: (currentArticle?.replies_count ?? 0) + 1,
       })
       .eq('id', threadId);
