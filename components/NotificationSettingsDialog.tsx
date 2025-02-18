@@ -274,7 +274,7 @@ export function NotificationSettingsDialog({
                         <div className="flex items-center space-x-2">
                           <Share size={20} className="text-muted-foreground" />
                           <p className="text-sm text-muted-foreground">
-                            →「ホーム画面に追加」してご利用ください。
+                            のアイコンをクリックし、「ホーム画面に追加」してご利用ください。
                           </p>
                         </div>
                         <p className="text-sm text-muted-foreground">
@@ -293,7 +293,7 @@ export function NotificationSettingsDialog({
                 <Button
                   onClick={handleSubscribePushNotification}
                   disabled={isSubscribing}
-                  className="bg-gray-700 hover:bg-gray-800 px-8 h-12"
+                  className="bg-gray-700 hover:bg-gray-800 px-8 h-12 dark:text-white"
                 >
                   {isSubscribing
                     ? 'プッシュ通知を設定中...'
@@ -334,7 +334,7 @@ export function NotificationSettingsDialog({
                   </CardContent>
                   <CardFooter className="max-md:p-4">
                     <Button
-                      className="bg-gray-700 hover:bg-gray-800 px-8 h-12"
+                      className="bg-gray-700 hover:bg-gray-800 px-8 h-12 dark:text-white"
                       type="submit"
                       disabled={isLoading}
                     >
