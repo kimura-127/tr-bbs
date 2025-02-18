@@ -10,7 +10,7 @@ export async function getTradingThreads(): Promise<Payment[]> {
   const { data: articles, error } = await supabase
     .from('articles')
     .select(
-      'id, title, content, user_id, updated_at, replies_count, views_count, name, device_user_id'
+      'id, title, content, user_id, created_at, replies_count, views_count, name, device_user_id'
     )
     .order('updated_at', { ascending: false });
 
@@ -26,7 +26,7 @@ export async function getTradingThreads(): Promise<Payment[]> {
     name: `${article.name ?? '名無し'}${article.device_user_id ? `@${article.device_user_id}` : ''}`,
     viewsCount: article.views_count,
     replyCount: article.replies_count,
-    createdAt: new Date(article.updated_at).toLocaleString('ja-JP', {
+    createdAt: new Date(article.created_at).toLocaleString('ja-JP', {
       timeZone: 'Asia/Tokyo',
       hour12: false,
       year: 'numeric',
@@ -45,7 +45,7 @@ export async function getFreeTalkThreads(): Promise<Payment[]> {
   const { data: articles, error } = await supabase
     .from('free_talk_articles')
     .select(
-      'id, title, content, user_id, updated_at, replies_count, views_count, name, device_user_id'
+      'id, title, content, user_id, created_at, replies_count, views_count, name, device_user_id'
     )
     .order('updated_at', { ascending: false });
 
@@ -61,7 +61,7 @@ export async function getFreeTalkThreads(): Promise<Payment[]> {
     name: `${article.name ?? '名無し'}${article.device_user_id ? `@${article.device_user_id}` : ''}`,
     viewsCount: article.views_count,
     replyCount: article.replies_count,
-    createdAt: new Date(article.updated_at).toLocaleString('ja-JP', {
+    createdAt: new Date(article.created_at).toLocaleString('ja-JP', {
       timeZone: 'Asia/Tokyo',
       hour12: false,
       year: 'numeric',
@@ -80,7 +80,7 @@ export async function getAvatarThreads(): Promise<Payment[]> {
   const { data: articles, error } = await supabase
     .from('avatar_articles')
     .select(
-      'id, title, content, user_id, updated_at, replies_count, views_count, name, device_user_id'
+      'id, title, content, user_id, created_at, replies_count, views_count, name, device_user_id'
     )
     .order('updated_at', { ascending: false });
 
@@ -96,7 +96,7 @@ export async function getAvatarThreads(): Promise<Payment[]> {
     name: `${article.name ?? '名無し'}${article.device_user_id ? `@${article.device_user_id}` : ''}`,
     viewsCount: article.views_count,
     replyCount: article.replies_count,
-    createdAt: new Date(article.updated_at).toLocaleString('ja-JP', {
+    createdAt: new Date(article.created_at).toLocaleString('ja-JP', {
       timeZone: 'Asia/Tokyo',
       hour12: false,
       year: 'numeric',
