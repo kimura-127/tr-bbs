@@ -162,7 +162,25 @@ export function DataTable<TData, TValue>({
           />
         </div>
       </div>
-      <div className="rounded-md border shadow mt-5">
+      <div className="flex items-center justify-end space-x-2 py-4">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => table.previousPage()}
+          disabled={!table.getCanPreviousPage()}
+        >
+          前へ
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => table.nextPage()}
+          disabled={!table.getCanNextPage()}
+        >
+          次へ
+        </Button>
+      </div>
+      <div className="rounded-md border shadow">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
