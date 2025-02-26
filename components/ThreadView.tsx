@@ -11,6 +11,7 @@ import {
 import type { Thread } from '@/app/thread/[threadId]/actions';
 import { bumpThread, createComment } from '@/app/thread/[threadId]/actions';
 import { NotificationSettingsDialog } from '@/components/NotificationSettingsDialog';
+import { ThreadPasswordDialog } from '@/components/ThreadPasswordDialog';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -124,6 +125,7 @@ export function ThreadView({ thread, threadType }: ThreadViewProps) {
   const [isBumping, setIsBumping] = useState(false);
   const [bumpSuccess, setBumpSuccess] = useState(false);
   const [resetImages, setResetImages] = useState(false);
+  const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
   const commentFormRef = useRef<HTMLDivElement>(null);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -326,6 +328,60 @@ export function ThreadView({ thread, threadType }: ThreadViewProps) {
     }
   };
 
+  // パスワード確認後のスレッド上位表示処理
+  const handleBumpThread = async (password: number) => {
+    setIsBumping(true);
+    setBumpSuccess(false);
+    try {
+      // デバイス情報を取得
+      let clientId = getClientId();
+      if (!clientId) {
+        // IPアドレスの取得はバックエンドで行う
+        const response = await fetch('/api/get-client-id');
+        const data = await response.json();
+        clientId = data.clientId;
+        if (clientId) {
+          setClientId(clientId);
+        }
+      }
+
+      if (!clientId) {
+        toast.info('クライアントIDの取得に失敗しました', {
+          description: 'IPアドレスからクライアントIDを取得できませんでした',
+        });
+        return;
+      }
+
+      const bumpThreadFunction = getBumpThreadFunction(threadType);
+      const result: CreateResult = await bumpThreadFunction(
+        thread.id,
+        clientId,
+        password
+      );
+
+      if (result.error) {
+        if (result.error === 'パスワードが一致しません') {
+          toast.error('パスワードが一致しません');
+        } else {
+          toast.info(`このアカウントはブロックされています: ${result.error}`);
+        }
+      } else {
+        setIsPasswordDialogOpen(false);
+        setBumpSuccess(true);
+        setTimeout(() => {
+          setBumpSuccess(false);
+        }, 1000);
+        result.warning
+          ? toast.warning(`警告があります: ${result.warning}`)
+          : toast.success('スレッドを上位に表示しました');
+      }
+    } catch (error) {
+      toast.error('エラーが発生しました');
+    } finally {
+      setIsBumping(false);
+    }
+  };
+
   return (
     // NOTE: スレッドビュー
     <div className="container mx-auto py-4">
@@ -405,76 +461,38 @@ export function ThreadView({ thread, threadType }: ThreadViewProps) {
           <ImageGallery urls={thread.image_urls} />
         </div>
       </div>
-
       <div className="flex justify-end gap-2 max-md:flex-col max-md:items-end">
-        <Button
-          onClick={async () => {
-            setIsBumping(true);
-            setBumpSuccess(false);
-            try {
-              // デバイス情報を取得
-              let clientId = getClientId();
-              if (!clientId) {
-                // IPアドレスの取得はバックエンドで行う
-                const response = await fetch('/api/get-client-id');
-                const data = await response.json();
-                clientId = data.clientId;
-                if (clientId) {
-                  setClientId(clientId);
-                }
-              }
-
-              if (!clientId) {
-                toast.info('クライアントIDの取得に失敗しました', {
-                  description:
-                    'IPアドレスからクライアントIDを取得できませんでした',
-                });
-                return;
-              }
-
-              const bumpThreadFunction = getBumpThreadFunction(threadType);
-              const result: CreateResult = await bumpThreadFunction(
-                thread.id,
-                clientId
-              );
-              if (result.error) {
-                toast.info(
-                  `このアカウントはブロックされています: ${result.error}`
-                );
-              } else {
-                setBumpSuccess(true);
-                setTimeout(() => {
-                  setBumpSuccess(false);
-                }, 1000);
-                result.warning
-                  ? toast.warning(`警告があります: ${result.warning}`)
-                  : toast.success('スレッドを上位に表示しました');
-              }
-            } catch (error) {
-              toast.error('エラーが発生しました');
-            } finally {
-              setIsBumping(false);
-            }
-          }}
-          disabled={isBumping}
-          className="w-52 max-md:text-xs max-md:tracking-normal bg-gray-700 hover:bg-gray-800 font-semibold gap-2 text-xs tracking-wide dark:text-white"
-        >
-          {bumpSuccess ? (
-            <div className="flex items-center gap-2">
-              <FileCheck2 />
-              <p>上位に表示されました！</p>
-            </div>
-          ) : (
-            <div className="flex items-center gap-2">
-              <RotateCw className={isBumping ? 'animate-spin' : ''} />
-              <p>スレッドを上位に表示させる</p>
-            </div>
-          )}
-        </Button>
+        {thread.password && (
+          <Button
+            onClick={() => setIsPasswordDialogOpen(true)}
+            disabled={isBumping}
+            className="w-52 max-md:text-xs max-md:tracking-normal bg-gray-700 hover:bg-gray-800 font-semibold gap-2 text-xs tracking-wide dark:text-white"
+          >
+            {bumpSuccess ? (
+              <div className="flex items-center gap-2">
+                <FileCheck2 />
+                <p>上位に表示されました！</p>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <RotateCw className={isBumping ? 'animate-spin' : ''} />
+                <p>スレッドを上位に表示させる</p>
+              </div>
+            )}
+          </Button>
+        )}
         {threadType === 'trade' && (
           <NotificationSettingsDialog threadId={thread.id} />
         )}
       </div>
+
+      {/* パスワード入力ダイアログ */}
+      <ThreadPasswordDialog
+        isOpen={isPasswordDialogOpen}
+        onClose={() => setIsPasswordDialogOpen(false)}
+        onConfirm={handleBumpThread}
+        isLoading={isBumping}
+      />
 
       <div className="flex items-center">
         <div className="border-t w-full my-14" />

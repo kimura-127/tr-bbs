@@ -45,6 +45,19 @@ const formSchema = z.object({
     .string()
     .min(10, { message: 'コメントは10文字以上で入力してください' })
     .max(1000, { message: 'コメントは1000文字以内で入力してください' }),
+  password: z
+    .union([z.string(), z.null()])
+    .refine(
+      (val) =>
+        val === null || val === '' || (val.length === 4 && /^\d+$/.test(val)),
+      { message: 'パスワードは4桁の数字で入力してください' }
+    )
+    .transform((val) => {
+      if (val === null || val === '') return null;
+      return Number.parseInt(val, 10);
+    })
+    .nullable()
+    .optional(),
   boardType: z.enum(['trade', 'free-talk', 'avatar'], {
     required_error: '掲示板を選択してください',
   }),
@@ -99,6 +112,7 @@ export function CreateThreadForm({
           ? localStorage.getItem('userName') || '名無し'
           : '名無し',
       content: '',
+      password: null,
       boardType: threadType,
       images: [],
     },
@@ -178,6 +192,7 @@ export function CreateThreadForm({
         title: values.title,
         name: values.name,
         content: values.content,
+        password: values.password,
         image_urls: image_urls,
         client_id: clientId,
       };
@@ -263,6 +278,46 @@ export function CreateThreadForm({
                   placeholder="お名前を入力"
                   className="my-4 leading-8 tracking-wider max-md:leading-6 max-md:text-sm bg-background text-foreground"
                   {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="password"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="font-semibold tracking-wider text-foreground/90">
+                パスワード
+                <span className="text-sm text-muted-foreground">
+                  （任意・4桁の数字）
+                </span>
+              </FormLabel>
+              <FormControl>
+                <Input
+                  type="number"
+                  placeholder="スレッド上位表示機能のためのパスワード"
+                  className="my-4 leading-8 tracking-wider max-md:leading-6 max-md:text-sm bg-background text-foreground"
+                  value={field.value === null ? '' : field.value}
+                  onChange={(e) => {
+                    // 入力値が空の場合はnullを設定
+                    if (e.target.value === '') {
+                      field.onChange(null);
+                      return;
+                    }
+
+                    // 数字のみを許可し、4桁までに制限
+                    const value = e.target.value
+                      .replace(/[^0-9]/g, '')
+                      .slice(0, 4);
+                    field.onChange(value);
+                  }}
+                  onBlur={field.onBlur}
+                  name={field.name}
+                  inputMode="numeric"
+                  pattern="[0-9]*"
                 />
               </FormControl>
               <FormMessage />

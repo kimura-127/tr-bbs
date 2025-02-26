@@ -50,6 +50,7 @@ export type Database = {
           id: string
           image_urls: string[] | null
           name: string | null
+          password: number | null
           replies_count: number
           title: string
           updated_at: string
@@ -63,6 +64,7 @@ export type Database = {
           id?: string
           image_urls?: string[] | null
           name?: string | null
+          password?: number | null
           replies_count?: number
           title: string
           updated_at?: string
@@ -76,6 +78,7 @@ export type Database = {
           id?: string
           image_urls?: string[] | null
           name?: string | null
+          password?: number | null
           replies_count?: number
           title?: string
           updated_at?: string
@@ -100,6 +103,7 @@ export type Database = {
           id: string
           image_urls: string[] | null
           name: string | null
+          password: number | null
           replies_count: number
           title: string
           updated_at: string
@@ -113,6 +117,7 @@ export type Database = {
           id?: string
           image_urls?: string[] | null
           name?: string | null
+          password?: number | null
           replies_count?: number
           title: string
           updated_at?: string
@@ -126,6 +131,7 @@ export type Database = {
           id?: string
           image_urls?: string[] | null
           name?: string | null
+          password?: number | null
           replies_count?: number
           title?: string
           updated_at?: string
@@ -291,6 +297,7 @@ export type Database = {
           id: string
           image_urls: string[] | null
           name: string | null
+          password: number | null
           replies_count: number
           title: string
           updated_at: string
@@ -304,6 +311,7 @@ export type Database = {
           id?: string
           image_urls?: string[] | null
           name?: string | null
+          password?: number | null
           replies_count?: number
           title: string
           updated_at?: string
@@ -317,6 +325,7 @@ export type Database = {
           id?: string
           image_urls?: string[] | null
           name?: string | null
+          password?: number | null
           replies_count?: number
           title?: string
           updated_at?: string

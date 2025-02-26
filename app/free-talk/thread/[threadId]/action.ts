@@ -13,6 +13,7 @@ export interface Thread {
   content: string;
   createdAt: string;
   image_urls: string[] | null;
+  password: number | null;
   replies: {
     id: string;
     content: string;
@@ -79,6 +80,7 @@ export async function getFreeTalkThread(
       hour: '2-digit',
       minute: '2-digit',
     }),
+    password: article.password,
   };
 }
 
@@ -165,7 +167,11 @@ export async function createFreeTalkComment(
   }
 }
 
-export async function bumpFreeTalkThread(threadId: string, client_id: string) {
+export async function bumpFreeTalkThread(
+  threadId: string,
+  client_id: string,
+  password?: number
+) {
   const supabase = await createClient();
 
   // クライアントIDからユーザーIDを生成
@@ -175,6 +181,36 @@ export async function bumpFreeTalkThread(threadId: string, client_id: string) {
   const blockCheck = await checkBlockStatus(supabase, deviceUserId);
   if (blockCheck.error) {
     return blockCheck;
+  }
+
+  // スレッドのパスワードを取得
+  const { data: thread, error: threadError } = await supabase
+    .from('free_talk_articles')
+    .select('password')
+    .eq('id', threadId)
+    .single();
+
+  if (threadError) {
+    return {
+      error: 'スレッドの取得に失敗しました',
+    };
+  }
+
+  // パスワードが設定されている場合は検証
+  if (thread.password !== null) {
+    // パスワードが提供されていない場合
+    if (password === undefined) {
+      return {
+        error: 'パスワードが必要です',
+      };
+    }
+
+    // パスワードが一致しない場合
+    if (thread.password !== password) {
+      return {
+        error: 'パスワードが一致しません',
+      };
+    }
   }
 
   const { error: updateError } = await supabase
