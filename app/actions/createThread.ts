@@ -8,6 +8,7 @@ interface CreateThreadData {
   title: string;
   name: string;
   content: string;
+  password?: number | null;
   image_urls?: string[];
   client_id: string;
 }
@@ -29,6 +30,7 @@ export async function createTradingThread(data: CreateThreadData) {
     title: data.title,
     name: data.name,
     content: data.content,
+    password: data.password,
     image_urls: data.image_urls,
     device_user_id: deviceUserId,
   });
@@ -61,6 +63,7 @@ export async function createFreeTalkThread(data: CreateThreadData) {
     title: data.title,
     name: data.name,
     content: data.content,
+    password: data.password,
     image_urls: data.image_urls,
     device_user_id: deviceUserId,
   });
@@ -93,6 +96,7 @@ export async function createAvatarThread(data: CreateThreadData) {
     title: data.title,
     name: data.name,
     content: data.content,
+    password: data.password,
     image_urls: data.image_urls,
     device_user_id: deviceUserId,
   });
