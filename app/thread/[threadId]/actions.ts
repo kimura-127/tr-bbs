@@ -140,7 +140,6 @@ export async function createComment(
     const { error: articleError } = await supabase
       .from('articles')
       .update({
-        updated_at: new Date().toISOString(),
         replies_count: (currentArticle?.replies_count ?? 0) + 1,
       })
       .eq('id', threadId);
