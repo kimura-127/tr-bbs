@@ -1,7 +1,13 @@
 'use client';
 
 import { SiteLogo } from '@/components/SiteLogo';
-import { Bell, MessageCircle, ShoppingCart, Speech } from 'lucide-react';
+import {
+  Bell,
+  MessageCircle,
+  Search,
+  ShoppingCart,
+  Speech,
+} from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { MenuBar } from './ui/glow-menu';
