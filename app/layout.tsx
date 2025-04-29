@@ -5,6 +5,8 @@ import { Footer } from '@/components/Footer';
 import { Header } from '@/components/Header';
 import { MobileNavigation } from '@/components/MobileNavigation';
 import { Toaster } from '@/components/ui/sonner';
+import { jaJP } from '@clerk/localizations';
+import { ClerkProvider } from '@clerk/nextjs';
 import type { Metadata, Viewport } from 'next';
 
 const defaultUrl = 'https://www.cl-bbs.com';
@@ -81,30 +83,32 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ja" className={geistSans.className} suppressHydrationWarning>
-      <head>
-        <meta charSet="utf-8" />
-        <meta name="format-detection" content="telephone=no" />
-        <link rel="icon" href="/favicon.ico" />
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-        <link rel="manifest" href="/manifest.json" />
-      </head>
-      <body className="bg-background text-foreground">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <Header />
-          <main className="min-h-screen flex flex-col items-center pb-16 md:pb-0">
-            {children}
-          </main>
-          <MobileNavigation />
-          <Footer />
-          <Toaster />
-        </ThemeProvider>
-      </body>
-    </html>
+    <ClerkProvider localization={jaJP}>
+      <html lang="ja" className={geistSans.className} suppressHydrationWarning>
+        <head>
+          <meta charSet="utf-8" />
+          <meta name="format-detection" content="telephone=no" />
+          <link rel="icon" href="/favicon.ico" />
+          <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+          <link rel="manifest" href="/manifest.json" />
+        </head>
+        <body className="bg-background text-foreground">
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <Header />
+            <main className="min-h-screen flex flex-col items-center pb-16 md:pb-0">
+              {children}
+            </main>
+            <MobileNavigation />
+            <Footer />
+            <Toaster />
+          </ThemeProvider>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

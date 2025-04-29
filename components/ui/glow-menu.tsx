@@ -1,8 +1,10 @@
 'use client';
 
 import { cn } from '@/lib/utils';
+import { SignInButton, SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
 import { type HTMLMotionProps, motion } from 'framer-motion';
 import type { LucideIcon } from 'lucide-react';
+import { CircleUser } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import * as React from 'react';
 
@@ -168,6 +170,21 @@ export const MenuBar = React.forwardRef<HTMLDivElement, MenuBarProps>(
               </motion.li>
             );
           })}
+          <SignedOut>
+            <div className="h-fit ml-4 bg-orange-500 w-fit p-2 rounded-md text-white text-sm font-semibold cursor-pointer">
+              <SignInButton>
+                <div className="flex items-center gap-2">
+                  <CircleUser className="h-4 w-4" />
+                  <span>ログイン</span>
+                </div>
+              </SignInButton>
+            </div>
+          </SignedOut>
+          <SignedIn>
+            <div className="h-fit ml-4 w-fit flex items-center justify-center">
+              <UserButton />
+            </div>
+          </SignedIn>
         </ul>
       </motion.div>
     );

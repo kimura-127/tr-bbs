@@ -1,7 +1,14 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { Bell, MessageCircle, ShoppingCart, Speech } from 'lucide-react';
+import { SignInButton, SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
+import {
+  Bell,
+  CircleUser,
+  MessageCircle,
+  ShoppingCart,
+  Speech,
+} from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -92,6 +99,21 @@ export function MobileNavigation() {
             </Link>
           );
         })}
+        <SignedOut>
+          <div className="flex flex-col items-center justify-start mt-2 w-full h-full space-y-1">
+            <SignInButton>
+              <div className="flex flex-col items-center space-y-1">
+                <CircleUser className="w-5 h-5" />
+                <span className="text-xs font-medium">ログイン</span>
+              </div>
+            </SignInButton>
+          </div>
+        </SignedOut>
+        <SignedIn>
+          <div className="flex flex-col items-center justify-center mb-2 w-full h-full">
+            <UserButton />
+          </div>
+        </SignedIn>
       </div>
     </nav>
   );
