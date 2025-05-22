@@ -31,6 +31,7 @@ import type { CreateResult, ThreadType } from '@/types';
 import { fetcher } from '@/utils/fetcher';
 import { getClientId, setClientId } from '@/utils/generateUserIdentifier';
 import { createClient } from '@/utils/supabase/client';
+import { SignedIn, SignedOut } from '@clerk/nextjs';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Linkify from 'linkify-react';
 import { FileCheck2, RotateCw } from 'lucide-react';
@@ -589,16 +590,33 @@ export function ThreadView({ thread, threadType }: ThreadViewProps) {
                   </FormItem>
                 )}
               />
-              <InteractiveHoverButton
-                type="submit"
-                disabled={isLoading}
-                className={`absolute border-2 flex items-center justify-center max-md:hidden bottom-2 right-2 h-10 w-28 font-semibold gap-2 text-base tracking-wide transition-colors ${
-                  form.getValues('content')
-                    ? 'bg-transparent'
-                    : 'bg-gray-700 hover:bg-gray-800 text-white'
-                }`}
-                text={isLoading ? '送信中...' : '返信'}
-              />
+              <SignedIn>
+                <InteractiveHoverButton
+                  type="submit"
+                  disabled={isLoading}
+                  className={`absolute border-2 flex items-center justify-center max-md:hidden bottom-2 right-2 h-10 w-28 font-semibold gap-2 text-base tracking-wide transition-colors ${
+                    form.getValues('content')
+                      ? 'bg-transparent'
+                      : 'bg-gray-700 hover:bg-gray-800 text-white'
+                  }`}
+                  text={isLoading ? '送信中...' : '返信'}
+                />
+              </SignedIn>
+              <SignedOut>
+                <InteractiveHoverButton
+                  type="button"
+                  disabled={isLoading}
+                  className={`absolute border-2 flex items-center justify-center max-md:hidden bottom-2 right-2 h-10 w-28 font-semibold gap-2 text-base tracking-wide transition-colors ${
+                    form.getValues('content')
+                      ? 'bg-transparent'
+                      : 'bg-gray-700 hover:bg-gray-800 text-white'
+                  }`}
+                  text="返信"
+                  onClick={() =>
+                    toast.warning('ログインしてから返信してください')
+                  }
+                />
+              </SignedOut>
             </div>
             <FormField
               control={form.control}

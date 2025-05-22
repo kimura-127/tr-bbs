@@ -20,6 +20,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import type { CreateResult, ThreadType } from '@/types';
 import { getClientId, setClientId } from '@/utils/generateUserIdentifier';
 import { createClient } from '@/utils/supabase/client';
+import { SignedIn, SignedOut } from '@clerk/nextjs';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
