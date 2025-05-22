@@ -6,7 +6,7 @@ import { Webhook } from 'svix';
 export async function POST(req: Request) {
   // WebhookシークレットをClerkダッシュボードから取得
   const WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET;
-
+  console.log('あああああああああ');
   if (!WEBHOOK_SECRET) {
     throw new Error('CLERK_WEBHOOK_SECRET is not set');
   }
