@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { useToast } from '@/hooks/use-toast';
+import { SignedIn, SignedOut } from '@clerk/nextjs';
 import {
   type ColumnDef,
   type ColumnFiltersState,
@@ -24,6 +24,7 @@ import { SquarePen } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { toast } from 'sonner';
 import { CreateThreadForm } from './CreateThreadForm';
 import { Button } from './ui/button';
 import {
@@ -88,22 +89,16 @@ export function DataTable<TData, TValue>({
   });
 
   const router = useRouter();
-  const { toast } = useToast();
+
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const handleRefresh = async () => {
     try {
       setIsRefreshing(true);
       router.refresh();
-      toast({
-        description: '記事一覧を更新しました',
-      });
+      toast.info('記事一覧を更新しました');
     } catch (error) {
-      toast({
-        variant: 'destructive',
-        title: 'エラー',
-        description: '更新中にエラーが発生しました',
-      });
+      toast.warning('更新中にエラーが発生しました');
     } finally {
       setTimeout(() => {
         setIsRefreshing(false);
@@ -125,26 +120,39 @@ export function DataTable<TData, TValue>({
           </Button>
           {isVisibleCreateWithSearch && (
             <div>
-              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                <DialogTrigger asChild>
-                  <Button className="bg-gray-700 hover:bg-gray-800 hover:text-gray-300 font-semibold gap-2 text-base tracking-wide max-md:text-xs dark:text-white">
-                    <SquarePen className="max-sm:hidden" />
-                    新規作成
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="max-w-4xl max-h-screen overflow-auto pb-32">
-                  <DialogHeader>
-                    <DialogTitle>新規スレッド作成</DialogTitle>
-                    <DialogDescription className="py-2">
-                      タイトルとコメントを入力してください
-                    </DialogDescription>
-                  </DialogHeader>
-                  <CreateThreadForm
-                    threadType={threadType}
-                    setIsDialogOpen={setIsDialogOpen}
-                  />
-                </DialogContent>
-              </Dialog>
+              <SignedIn>
+                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button className="bg-gray-700 hover:bg-gray-800 hover:text-gray-300 font-semibold gap-2 text-base tracking-wide max-md:text-xs dark:text-white">
+                      <SquarePen className="max-sm:hidden" />
+                      新規作成
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-4xl max-h-screen overflow-auto pb-32">
+                    <DialogHeader>
+                      <DialogTitle>新規スレッド作成</DialogTitle>
+                      <DialogDescription className="py-2">
+                        タイトルとコメントを入力してください
+                      </DialogDescription>
+                    </DialogHeader>
+                    <CreateThreadForm
+                      threadType={threadType}
+                      setIsDialogOpen={setIsDialogOpen}
+                    />
+                  </DialogContent>
+                </Dialog>
+              </SignedIn>
+              <SignedOut>
+                <Button
+                  onClick={() =>
+                    toast.warning('ログインしてから作成してください')
+                  }
+                  className="bg-gray-700 hover:bg-gray-800 hover:text-gray-300 font-semibold gap-2 text-base tracking-wide max-md:text-xs dark:text-white"
+                >
+                  <SquarePen className="max-sm:hidden" />
+                  新規作成
+                </Button>
+              </SignedOut>
             </div>
           )}
         </div>
