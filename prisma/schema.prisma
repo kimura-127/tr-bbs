@@ -1,0 +1,199 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model AppUser {
+  id               String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email            String   @unique
+  name             String
+  lastLoginDate    DateTime @map("last_login_date") @db.Timestamptz(6)
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  authProvider     String?  @map("auth_provider")
+  isBan            Boolean  @default(false) @map("is_ban")
+
+  // Relations
+  articles         Article[]
+  replies          Reply[]
+  freeTalkArticles FreeTalkArticle[]
+  freeTalkReplies  FreeTalkReply[]
+  avatarArticles   AvatarArticle[]
+  avatarReplies    AvatarReply[]
+
+  @@map("app_users")
+}
+
+model Article {
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title          String
+  content        String
+  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  userId         String?   @map("user_id") @db.Uuid
+  deviceUserId   String?   @map("device_user_id")
+  repliesCount   Int       @default(0) @map("replies_count")
+  name           String?
+  imageUrls      String[]  @default([]) @map("image_urls")
+  viewsCount     Int       @default(0) @map("views_count")
+  password       Int?
+
+  // Relations
+  user           AppUser?  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  replies        Reply[]
+
+  @@map("articles")
+}
+
+model Reply {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  content      String
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  articleId    String   @map("article_id") @db.Uuid
+  userId       String?  @map("user_id") @db.Uuid
+  deviceUserId String?  @map("device_user_id")
+  imageUrls    String[] @default([]) @map("image_urls")
+
+  // Relations
+  article      Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  user         AppUser? @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("replies")
+}
+
+model FreeTalkArticle {
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title          String
+  content        String
+  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  userId         String?   @map("user_id") @db.Uuid
+  deviceUserId   String?   @map("device_user_id")
+  repliesCount   Int       @default(0) @map("replies_count")
+  name           String?
+  imageUrls      String[]  @default([]) @map("image_urls")
+  viewsCount     Int       @default(0) @map("views_count")
+  password       Int?
+
+  // Relations
+  user           AppUser?  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  replies        FreeTalkReply[]
+
+  @@map("free_talk_articles")
+}
+
+model FreeTalkReply {
+  id           String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  content      String
+  createdAt    DateTime        @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime        @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  articleId    String          @map("article_id") @db.Uuid
+  userId       String?         @map("user_id") @db.Uuid
+  deviceUserId String?         @map("device_user_id")
+  imageUrls    String[]        @default([]) @map("image_urls")
+
+  // Relations
+  article      FreeTalkArticle @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  user         AppUser?        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("free_talk_replies")
+}
+
+model AvatarArticle {
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title          String
+  content        String
+  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  userId         String?   @map("user_id") @db.Uuid
+  deviceUserId   String?   @map("device_user_id")
+  repliesCount   Int       @default(0) @map("replies_count")
+  name           String?
+  imageUrls      String[]  @default([]) @map("image_urls")
+  viewsCount     Int       @default(0) @map("views_count")
+  password       Int?
+
+  // Relations
+  user           AppUser?  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  replies        AvatarReply[]
+
+  @@map("avatar_articles")
+}
+
+model AvatarReply {
+  id           String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  content      String
+  createdAt    DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime      @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  articleId    String        @map("article_id") @db.Uuid
+  userId       String?       @map("user_id") @db.Uuid
+  deviceUserId String?       @map("device_user_id")
+  imageUrls    String[]      @default([]) @map("image_urls")
+
+  // Relations
+  article      AvatarArticle @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  user         AppUser?      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("avatar_replies")
+}
+
+model NotificationSetting {
+  id                     String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId                 String   @map("user_id") @db.Uuid
+  emailNotification      Boolean  @default(true) @map("email_notification")
+  pushNotification       Boolean  @default(true) @map("push_notification")
+  createdAt              DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt              DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@unique([userId])
+  @@map("notification_settings")
+}
+
+model EmailLog {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  to        String
+  subject   String
+  body      String
+  sentAt    DateTime @default(now()) @map("sent_at") @db.Timestamptz(6)
+  success   Boolean
+  error     String?
+
+  @@map("email_logs")
+}
+
+model PushSubscription {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId       String   @map("user_id") @db.Uuid
+  endpoint     String
+  p256dhKey    String   @map("p256dh_key")
+  authKey      String   @map("auth_key")
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@unique([userId, endpoint])
+  @@map("push_subscriptions")
+}
+
+model UserBlock {
+  id               String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  blockerUserId    String   @map("blocker_user_id") @db.Uuid
+  blockedUserId    String   @map("blocked_user_id") @db.Uuid
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@unique([blockerUserId, blockedUserId])
+  @@map("user_blocks")
+}
+
+model DeviceBlock {
+  id                  String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  blockerDeviceUserId String   @map("blocker_device_user_id")
+  blockedDeviceUserId String   @map("blocked_device_user_id")
+  createdAt           DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@unique([blockerDeviceUserId, blockedDeviceUserId])
+  @@map("device_blocks")
+}

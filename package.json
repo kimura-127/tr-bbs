@@ -9,6 +9,10 @@
     "db:reset": "supabase db reset",
     "db:status": "supabase db status",
     "generate-types": "supabase gen types typescript --local --schema public > types/supabase.ts",
+    "prisma:generate": "prisma generate",
+    "prisma:db:push": "prisma db push",
+    "prisma:db:pull": "prisma db pull",
+    "prisma:studio": "prisma studio",
     "lint": "biome lint .",
     "format": "biome format . --write",
     "check": "biome check --apply ."
