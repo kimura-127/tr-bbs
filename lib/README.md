@@ -1,76 +1,86 @@
-# Prisma Integration
+# Database Access Strategy
 
-このプロジェクトではSupabaseと併用してPrismaを使用しています。
+このプロジェクトではSupabaseを主要なデータベースアクセス方法として使用し、Prismaはスキーマ管理の補助として利用しています。
 
-## セットアップ
+## 統一されたアプローチ
 
-1. 環境変数を設定:
-```bash
-DATABASE_URL="postgresql://username:password@hostname:port/database?schema=public"
-```
+権限エラーを避けるため、**すべてのデータベースアクセスはSupabase SDKを通して行います**。
 
-2. Prismaクライアントを生成:
-```bash
-npm run prisma:generate
-```
+### 使用方法
 
-## 使用方法
-
-### 基本的な使用方法
+#### Supabaseクライアント（推奨）
 
 ```typescript
-import { prisma } from '@/lib/prisma'
+import { createClient } from '@/utils/supabase/server'
 
-// 記事を取得
-const articles = await prisma.article.findMany({
-  include: {
-    user: true,
-    replies: true
-  }
-})
+// 記事を取得（RLSポリシー適用）
+const supabase = await createClient()
+const { data: articles, error } = await supabase
+  .from('articles')
+  .select('*')
 
 // 新しい記事を作成
-const newArticle = await prisma.article.create({
-  data: {
+const { data: article, error } = await supabase
+  .from('articles')
+  .insert({
     title: 'タイトル',
     content: '内容',
-    userId: 'user-id'
-  }
-})
+    device_user_id: 'device-id'
+  })
 ```
 
-### ユーティリティ関数の使用
+#### 統一されたアクション関数
 
 ```typescript
-import { getArticlesWithPagination, incrementViewCount } from '@/lib/prisma-utils'
+import { 
+  createTradingThreadWithSupabase,
+  createFreeTalkThreadWithSupabase,
+  getArticleByIdWithSupabase 
+} from '@/lib/supabase-actions'
 
-// ページネーション付きで記事を取得
-const { articles, total, totalPages } = await getArticlesWithPagination(1, 10)
+// スレッド作成
+const result = await createTradingThreadWithSupabase({
+  title: 'タイトル',
+  name: '名前',
+  content: '内容',
+  deviceUserId: 'device-id'
+})
 
-// ビュー数を増加
-await incrementViewCount('article-id', 'article')
+// 記事取得
+const { article } = await getArticleByIdWithSupabase('article-id')
 ```
 
-## データベースとの同期
+## Prismaの役割
 
-PrismaスキーマはSupabaseのマイグレーションと同期する必要があります。
+Prismaは以下の用途で使用します：
 
-### スキーマを更新する場合
+1. **スキーマ定義**: TypeScript型の生成
+2. **開発ツール**: データベーススキーマの管理
+3. **マイグレーション確認**: Supabaseとの整合性チェック
 
-1. Supabaseマイグレーションを作成・実行
-2. Prismaスキーマを手動で更新するか、`prisma db pull`を使用
-3. `npm run prisma:generate`でクライアントを再生成
+```bash
+# スキーマから型を生成
+npm run prisma:generate
+
+# スキーマをデータベースと同期
+npm run prisma:db:pull
+```
+
+## セキュリティとRLS
+
+- **Supabase SDK**: RLSポリシーが自動的に適用される
+- **anon key**: 匿名ユーザー権限でアクセス
+- **権限統一**: すべてのクエリが同じ権限レベルで実行
 
 ## ベストプラクティス
 
-1. **グローバルPrismaクライアント**: `lib/prisma.ts`では開発環境でのホットリロード対応のためグローバルインスタンスを使用
-2. **型安全性**: Prismaの生成された型を活用してTypeScriptの型安全性を確保
-3. **リレーションの活用**: `include`オプションを使用して関連データを効率的に取得
-4. **ページネーション**: 大量データに対してはページネーションを実装
-5. **エラーハンドリング**: try-catchブロックでPrismaエラーを適切に処理
+1. **Supabaseファースト**: 新機能は必ずSupabase SDKを使用
+2. **権限一貫性**: 異なるクライアントを混在させない
+3. **RLS活用**: データベースレベルでセキュリティを確保
+4. **型安全性**: Prismaスキーマから生成される型を活用
 
 ## 注意事項
 
-- SupabaseのRLSポリシーはPrismaでは直接適用されません
-- 認証・認可ロジックはアプリケーション層で実装する必要があります
-- Supabaseの関数やトリガーはPrismaでは管理されません
+- **重要**: Prismaクライアントを直接データアクセスに使用しない
+- **混在禁止**: PrismaとSupabaseのクライアントを同じ処理で混在させない
+- **権限エラー回避**: すべてのアクセスはSupabase anon keyレベルで統一
